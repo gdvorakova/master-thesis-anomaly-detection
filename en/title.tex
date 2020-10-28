@@ -1,0 +1,55 @@
+%%% Mandatory information page of the thesis
+
+%%  Begin title page
+%%  ==================================================================
+    \thispagestyle{empty}
+    \ULCornerWallPaper{1}{ku-coverpage/nat-farve.pdf}
+    \ULCornerWallPaper{1}{ku-coverpage/nat-en.pdf}
+    \begin{adjustwidth}{-3cm}{-1.5cm}
+    \vspace*{-1cm}
+    \textbf{\Huge \ThesisType} \\
+    \vspace*{2.5cm} \\
+    \textbf{\Huge \ThesisTitle} \\
+    \vspace*{.1cm} \\
+    {\huge \ThesisSubtitle} \\
+    \begin{tabbing}
+    % adjust the hspace below for the longest author name
+    \StudentFirstName \hspace{1cm} \= \texttt{<\StudentFirstMail>} \\
+    \StudentSecondName \> \texttt{<\StudentSecondMail>} \\
+    \\[12cm]
+    \textbf{\Large Supervisor} \\
+    \SupervisorName \> \texttt{<\SupervisorMail>} \\
+    \end{tabbing}
+    \end{adjustwidth}
+    \newpage
+    \ClearWallPaper
+%%  ==================================================================
+%%  End title page
+
+\newpage
+
+%%% Dedication
+\openright
+\noindent
+\Dedication
+
+\newpage
+
+\openright
+\vbox to 0.5\vsize{
+\setlength\parindent{0mm}
+\setlength\parskip{5mm}
+
+Title:
+\ThesisTitle
+
+Authors:
+\StudentFirstName, \StudentSecondName
+
+Supervisor:
+\SupervisorName
+
+Abstract:
+\Abstract
+
+\vss}
