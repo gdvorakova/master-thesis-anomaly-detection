@@ -7,6 +7,7 @@ organisations, it is crucial to stay connected even beyond the boundaries of the
 radio system. Motorola Solutions’ SmartConnect is a system optimised for
 reliability and excellent coverage to ensure connection between teams no matter
 where they are.
+
 Land Mobile Radio (LMR) is the leading communication system for public safety,
 voice-centric, “Push-To-Talk” (PTT) mobile radio communications. P25 (Project 25),
 is a set of standards suited to public safety radio systems and first responders to
@@ -17,6 +18,7 @@ public safety users, however, the greatest benefit is when both technologies are
 leveraged simultaneously. When LMR is unavailable, SmartConnect is
 automatically switching the P25 channel to the broadband LTE system without
 intervention.
+
 The production system consists of infrastructure and directly connected radios.
 There are two kinds of data available. Both infrastructure and radios are being
 monitored and produce logs and metrics. In addition, there is a recorded history of
@@ -37,6 +39,7 @@ Prior to applying machine learning to the problem, it is needed to preprocess th
 raw logged data from both the PTT devices and the infrastructure. The first
 problem our research tries to address is whether it is possible to use machine
 learning techniques at all to detect anomalies on the provided data.
+
 Another part of the research is to try to analyse the current state of the logging to
 determine whether there are properties of the system that should be recorded
 further in order to improve the performance of our machine learning models or,
@@ -44,10 +47,12 @@ conversely, there are data properties that could be omitted from the trace as th
 do not provide any valuable information and unnecessarily take up storage space.
 Exploratory analysis will be performed on the datasets in order to identify
 anomalous patterns and identify hypotheses to be further tested.
+
 If there are informative patterns yielded by the exploratory analysis, we will
 propose different machine learning approaches to detect them and we will
 evaluate their performance in a series of experiments.
-Possible extensions
+
+### Possible extensions
 After achieving the thesis statement, there are possibilities of extending the
 project. One such extensions is applying machine learning techniques in order to
 characterise audio streams and classify different kinds of poor audio connection.
@@ -56,13 +61,13 @@ log to predict an anomaly to effect the data size.
 
 ## A list of 4-6 project-specific learning objectives
 
-- Understand and analyse the structure of a real-world dataset.
-- Apply data preprocessing techniques on raw log data from live production
+1. Understand and analyse the structure of a real-world dataset.
+2. Apply data preprocessing techniques on raw log data from live production
 systems to prepare inputs for machine learning models.
-- Build further on the grounding of principles acquired in the Machine Learning
+3. Build further on the grounding of principles acquired in the Machine Learning
 course, and to determine if those principles can be applied to achieve anomaly
 detection.
-- Investigate the data quality requirements that would allow for anomaly
+4. Investigate the data quality requirements that would allow for anomaly
 detection.
-- Ability to discuss the methodologies and theory of anomaly detection
+5. Ability to discuss the methodologies and theory of anomaly detection
 techniques in general as well as at an academic level.
