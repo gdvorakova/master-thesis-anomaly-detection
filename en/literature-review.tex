@@ -1,0 +1,68 @@
+\chapter{Literature Review (and Related Work)}
+
+\section{Anomaly Detection}
+\subsection{Overview}
+
+% definition of anomaly detection
+\textis{Anomaly detection} is a problem of finding patterns in data that do not follow expected normal behavior represented by the majority of the data points. It follows that defining normal behaviour is one of the crucial challenges of anomaly detection. The unusual patterns are also called \textit{outliers} or \textit{anomalies} and anomaly detection is referred to as \textit{outlier detection}. In other words, statistical properties of the anomalous data points are not in alignment with the rest of the data. Outliers vary depending on the domain and may arise due to various reasons, such as fraudulent behaviour in credit card fraud, intrusion in cybersecurity, system failures, mechanical faults in industrial applications, deviations caused by natural behaviour or human error. Initially, outliers would be detected manually by the hand of a domain expert. Nowadays, anomaly detection's focus is identifying anomalous behavior automatically. Anomaly detection is also related to \textit{noise}. Noise is defined as an unwanted phenomenon in data, which is not of interest to the analyst, but acts as a hindrance to data analysis \cite{cvbakv2009}. Noise is  caused by an external factor not related to the distribution that generates the data \cite{ggh2017} and leads to excessively complex models with deteriorated performance \cite{wu2007}. 
+
+In our thesis we focus on anomaly detection in time series data. Time series outlier analysis examines anomalies in the behavior of the data across time \cite{gupta2014}. An outlier in time series data is a data point, which is not following a common behaviour, either a general long-term trend or a tendency of the data to incease or decrease in seasonal patterns. 
+
+It is dependant on the \textit{input data type}, \textit{outlier type} and the \textit{nature of the method} \cite{gcml2020}, which are described in the next section.
+
+\subsection{Classification of anomaly detection techniques in time series}
+
+% definition of outlier
+% examples where is AD used
+% why is there interest in studying time series data
+% anomaly detection in time series 
+
+\subsection{Approaches to Anomaly Detection}
+    \subsubsection{Supervised}
+    \subsubsection{Semi-supervised}
+    \subsubsection{Unupervised}
+    
+\newpage
+
+\section{Detecting Events}
+The time series data we work with is a sequence of logs produced by a production system. 
+Log is a textual trace, log message, that's designed to be well readable by humans. A log may as well contain additional metadata.
+Log indicates that some event took place at the time the log was produced. We want to extract these events from the natural language messages and categorize them.
+Therefore, the goal is to assign type of event to every log the system produces.\\
+\\
+First, let's have a look at how a log message generally looks like.
+When a programmer writes code, he calls a logging framework at places where something worth noting happens. The lines that invoke such framework are shown in Listing~\ref{lst:logging_code}.
+\\
+\begin{lstlisting}[language=elixir, caption={Example of how logging is done in source code}, captionpos=b, label={lst:logging_code}]
+Log.info("Cached default value,tenant: 
+            #{inspect(tenant_id)}, param key: #{key}")
+\end{lstlisting}
+\\
+This chunk of code may however result in different log messages such as the ones printed in Listing~\ref{lst:log_messages}.
+\\
+\begin{lstlisting}[label={lst:log_messages}, caption={Possible outputs of the code in Listing~\ref{lst:logging_code}}, captionpos=b]
+Cached default value, tenant: 12556, param key: 12
+Cached default value, tenant: 45, param key: 4
+Cached default value, tenant: 789, param key: 54
+Cached default value, tenant: 12556, param key: 78
+\end{lstlisting}
+
+As one can see, the log message is comprised of constant part and zero or more variable parts.
+As the names suggest, the constant part is invariable throughout executions of the code, whereas the variable parts are subject to change from one run to another.\\
+
+What is important is that all the log messages in Listing~\ref{lst:log_messages} are describing the same type of event and the variable parts are telling us that the context was slightly different.\\
+In order to generalize log message we introduce concept of log message template which is a string with consisting of the constant part and regular expressions describing the variable parts. In example a template for the messages that we saw in Listing~\ref{lst:log_messages} can be described by the template shown in Listing~\ref{lst:log_message_template}\\
+
+\begin{lstlisting}[label={lst:log_message_template}, caption={Template for ~\ref{lst:log_messages}}, captionpos=b]
+Cached default value, tenant: [0-9]+, param key: [0-9]+ 
+\end{lstlisting}
+Therefore, we say that two logs have the same event type if their messages match the same log message template.\\
+
+Now let's look into how we categorize logs from our system into by event types.
+    \subsection{Template Mining}
+    \subsubsection{Drain3}
+    \subsection{Unsupervised clustering/Cluster Analysis}
+    
+\section{Elasticsearch}
+\section{Related Work}
+\subsection{Automated Log Analysis}
