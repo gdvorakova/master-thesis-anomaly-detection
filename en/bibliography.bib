@@ -11,6 +11,12 @@
 %
 %  ===========================================================================
 
+@misc{k8s:pods,
+  title = {{K}ubernetes {P}ods},
+  howpublished = {\url{https://kubernetes.io/docs/concepts/workloads/pods/}},
+  note = {Online, Accessed: 2020-12-11}
+}
+
 @ARTICLE{gupta2014,  author={M. {Gupta} and J. {Gao} and C. C. {Aggarwal} and J. {Han}},  journal={IEEE Transactions on Knowledge and Data Engineering},   title={Outlier Detection for Temporal Data: A Survey},   year={2014},  volume={26},  number={9},  pages={2250-2267},  doi={10.1109/TKDE.2013.184}}
 
 @article{cvbakv2009,
@@ -47,4 +53,132 @@ Author = {Ane Blázquez-García and Angel Conde and Usue Mori and Jose A. Lozano
 Title = {A review on outlier/anomaly detection in time series data},
 Year = {2020},
 Eprint = {arXiv:2002.04236},
+}
+
+@article{ORD1996175,
+title = "Outliers in statistical data: V. Barnett and T. Lewis, 1994, 3rd edition, (John Wiley & Sons, Chichester), 584 pp., £55.00, ISBN 0-471-93094-6.",
+journal = "International Journal of Forecasting",
+volume = "12",
+number = "1",
+pages = "175 - 176",
+year = "1996",
+note = "Probability Judgmental Forecasting",
+issn = "0169-2070",
+doi = "https://doi.org/10.1016/0169-2070(95)00625-7",
+url = "http://www.sciencedirect.com/science/article/pii/0169207095006257",
+author = "Keith Ord"
+}
+
+@misc{zhlhxzl2018,
+Author = {Jieming Zhu and Shilin He and Jinyang Liu and Pinjia He and Qi Xie and Zibin Zheng and Michael R. Lyu},
+Title = {Tools and Benchmarks for Automated Log Parsing},
+Year = {2018},
+Eprint = {arXiv:1811.03509},
+}
+
+@INPROCEEDINGS{logParsingEvaluation2016,  author={P. {He} and J. {Zhu} and S. {He} and J. {Li} and M. R. {Lyu}},  booktitle={2016 46th Annual IEEE/IFIP International Conference on Dependable Systems and Networks (DSN)},   title={An Evaluation Study on Log Parsing and Its Use in Log Mining},   year={2016},  volume={},  number={},  pages={654-661},  doi={10.1109/DSN.2016.66}}
+
+@inproceedings{xu2009,
+author = {Xu, Wei and Huang, Ling and Fox, Armando and Patterson, David and Jordan, Michael I.},
+title = {Detecting Large-Scale System Problems by Mining Console Logs},
+year = {2009},
+isbn = {9781605587523},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1629575.1629587},
+doi = {10.1145/1629575.1629587},
+abstract = {Surprisingly, console logs rarely help operators detect problems in large-scale datacenter services, for they often consist of the voluminous intermixing of messages from many software components written by independent developers. We propose a general methodology to mine this rich source of information to automatically detect system runtime problems. We first parse console logs by combining source code analysis with information retrieval to create composite features. We then analyze these features using machine learning to detect operational problems. We show that our method enables analyses that are impossible with previous methods because of its superior ability to create sophisticated features. We also show how to distill the results of our analysis to an operator-friendly one-page decision tree showing the critical messages associated with the detected problems. We validate our approach using the Darkstar online game server and the Hadoop File System, where we detect numerous real problems with high accuracy and few false positives. In the Hadoop case, we are able to analyze 24 million lines of console logs in 3 minutes. Our methodology works on textual console logs of any size and requires no changes to the service software, no human input, and no knowledge of the software's internals.},
+booktitle = {Proceedings of the ACM SIGOPS 22nd Symposium on Operating Systems Principles},
+pages = {117–132},
+numpages = {16},
+keywords = {pca, source code analysis, statistical learning, console log analysis, monitoring, problem detection, tracing},
+location = {Big Sky, Montana, USA},
+series = {SOSP '09}
+}
+
+@INPROCEEDINGS{vaarandi2003,  author={R. {Vaarandi}},  booktitle={Proceedings of the 3rd IEEE Workshop on IP Operations   Management (IPOM 2003) (IEEE Cat. No.03EX764)},   title={A data clustering algorithm for mining patterns from event logs},   year={2003},  volume={},  number={},  pages={119-126},  doi={10.1109/IPOM.2003.1251233}}
+
+@inproceedings{xu2008,
+author = {Xu, Wei and Huang, Ling and Fox, Armando and Patterson, David and Jordan, Michael},
+year = {2008},
+month = {01},
+pages = {},
+title = {Mining Console Logs for Large-Scale System Problem Detection.}
+}
+
+@inproceedings{Makanju2009ALA,
+  title={A Lightweight Algorithm for Message Type Extraction in Event Logs ∗},
+  author={A. Makanju and A. N. Zincir-Heywood and E. Milios},
+  year={2009}
+}
+
+@INPROCEEDINGS{Agrawal94fastalgorithms,
+    author = {Rakesh Agrawal and Ramakrishnan Srikant},
+    title = {Fast algorithms for mining association rules},
+    booktitle = {Proc. of 20th Intl. Conf. on VLDB},
+    year = {1994},
+    pages = {487--499}
+}
+
+@inproceedings{logsig2011,
+author = {Tang, Liang and Li, Tao and Perng, Chang-Shing},
+year = {2011},
+month = {10},
+pages = {785-794},
+title = {LogSig: Generating system events from raw textual logs},
+doi = {10.1145/2063576.2063690}
+}
+
+@INPROCEEDINGS{drain2017,  author={P. {He} and J. {Zhu} and Z. {Zheng} and M. R. {Lyu}},  booktitle={2017 IEEE International Conference on Web Services (ICWS)},   title={Drain: An Online Log Parsing Approach with Fixed Depth Tree},   year={2017},  volume={},  number={},  pages={33-40},  doi={10.1109/ICWS.2017.13}}
+
+@article{Goernitz_2013,
+   title={Toward Supervised Anomaly Detection},
+   volume={46},
+   ISSN={1076-9757},
+   url={http://dx.doi.org/10.1613/jair.3623},
+   DOI={10.1613/jair.3623},
+   journal={Journal of Artificial Intelligence Research},
+   publisher={AI Access Foundation},
+   author={Goernitz, N. and Kloft, M. and Rieck, K. and Brefeld, U.},
+   year={2013},
+   month={Feb},
+   pages={235–262}
+}
+
+@article{anomalyDetectionSurvey,
+author = {Chandola, Varun and Banerjee, Arindam and Kumar, Vipin},
+title = {Anomaly Detection: A Survey},
+year = {2009},
+issue_date = {July 2009},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {41},
+number = {3},
+issn = {0360-0300},
+url = {https://doi.org/10.1145/1541880.1541882},
+doi = {10.1145/1541880.1541882},
+journal = {ACM Comput. Surv.},
+month = jul,
+articleno = {15},
+numpages = {58},
+keywords = {outlier detection, Anomaly detection}
+}
+
+@article{liu2012isolation,
+  title={Isolation-based anomaly detection},
+  author={Liu, Fei Tony and Ting, Kai Ming and Zhou, Zhi-Hua},
+  journal={ACM Transactions on Knowledge Discovery from Data (TKDD)},
+  volume={6},
+  number={1},
+  pages={1--39},
+  year={2012},
+  publisher={Acm New York, NY, USA}
+}
+
+@book{introToDataMining2005,
+author = {Tan, and Pang-Ning, and Steinbach, Michael and Adeyeye Oshin, Michael and Kumar, Vipin and Vipin,},
+year = {2005},
+month = {05},
+pages = {},
+title = {Introduction to Data Mining}
 }

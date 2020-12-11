@@ -1,4 +1,36 @@
 \chapter{Dataset}
 
-\section{Data description}
+The primary dataset contains log traces gathered from multiple services comprising Motorola SmartConnect's Cloud Infrastructure Engineering development environment.\\
+The services producing the logs are ran within Kubernetes Pods \cite{K8s:pods}. In order to obtain the logs, we came up with a pipeline that periodically connects to the pods\todo[]{depends on where we are getting logs from - not settled yet}, gathers and preprocesses them into such a form that the data can be fed to selected machine learning algorithms or plotted. More on the preprocessing can be found in Chapter\todo[]{reference data preprocessing chapter}.\\
+Here we pay attention what important properties of the logs can be retrieved from the raw raw data in the first place.
+Kubernetes records 16 properties per single log entry\todo[]{depends on where we are getting logs from - not settled yet}.\\
+Timestamps are in the format \texttt{YYYY-MM-DDTHH:mm:SS.sssZ} - therefore year (YYYY) is a four digit zero padded number, month (\texttt{MM}), day (\texttt{DD}), hour (\texttt{HH}), minutes (\texttt{mm}) and seconds (\texttt{SS}) are two digit zero padded numbers and milliseconds(\texttt{ssss}) is a three digit zero padded number. The time part is separated from date by a single \texttt{T} character and the whole timestamp ends with a letter \texttt{Z}.\todo{also depends on where we get the logs from}\\
+
+The dataset contains no labels to the logs, however, we strived to obtain solely anomaly free data from the expected behavior of the system.\\
+At night, the system undergoes testing. During the testing, normal behavior of the telecommunication system is mimicked - all the required set up of infrastructure takes place and simulations of calls are happening. This way, the system produces logs that our machine learning models are compatible with.
+In case the nightly tests are all passed it should be sound that the collected data are either completely free of anomalies, respectively contain only very small percentage of them, therefore we train our models on vastly anomaly free dataset.
+
+We gathered the data throughout \todo[]{n} nightly test runs between dates \todo[]{date-start - date-end}.
+
+
+\section{Data Characteristics}
+Out of the 16 log properties, we decided to look only at \texttt{msg} and \texttt{timestamp} as the others (pod name, process id, ...)\todo[]{other names of the properties} or are too specific, such as \texttt{pod}. 
+Including characteristics that may be too specific in training can lead to overtraining a model, therefore in order to produce as general solution as possible, we stick only to those two properties.\\
+
+The data that the system under test is producing, however are slightly different from production environment. The difference is that the mimicked calls the test suit generates are serialized whereas live calls in production can overlap. \todo[]{figures showing serialized calls vs overlapping ones}\\
+\todo[]{do we do something about the serialization like trying to modify timestamps in the data to "parallelize" the calls?}
+
 \section{Types of Anomalies}
+In this section, we present a couple of known anomalies as a motivation for our solution.
+Also, we are going to benchmark our approaches and models against these anomalies, however our objective is to also be able to detect anomalies that we do not have prior knowledge of. 
+In other words, we aim to also identify anomalous events that are spotted for the first time in the production environment and do not appear in our dataset.
+
+\subsection{Database Outage}
+The first anomaly that we describe is not something that we would expect happen often in the production system. However, it is an easy event to observe from the data. In this anomaly, a database that is orchestrating the call logic is taken down and radios that are in a call at that moment bonk as they're unable to communicate with each other. In response to that, the database recovers itself in no more than 2 seconds mostly. After that broadcast should continue.
+
+\todo{Figure with plots comparing anomaly and normal behavior}
+
+\subsection{Weakening Connection}
+A user with radio moves and his connection to the internet is getting worse - he is getting away from his source of internet connection. This should eventually lead to an increased loss of data packets delivered to the user. For him, this ultimately results in receiving distorted audio from other members of the broadcast.
+
+\todo{Figure with plots comparing anomaly and normal behavior}

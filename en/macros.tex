@@ -22,6 +22,11 @@
 \newcommand{\entityname}[1]{\textit{#1}}
 \newcommand{\erstudiotable}[1]{\textit{#1}}
 \newcommand{\elementname}[1]{\textit{#1}}
+\usepackage{todonotes}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\usepackage{tabularx}
 
 % These macros employ a little dirty trick to convince LaTeX to typeset
 % chapter headings sanely, without lots of empty space above them.
@@ -83,6 +88,7 @@
 \lstset{basicstyle=\ttfamily,breaklines=true}
 \lstset{frame=tb}
 \lstset{numbers=left,xleftmargin=2em,framexleftmargin=0em,numberstyle=\footnotesize\ttfamily}
+\lstset{escapeinside={<@}{@>}}
  
 
 %%% Macros for definitions, theorems, claims, examples, ... (requires amsthm package)
