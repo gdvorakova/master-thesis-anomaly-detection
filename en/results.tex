@@ -1,1 +1,50 @@
 \chapter{Results}
+
+\section{Evaluation metrics}
+In order to appropriately compare different anomaly detection algorithms and different experiment settings, evaluation metrics are required.
+
+Firstly, let's introduce four basic metrics: true positive (TP), false positive (FP), true negative (TN) and false negative (FN). 
+
+To give an example, let's consider an experimental setting: in a classification task, for each data example we have assigned a binary label $l$ with values in a set of classes. One class, that is usually positive, is of special interest. It gives an information about the correctness of the example given the anomaly detection task. Moreover, an anomaly detector produces a prediction $\hat{l}$, assigning for each data example whether it classifies it as an anomaly or a normal data instance. The pair-wise relationship the four counts is explained by the confusion matrix in Table \ref{table:confusionMatrix}. Confusion matrix allows interpretation of the performance of a classification model on a labeled dataset. It is a $2 \times 2$ matrix, where rows represents an actual value of a variable, while columns represent the predicted value of a variable.
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{cccc}
+\multicolumn{1}{r}{}                 &                              & \textbf{Predicted}          &   $\hat{l}$                          \\ \cline{3-4} 
+                                     & \multicolumn{1}{l|}{}        & \multicolumn{1}{l|}{Anomaly} & \multicolumn{1}{l|}{Normal} \\ \cline{2-4} 
+                                      
+\multicolumn{1}{l|}{\textbf{Actual}} & \multicolumn{1}{l|}{Anomaly}  & \multicolumn{1}{l|}{\textcolor{customGreen}{TP}}     & \multicolumn{1}{l|}{\textcolor{customRed}{FN}}      \\ \cline{2-4} 
+\multicolumn{1}{c|}{\textit{l}}                & \multicolumn{1}{c|}{Normal} & \multicolumn{1}{l|}{\textcolor{customRed}{FP}}     & \multicolumn{1}{l|}{\textcolor{customGreen}{TN}}      \\ \cline{2-4} 
+\end{tabular}
+\caption{An example of a confusion matrix for binary classification.}
+\label{table:confusionMatrix}
+\end{table}
+
+ The evaluation measures are calculated on the positive class representing the presence of an anomaly.
+ 
+\textit{Accuracy} is the most general metrics to measure performance. It simply measures the fraction of correct predictions from all the available data points. The computation of accuracy in binary classification is done as shown in the following equation:
+
+%\begin{align}
+ %   Accuracy = \dfrac{TP + TN}{TP + TN + FP + FN}
+%\end{align}
+
+However, accuracy alone does not exactly reflect the real performance of a system designed to correctly detect anomalies. It does not differentiate between the number of correct predictions of different classes \cite{performanceEvaluation2006}. The reason why accuracy measure is not enough in the majority of ML applications will be explained in the remainder of this section. 
+
+The most typically used metrics for estimating performance in machine learning are \textit{precision, recall} and \textit{F1 measure}. They measure the correct prediction of anomaly within different classes. In our research, we will also focus on these three  performance indicators.
+
+In order to use them, the problem for which we want to estimate performance must be a classification problem. We assume our dataset represents a normal behaviour of the system, thus an anomaly detection problem can be translated into a one-class classification problem. 
+
+Precision, recall and F1 measure rely on the ratios of TP, FP, TN and FN counts. 
+
+Precision represents the fraction of correctly detected anomalies from the total number of reported anomalies. Recall measures the fraction of correctly detected anomalies from the total number of anomalous data points in the dataset. Lastly, F1 combines both of these measures into a single measure. F1 score represents the harmonic mean of precision and recall. The reason for F1 metrics is that improving either precision or recall on their own is a trivial task, but the goal is to optimize both of them at the same time. Accuracy metrics is more useful when true positives and true negatives are more important. However, false positives and false negatives are considered to be crucial in most of the classification problems \todo{add reference}. Thus, in these cases, F1 score happens to be a  better evaluation metrics. False negatives and false positives are given more weight while not letting large numbers of true negatives to influence the score.
+
+Let's look at the mathematical formulas for calculating evaluation measures:
+
+\begin{align}
+    Precision &= \dfrac{TP}{TP + FP} \\
+    Recall &= \dfrac{TP}{TP + FN} \\
+    F1 &= 2 \cdot \dfrac{Precision \times Recall }{Precision + Recall} 
+\end{align}
+
+\todo{ROC curve evaluation?}
+%https://reader.elsevier.com/reader/sd/pii/S0167404818306333?token=86A40DFE4370A7717E0B15DEAAD2B345D4CC6B9710DBAF61E109BBCB91AF725627908E3B8838A3472D5D1E42201C1845

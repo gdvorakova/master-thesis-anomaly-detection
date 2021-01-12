@@ -1,7 +1,25 @@
 \chapter{Introduction}
+\label{introduction}
+
+Software systems and internet are nowadays omnipresent. 
+Even in an old-fashioned field like communication over push-to-talk devices, that used to be carried out only through analogue networks can be today complemented by software that detects poor coverage and eventually switches to digital connection. 
+This is what Motorola SmartConnect system has been developed for. Since this software system serves people in critical job positions such as policemen, policewomen or firefighters, it is crucial that SmartConnect's infrastructure is as robust as possible. If something goes wrong it is desirable to, first, recognize that a problem happened and, ideally, to be able to target the problem where it happened in order to act upon it.
+For observing and troubleshooting a system's state, it is a good practice for developers to introduce logs.
+However, in a complex system like SmartConnect, comprised of many different services which produce gigabytes of raw textual data per day in logs, it is becoming unfeasible to track down and figure out solutions to issues by humans.
+Not only that there is way too much information in terms of size, logs from different services may be located at different places and it is unrealistic to expect from a person to uncover the internal relationships by which the services are affecting one another.
+To automate this process we aim to invent a tool that would be able to carry out this heavy cumbersome work automatically, monitor Motorola's production system and raise alarm when an anomaly is detected.
+From there a responsible person can pick up the issue with narrowed scope and investigate further on the alleged issue.
+
 
 \section{Goals}
-
+% In this paper, we explore anomalies in log data and existing anomaly detection techniques [3].
+% He: To bridge this gap, in this paper, we provide a detailed review and evaluation of log-based anomaly detection, as well as release an open-source toolkit1 for anomaly detection. Our goal is not to improve any specific method, but to portray an overall picture of current research on log analysis for anomaly detection. We believe that our work can benefit researchers and practitioners in two aspects: The review can help them grasp a quick understanding of current anomaly detection methods; while the open-source toolkit allows them to easily reuse existing methods and make further customization or improvement. This helps avoid time-consuming yet redundant efforts for re-implementation.
+With our master thesis, we are trying to answer the following questions: 
+\begin{itemize}
+    \item Which anomaly detection techniques exist?
+    \item Can machine learning techniques be applied for anomaly detection in our log dataset?
+    \item 
+\end{itemize}
 \section{Glossary}
 
 \section{Outline}

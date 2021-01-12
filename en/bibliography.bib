@@ -17,6 +17,30 @@
   note = {Online, Accessed: 2020-12-11}
 }
 
+@misc{log4j:example,
+  title = {{L}og4j 2 {API}},
+  howpublished = {\url{https://logging.apache.org/log4j/2.x/manual/api.html}},
+  note = {Online, Accessed: 2020-01-11}
+}
+
+@misc{python_log:example,
+  title = {{logging — Logging facility for Python}},
+  howpublished = {\url{https://docs.python.org/3/library/logging.html}},
+  note = {Online, Accessed: 2020-01-12}
+}
+
+@misc{serilog:example,
+  title = {{S}erilog},
+  howpublished = {\url{https://serilog.net/}},
+  note = {Online, Accessed: 2020-01-11}
+}
+
+@article{structured_logging,
+  title={Structured Logging: Crafting Useful Message Content},
+  author={Legeza, Vladimir and Golubtsov, Anton and Beyer, Betsy},
+  year={2019}
+}
+
 @ARTICLE{gupta2014,  author={M. {Gupta} and J. {Gao} and C. C. {Aggarwal} and J. {Han}},  journal={IEEE Transactions on Knowledge and Data Engineering},   title={Outlier Detection for Temporal Data: A Survey},   year={2014},  volume={26},  number={9},  pages={2250-2267},  doi={10.1109/TKDE.2013.184}}
 
 @article{cvbakv2009,
@@ -181,4 +205,126 @@ year = {2005},
 month = {05},
 pages = {},
 title = {Introduction to Data Mining}
+}
+
+@book{murphy2013machine,
+  added-at = {2017-02-27T11:22:42.000+0100},
+  address = {Cambridge, Mass. [u.a.]},
+  author = {Murphy, Kevin P.},
+  biburl = {https://www.bibsonomy.org/bibtex/270148d65a6a66e0ae962bf22c5f66148/hotho},
+  description = {Machine Learning: A Probabilistic Perspective (Adaptive Computation and Machine Learning series): Kevin P. Murphy: 9780262018029: Amazon.com: Books},
+  interhash = {e99d8a06cc36507b05c38192ab80573e},
+  intrahash = {70148d65a6a66e0ae962bf22c5f66148},
+  isbn = {9780262018029 0262018020},
+  keywords = {hmm lda learning machine statistics},
+  publisher = {MIT Press},
+  refid = {904442949},
+  timestamp = {2017-02-27T11:22:42.000+0100},
+  title = {Machine learning : a probabilistic perspective},
+  url = {https://www.amazon.com/Machine-Learning-Probabilistic-Perspective-Computation/dp/0262018020/ref=sr_1_2?ie=UTF8&qid=1336857747&sr=8-2},
+  year = 2013
+}
+
+@article{pca1997,
+author = {Dunia, Ricardo and Qin, Joe},
+year = {1997},
+month = {04},
+pages = {},
+title = {Multi-dimensional Fault Diagnosis Using a Subspace Approach}
+}
+
+@article{pcaJackson1979,
+author = {Jackson, J. and Mudholkar, Govind},
+year = {1979},
+month = {08},
+pages = {341-349},
+title = {Control Procedures for Residuals Associated With Principal Component Analysis},
+volume = {21},
+journal = {Technometrics},
+doi = {10.1080/00401706.1979.10489779}
+}
+
+@INPROCEEDINGS{he2016,
+  author={S. {He} and J. {Zhu} and P. {He} and M. R. {Lyu}},
+  booktitle={2016 IEEE 27th International Symposium on Software Reliability Engineering (ISSRE)}, 
+  title={Experience Report: System Log Analysis for Anomaly Detection}, 
+  year={2016},
+  volume={},
+  number={},
+  pages={207-218},
+  doi={10.1109/ISSRE.2016.21}}
+  
+  @article{lou2010,
+author = {Lou, Jian-Guang and Fu, Qiang and Yang, Shengqi and Xu, Ye and Li, Jiang},
+year = {2010},
+month = {01},
+pages = {},
+title = {Mining invariants from console logs for system problem detection}
+}
+
+@inproceedings{Sydney2019DeepLF,
+  title={Deep Learning for Anomaly Detection: A Survey},
+  author={Raghavendra Chalapathy University of Sydney and Capital Markets Cooperative Research Centre and Sanjay Chawla Qatar Computing Research Institute and Hbku},
+  year={2019}
+}
+
+@inproceedings{duLSTM2017,
+author = {Du, Min and Li, Feifei and Zheng, Guineng and Srikumar, Vivek},
+year = {2017},
+month = {10},
+pages = {1285-1298},
+title = {DeepLog: Anomaly Detection and Diagnosis from System Logs through Deep Learning},
+isbn = {978-1-4503-4946-8},
+doi = {10.1145/3133956.3134015}
+}
+
+@inproceedings{deeplog2017,
+author = {Du, Min and Li, Feifei and Zheng, Guineng and Srikumar, Vivek},
+title = {DeepLog: Anomaly Detection and Diagnosis from System Logs through Deep Learning},
+year = {2017},
+isbn = {9781450349468},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3133956.3134015},
+doi = {10.1145/3133956.3134015},
+abstract = {Anomaly detection is a critical step towards building a secure and trustworthy system. The primary purpose of a system log is to record system states and significant events at various critical points to help debug system failures and perform root cause analysis. Such log data is universally available in nearly all computer systems. Log data is an important and valuable resource for understanding system status and performance issues; therefore, the various system logs are naturally excellent source of information for online monitoring and anomaly detection. We propose DeepLog, a deep neural network model utilizing Long Short-Term Memory (LSTM), to model a system log as a natural language sequence. This allows DeepLog to automatically learn log patterns from normal execution, and detect anomalies when log patterns deviate from the model trained from log data under normal execution. In addition, we demonstrate how to incrementally update the DeepLog model in an online fashion so that it can adapt to new log patterns over time. Furthermore, DeepLog constructs workflows from the underlying system log so that once an anomaly is detected, users can diagnose the detected anomaly and perform root cause analysis effectively. Extensive experimental evaluations over large log data have shown that DeepLog has outperformed other existing log-based anomaly detection methods based on traditional data mining methodologies.},
+booktitle = {Proceedings of the 2017 ACM SIGSAC Conference on Computer and Communications Security},
+pages = {1285–1298},
+numpages = {14},
+keywords = {log data analysis, anomaly detection, deep learning},
+location = {Dallas, Texas, USA},
+series = {CCS '17}
+}
+
+@INPROCEEDINGS{zhang2016,  author={K. {Zhang} and J. {Xu} and M. R. {Min} and G. {Jiang} and K. {Pelechrinis} and H. {Zhang}},  booktitle={2016 IEEE International Conference on Big Data (Big Data)},   title={Automated IT system failure prediction: A deep learning approach},   year={2016},  volume={},  number={},  pages={1291-1300},  doi={10.1109/BigData.2016.7840733}}
+
+@INPROCEEDINGS{izakian2013, 
+author={H. {Izakian} and W. {Pedrycz}}, 
+booktitle={2013 Joint IFSA World Congress and NAFIPS Annual Meeting (IFSA/NAFIPS)}, title={Anomaly detection in time series data using a fuzzy c-means clustering}, 
+year={2013}, 
+volume={}, 
+number={}, 
+pages={1513-1518}, 
+doi={10.1109/IFSA-NAFIPS.2013.6608627}}
+
+@book{informationRetrieval2008,
+author = {Manning, Christopher D. and Raghavan, Prabhakar and Sch\"{u}tze, Hinrich},
+title = {Introduction to Information Retrieval},
+year = {2008},
+isbn = {0521865719},
+publisher = {Cambridge University Press},
+address = {USA},
+abstract = {Class-tested and coherent, this groundbreaking new textbook teaches web-era information retrieval, including web search and the related areas of text classification and text clustering from basic concepts. Written from a computer science perspective by three leading experts in the field, it gives an up-to-date treatment of all aspects of the design and implementation of systems for gathering, indexing, and searching documents; methods for evaluating systems; and an introduction to the use of machine learning methods on text collections. All the important ideas are explained using examples and figures, making it perfect for introductory courses in information retrieval for advanced undergraduates and graduate students in computer science. Based on feedback from extensive classroom experience, the book has been carefully structured in order to make teaching more natural and effective. Although originally designed as the primary text for a graduate or advanced undergraduate course in information retrieval, the book will also create a buzz for researchers and professionals alike.}
+}
+
+@inproceedings{performanceEvaluation2006,
+author = {Sokolova, Marina and Japkowicz, Nathalie and Szpakowicz, Stan},
+year = {2006},
+month = {01},
+pages = {1015-1021},
+title = {Beyond Accuracy, F-Score and ROC: A Family of Discriminant Measures for Performance Evaluation},
+volume = {Vol. 4304},
+isbn = {978-3-540-49787-5},
+journal = {AI 2006: Advances in Artificial Intelligence, Lecture Notes in Computer Science},
+doi = {10.1007/11941439_114}
 }
