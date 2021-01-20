@@ -1,0 +1,30 @@
+\begin{tikzpicture}[
+    serviceNode/.style={circle,draw=customDarkBlue,fill=white,thick,inner sep=0pt,minimum size=8mm, thin},
+    output/.style={circle,draw=black,fill=customGreen,thick,inner sep=0pt,minimum size=8mm},
+    hidden/.style={circle,draw=black,fill=customRed,thick,inner sep=0pt,minimum size=8mm},
+    function/.style={rectangle,draw=black,fill=customGrey,thick,inner sep=0pt,minimum size=8mm},
+    post/.style={thin, -latex, color=customGrey},
+    inEdge/.style={-latex,shorten >=1pt, thin,color=customGrey!50}
+    ]
+		% output invisible node
+		\node[draw=none] (pOut) at (9, 3) {};
+		
+		\node[serviceNode] (s4) at (8, 3) {\tiny $s_4$}
+		edge [post] node[auto] {\textcolor{black}{\tiny $p_4$}} (pOut);
+		
+		\node[serviceNode, label={[label distance=0.5cm,align=center,font=\fontsize{12}{12}\selectfont]\textcolor{customDarkRed}{\tiny FAIL}\\\small $Pi[E_2]=1 - p_i$}] (s3) at (6, 3) {\tiny $s_3$}
+		edge [post] node[auto] {\textcolor{black}{\tiny $p_3$}} (s4);
+		
+		\node[serviceNode] (s2) at (4, 3) {\tiny $s_2$}
+		edge [post] node[auto] {\textcolor{black}{\tiny $p_2$}} (s3);
+		
+		\node[serviceNode] (s1) at (2, 3) {\tiny $s_1$}
+		edge [post] node[auto] {\textcolor{black}{\tiny $p_1$}} (s2);
+		
+		\node[serviceNode,label={[label distance=0.5cm,align=center,font=\fontsize{12}{12}\selectfont]\textcolor{customDarkBlue}{\tiny SEND}\\\small $Pi[E_1]=p_i$}] (s0) at (0, 3){\tiny $s_0$}
+		edge [post] node[auto] {\textcolor{black}{\tiny $p_0$}} (s1);
+		
+		% input invisible node
+		\node[draw=none] (p0) at (-2, 3) {}
+		edge [inEdge, densely dashed] node[auto] {\textcolor{black}{\footnotesize packet}}  (s0);
+\end{tikzpicture}

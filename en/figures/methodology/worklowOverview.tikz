@@ -1,0 +1,95 @@
+
+\begin{tikzpicture} [
+    edge/.style={-latex,shorten >=1pt, thin, color=customGrey},
+    line/.style={-,shorten >=1pt, thin, color=customGrey},
+    mainRectangle/.style={rectangle, draw=customBlue, align=center},
+    dataCollectionCylinder/.style={cylinder, draw=customBlue, shape aspect = 0.3, align=center, shape border rotate=90}
+]
+    % DATA COLLECTION
+    \node[mainRectangle, minimum width={40mm}, label={[label distance=2mm, align=center]{ \footnotesize 1. Data collection}}] (dataCollection) at (0, 0) {
+        \begin{tikzpicture}[node distance=1cm,outer sep=0pt]
+          \node[dataCollectionCylinder, minimum width={25mm}, minimum height={10mm}] (dataCylinder) {\scriptsize Log file};
+        \end{tikzpicture}
+    };
+    
+    % LOG PARSING
+    \node[mainRectangle, minimum width={43mm},
+    label={[label distance=2mm, align=center]{\footnotesize 2. Log parsing}}] (logParsing) at (6, 0) {
+        \begin{tikzpicture}[align=center]
+            \node[mainRectangle, densely dashed, minimum width={30mm}, label={[label distance=0mm, align=center]{\scriptsize Template mining}}] (templateMining) {
+                \begin{tikzpicture}
+                    \node[rectangle, draw=customDarkRed, align=center, solid] (rawLog) at (6, -2) {\textcolor{customDarkRed}{\tiny RAW LOG}};
+                    \node[rectangle, draw=customDarkRed, align=center, solid] (eventTemplate) at (6, -4) {\textcolor{customDarkRed}{\tiny LOG EVENT}};
+                    \draw[edge, solid] (rawLog) -- (eventTemplate);
+                \end{tikzpicture}
+            };
+        \end{tikzpicture}
+    };
+    \draw[edge] (dataCollection) -- (logParsing);
+    
+    % FEATURE ENGINEERING
+    \node[mainRectangle, minimum width={50mm},
+    label={[label distance=2mm, align=center]{\footnotesize 3. Feature engineering}}] (featureEngineering) at (6,-6) {
+        \begin{tikzpicture}[node distance=1cm,outer sep=0pt]
+        % WINDOWING
+            \node[mainRectangle, align=center, densely dashed, minimum width={30mm}, label={[label distance=0mm, align=center]{\scriptsize Windowing}}] (windowing) {
+                \begin{tikzpicture}
+                    % LOG EVENTS
+                    \node[rectangle, draw=customDarkRed, fill=white, align=center, solid] (logEventWindow3) at (6.2, -3.8) {\textcolor{customDarkRed}{\tiny LOG EVENT}}; 
+                    \node[rectangle, draw=customDarkRed, fill=white, align=center, solid] (logEventWindow2) at (6.1, -3.9) {\textcolor{customDarkRed}{\tiny LOG EVENT}}; 
+                    \node[rectangle, draw=customDarkRed, fill=white, align=center, solid] (logEventWindow1) at (6, -4) {\textcolor{customDarkRed}{\tiny LOG EVENT}};
+                    
+                    % LOG SEQUENCE
+                    \node[rectangle, draw=customDarkRed, align=center, solid] (logSequence) at (6, -6) {\textcolor{customDarkRed}{\tiny LOG SEQUENCE}};
+                    
+                    \draw[edge, solid] (logEventWindow1) -- (logSequence);
+                \end{tikzpicture}
+            };
+            
+            % FEATURE VECTOR EXTRACTION
+            \node[mainRectangle, align=center, densely dashed, minimum width={30mm}, label={[label distance=0mm, align=center]{\scriptsize Feature vector extraction}}] (featureVectorExtraction) at (0,-3) {
+                
+                \begin{tikzpicture}
+                    \node[rectangle, draw=customDarkRed, align=center, solid, minimum width={15mm}] (eventCountVector) at (0, 0) {\textcolor{customDarkRed}{\tiny EVENT COUNT}\\\textcolor{customDarkRed}{\tiny VECTOR}};
+                    
+                    \node[rectangle, draw=customDarkRed, align=center, solid, minimum width={15mm}] at (2, 0) (tfIdfVector) {\textcolor{customDarkRed}{\tiny TF-IDF}\\\textcolor{customDarkRed}{\tiny VECTOR}};
+                \end{tikzpicture} 
+            };
+            
+            \draw[line, solid] (windowing) -- (0, -2);
+            \draw[edge, solid] (0, -2) -| (-2.3, -2) |- (-1.95, -3);
+            \draw[edge, solid] (0, -2) -| (2.3, -2) |- (1.85, -3);
+        \end{tikzpicture}
+    };
+    
+    \draw[edge] (node cs:name=logParsing, anchor=east) -| (9, 0) |- (node cs:name=featureEngineering, anchor=east);
+    
+    \node[mainRectangle, minimum width={40mm}, label={[label distance=2mm, align=center]{ \footnotesize 4. Anomaly Detection}}] (anomalyDetection) at (0, -6) {
+        % FEATURE MATRIX
+        \begin{tikzpicture}
+            \node[rectangle, draw=customDarkRed, align=center, solid, minimum width={30mm}] (featureMatrix) at (0, -2) {\textcolor{customDarkRed}{\tiny FEATURE MATRIX}};
+            
+            \draw[edge, solid] (featureMatrix) -- (0, -3);
+            \draw[edge, solid] (featureMatrix) -- (-1.4, -3);
+            \draw[edge, solid] (featureMatrix) -- (1.4, -3);
+        
+         % ML METHODS
+        \node[mainRectangle, align=center, densely dashed, minimum width={30mm}, label={[label distance=0mm, align=center]{\scriptsize ML Methods}}] (mlMethods) at (0,-4) {
+            \begin{tikzpicture}
+                \node[rectangle, draw=customDarkBlue, align=center, solid, minimum width={10mm}] (pca) at (0, 0) {\textcolor{customDarkBlue}{\tiny PCA}};
+                
+                \node[rectangle, draw=customDarkBlue, align=center, solid, minimum width={13mm}] at (1.4, 0) (isolationForest) {\textcolor{customDarkBlue}{\tiny ISOLATION}\\\textcolor{customDarkBlue}{\tiny FOREST}};
+                
+                \node[rectangle, draw=customDarkBlue, align=center, solid, minimum width={13mm}] at (3.15, 0) (invariantMining) {\textcolor{customDarkBlue}{\tiny INVARIANT}\\\textcolor{customDarkBlue}{\tiny MINING}};
+            
+            \end{tikzpicture} 
+        };
+       \end{tikzpicture}
+    };
+    \draw[edge] (featureEngineering) -- (anomalyDetection);
+    
+    \node[rectangle, draw=customGreen, align=center, solid, minimum width={10mm}] (result) at (0, -8.4) {\textcolor{customGreen}{\small Anomalies}};
+    \draw[edge] (anomalyDetection) -- (result);
+    
+\end{tikzpicture}
+

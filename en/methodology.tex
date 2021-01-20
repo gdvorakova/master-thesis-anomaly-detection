@@ -6,7 +6,14 @@ The goal of our approach is to fulfil the objective of the thesis as described i
 
 The first characteristic of our approach is that we only use unsupervised methods that do not require labeled data. 
 
-Figure \todo{Workflow of the proposed method} shows the high-level pipeline of the four main steps of our research approach:
+Figure \ref{fig:worklowOverview} shows the high-level pipeline of the four main steps of our research approach.
+
+\begin{figure}[h]
+    \centering
+    \input{en/figures/methodology/worklowOverview.tikz}
+    \caption{The workflow of our anomaly detection solution.}
+    \label{fig:worklowOverview}
+\end{figure}
 
 \begin{enumerate}
     \item Data Collection 
@@ -57,38 +64,7 @@ Firstly, we created a simulation and its illustration can be found in Figure \re
 \end{itemize}
 
 \begin{figure}\centering
-	\tikzstyle{serviceNode}=[circle,draw=black,fill=customGreen,thick,inner sep=0pt,minimum size=7mm]
-		\tikzstyle{output}=[circle,draw=black,fill=customGreen,thick,inner sep=0pt,minimum size=8mm]
-		\tikzstyle{hidden}=[circle,draw=black,fill=customRed,thick,inner sep=0pt,minimum size=8mm]
-		\tikzstyle{function}=[rectangle,draw=black,fill=customGrey,thick,inner sep=0pt,minimum size=8mm]
-		\tikzstyle{post}=[->,shorten >=1pt,thick]
-		\tikzstyle{inEdge}=[->,shorten >=1pt,thick,color=customGrey!50]
-	    \begin{tikzpicture}
-		
-		% output invisible node
-		\node[draw=none] (pOut) at (9, 3) {};
-		
-		\node[serviceNode] (s4) at (8, 3) {$s_4$}
-		edge [post] node[auto] {$p_4$} (pOut);
-		
-		\node[serviceNode, label={[label distance=0.5cm,align=center,font=\fontsize{12}{12}\selectfont]\textcolor{customRed}{FAIL}\\$Pi[E_2]=1 - p_i$}] (s3) at (6, 3) {$s_3$}
-		edge [post] node[auto] {$p_3$} (s4);
-		
-		\node[serviceNode] (s2) at (4, 3) {$s_2$}
-		edge [post] node[auto] {$p_2$} (s3);
-		
-		\node[serviceNode] (s1) at (2, 3) {$s_1$}
-		edge [post] node[auto] {$p_1$} (s2);
-		
-		\node[serviceNode,label={[label distance=0.5cm,align=center,font=\fontsize{12}{12}\selectfont]\textcolor{customBlue}{SEND}\\$Pi[E_1]=p_i$}] (s0) at (0, 3){$s_0$}
-		edge [post] node[auto] {$p_0$} (s1);
-		
-		% input invisible node
-		\node[draw=none] (p0) at (-2, 3) {}
-		edge [inEdge] node[auto] {packet}  (s0);
-		
-		\end{tikzpicture}
-
+    \input{en/figures/methodology/toyExample.tikz}
 	\caption{An example of simulation configuration with $5$ services, with each service having its own probability distribution of events $Pr_i$}.
 	\label{figure:simulation}
 \end{figure}
@@ -157,9 +133,34 @@ Epoch      & $\mathbf{s_0}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & $\mathbf{s_3}$ &
 The obtained simulated dataset can be easily modified to generate labels. If a row is all ones, the assigned label is \texttt{no\_service}. If a row contains a zero, its label is the index of the first service that failed to send a packet. This embedding is then used as an input to create a logistic regression and random forest model. The toy example should provide a better understanding of how can a unstructured textual input be transformed into a format suitable machine learning algorithms.
 
 \section{Data Collection}
-By data collection, we understand the process of downloading data from the system that can be further parsed, processed, and fed to the machine learning model.
-The way logs are usually stored is that every microservice has a specifically dedicated folder where it keeps appending lines with log messages or writes to standard error and output streams.
-Since the 
+By data collection, we understand the process of gathering log data from the observed system in such a way that the logs can be further parsed, processed, and fed to the machine learning model.
+The system we study follows the microservice architectural pattern.\\
+Nadareishvili et al. \cite{nadareishvili2016microservice} define a \textit{microservice} as an independently deployable component of bounded scope that supports interoperability through message-based communication. Then by \textit{microservice architecture (MSA)} they mean a style of engineering highly automated, evolvable software systems made up of capability-aligned microservices \cite{nadareishvili2016microservice}. 
+
+Traditionally, an application performs logging by sending messages to\\
+(pseudo)files \texttt{stderr} (standard error) and \texttt{stdout} (standard output). It can be combined with appending those logs also to a dedicated file with \texttt{.log} extension. Both of those practices are usually deployed by services running as containerized applications in pods. \footnote{\url{https://kubernetes.io/docs/concepts/cluster-administration/logging/}}
+
+In microservice architecture, this approach method of logging may not be sufficient as the logs are scattered at many locations since a MSA system is usually comprised of many these applications. Also the individual services may be often replaced and contents of log files therefore removed.
+
+Moreover, in systems that are generating big sizes and amounts of log messages, persisting logs in files that are stored in filesystem of a service pod may eventually lead to taking up all of the node's storage. 
+That's why services such as \texttt{logrotate}\footnote{\url{https://linux.die.net/man/8/logrotate}} are being used. Logrotate collect logs, sends them to a different location where they can be persisted without affecting MSA system's performance and removes them from pod's node. 
+This, on the other hand, means that when inspecting a pod, only the most recent (if any) logs can be found in pod's \texttt{log} file.
+
+When it comes to SmartConnect MSA, a similar approach to the one 
+
+
+\subsection{Elasticsearch}\todo{this maybe belongs to literature review?}
+Elasticsearch is an open-source, distributed search engine. Gormley and Tong \cite{gormley2015elasticsearch} argue that it can be used for exploring data at unprecedented speed. It is mostly recognized for its exceptional performance on text based data. Operations such as full-text search, structured search and analysis are supported efficiently.
+It can also be defined as a NoSQL database since Elasticsearch gathers JSON based \texttt{documents} of a specific \texttt{type} together and multiple \texttt{types} are organized into \texttt{indices}\footnote{\url{https://www.elastic.co/blog/what-is-an-elasticsearch-index}}. 
+
+\subsection{Implementation}
+
+To sum up our options for collection logs of the system:
+\begin{enumerate}
+    \item Downloading logs from services through \texttt{kubectl logs \${POD}} command
+    \item Collecting data saved in \texttt{\${POD}:/var/log/*.log}
+    \item Requesting logs from MSI's Elasticsearch server
+\end{enumerate}
 
 
 \section{Log Parsing}
@@ -167,11 +168,32 @@ This section describes our technique for parsing the raw and unstructured logs o
 As pointed out in Section~\ref{log_parsing_techniques} there is many different fundamental approaches to what techniques should be used when extracting message templates from logs. 
 Therefore, we developed an extra layer of abstraction over the actual parsers that makes our solution less dependent on what specific template mining algorithm is being used.
 
-The extra layer is implemented through the adapter design pattern where 
+The experiments therefore work with an object \texttt{LogCategorizer} that exposes functionality to clients. To mention some of the \texttt{LogCategorizer} methods, it provides among others these ones:
+
+\begin{itemize}
+    \item \texttt{process\textunderscore log\textunderscore message(self, log\textunderscore message: str)\\ -> LogCategory}
+    \item \texttt{process\textunderscore log\textunderscore messages(self, log\textunderscore messages: List[str])\\ -> List[LogCategory]}
+    \item \texttt{process\textunderscore file(self, input\textunderscore file\textunderscore name: str)}
+\end{itemize}
+
+The actual reading and template creating done by these methods is carried out by an instance of \texttt{LogParser}. \texttt{LogParser} is an abstraction - an interface that is used by \texttt{LogCategorizer}. Every implementation of parser needs to fulfill this contract defined by the interface. The interface defines just the bare minimum functionality that is required from a sensible log template miner and that is a pair of methods:
+\begin{itemize}
+    \item \texttt{get\textunderscore all\textunderscore templates(self) -> List[str]}
+    \item \texttt{process\textunderscore log\textunderscore message(self, log\textunderscore message: str) -> str}
+\end{itemize}
+Therefore an implementation of a log parser should be able to return all the templates that it identified by the moment the \texttt{get\textunderscore all\textunderscore templates} method is called. The other method returns a template based on the raw log message inputed.\\
+
+Our implementation follows the adapter design pattern \cite{gamma1995design_pattern_adapter} as the aim is to convert interfaces of specific log parsing libraries that may be dramatically different in terms of the API that they expose.
 
 This allows us to decouple the implementation of the algorithm that identifies templates from logs from our overall goal and opens the way for easy comparison with different template mining strategies.\\
 
-In Section~\ref{parser_summary} we mention that our decision was to progress with the framework Drain \cite{drain2017} that performs online fixed-depth tree template mining. The algorithm follows a template of 5 steps, as described in more depth in Section~\ref{fixed_depth_tree}:
+\begin{figure}[!tbp]
+    \includegraphics[width=\textwidth]{img/UML Adapter LogParser.png}		    
+    \caption{Architecture for parsing classes. Adapter design pattern application: \texttt{LogParser} as the adapter, \texttt{Drain3Parser} takes on the role of concrete adaptee, \texttt{TemplateMiner} is adaptee - class defined in a different framework with incompatible interface that needs to be converted.}
+	\label{fig:uml_parsers}
+\end{figure}
+
+In Section~\ref{parser_summary} we mention that our decision was to progress with the framework Drain \cite{drain2017} that performs online fixed-depth tree template mining. The actual implementation of the algorithm we used is \texttt{Drain3} by company IBM\footnote{\url{https://github.com/IBM/Drain3}}. The algorithm follows a template of 5 steps, as described in more depth in Section~\ref{fixed_depth_tree}:
 \begin{enumerate}
     \item Preprocess by Domain Knowledge
     \item Search by Log Message Length
@@ -180,7 +202,7 @@ In Section~\ref{parser_summary} we mention that our decision was to progress wit
     \item Update the Parse Tree
 \end{enumerate}
 
-Let's pay more attention to the first step as it gives us, the users of the parsing framework, the option to input encoded assumptions and insight on the logs that are produced by the logs.
+Let's pay more attention to the first step. It provides us, users, the option to input encoded assumptions and insight on the logs that are produced by the logs.
 It is rather intuitive to assume that this domain knowledge, if inserted correctly, should improve the performance and precision of the mining algorithm. An empirical study \cite{he2016} confirms this assumption.
 We, however, argue that this technique that tunes the algorithm may not be the option to choose in all use cases. With our solution, we are seeking to analyze a system that is very fluid, therefore likely to change over time. This, together with the fact many developers from multiple teams and companies (taking into account also external software the software system is dependent on), it is unfeasible to maintain a single source of truth regarding domain knowledge related to logging. Conversely, we are aiming for a solution that can learn and adapt to changes as independently as possible.\\
 
@@ -188,7 +210,16 @@ This goal of adaptability is also reflected on the fact that we ended up choosin
 To remind a definition of an online template miner from Section~\ref{log_template_mining}, an online template miner is such a parser, that does not require to see the whole dataset to start analyzing message templates. It can run categorization on the fly while updating its internal state, which keeps acquired knowledge about the domain.\\
 Drain offers the possibility to persist this internal state even between multiple runs which offers us the best of both worlds - the parser is learning patterns occurring in logs over time to improve while being able to react to new data in flexible fashion.
 
+We have not tweaked steps 2. - 4. as the default parameters \cite{ibmdrain3} yielded results that extracted correct templates from the observed logs.
+
+For the last step, updating the parse tree, Drain3 implementation offers the option to persist the state of the parse tree in json file format. This allows us to reuse the  domain knowledge that is acquired by the template miner across restarts of our solution.
+This is an extremely useful feature, when we may assume that all of the logs are coming from the same system, we can reuse the parse tree already build in previous runs and enrich it.
+Drain3 offers multiple ways of storing the snapshot of parse tree, we are using the one that saves the state into a file.
+
 \subsection{Abstracting Logs as Events}
+\todo{log data - event type distribution plot}
+\todo{distribution of event types plot}
+
 
 \section{Feature Engineering}
 \label{section:featureEngineering}
@@ -247,6 +278,13 @@ In our thesis, instead of setting the number of log lines in each window, we con
 \subsection{Feature Matrix Description}
 After applying the sliding window to generate the log sequences, the final step of feature extraction is to construct the feature matrix. In our thesis, we experiment with two types of feature matrices, where both representations describe a group of logs in log sequences: \textit{event count matrix} and \textit{TF-IDF weighted matrix}. Figure \ref{fig:feature-extraction} illustrates an example of a generation process of one single log sequence into a feature matrix. We assume that the logs in sequences are highly correlated.
 
+\begin{figure}[!h] \centering {
+   \input{en/figures/methodology/featureExtraction.tikz}
+   \caption{An example of encoding log sequence into two types of feature vectors: \textit{Event count vector} and \textit{TF-IDF vector}. We assume that there is $8$ event templates in the collection, thus the output vectors are also of length $8$.}
+	\label{fig:feature-extraction}
+	}
+\end{figure}
+
 \subsubsection*{Event Count Matrix}
 A simple approach to obtain such representation is to create a event count vector for each log sequence. In other words, for each log sequence, we count the number of occurred event type identifiers and store it as a row vector of an event count matrix. The length of the vector corresponds with the number of unique event types detected in the log parsing section, and each component of the vector corresponds to one event type. The value at each position in the vector is the frequency of event types. For event types that did not occur in the log sequence, the value is zero. Thus, one row of the event count matrix represents a single log sequence. The valuable information contributing to the machine learning model behind the event count matrix is determining what is a normal count of events and what does it mean to deviate from the normal counts.
 
@@ -264,9 +302,9 @@ In other words, $tf_{t, d}$ is the probability of occurrence of $t$ in $d$.
 %https://www2.eecs.berkeley.edu/Pubs/TechRpts/2009/EECS-2009-103.pdf
 \todo{Add dimensionality of the feature vector table}
 \subsubsection*{TF-IDF}
-Another frequently used weighting scheme stemming from NLP is called \textit{term frequency–inverse document frequency} (TF-IDF). 
+Another weighting scheme wildly used in Information Retrieval is called \textit{term frequency–inverse document frequency} (TF-IDF). 
 
-Using only the standard term frequency, we have to deal with an important issue. From the definition of term frequency, all event types are considered equally important \cite{informationRetrieval2008}. However, we would also like to know how often the term occurs not only in one document, but in the whole dataset. That's where another weight score, \textit{inverse document frequency} (IDF) comes to play. First, let us define \textit{document frequency} (DF). Document frequency $df_t$ is defined as the number of documents in the collection that contain the term $t$. Then the inverse document frequency $df_t$ of the term $t$ is defined as: 
+Using only the standard term frequency, we have to deal with an important issue. From the definition of term frequency, all event types are considered equally important \cite{informationRetrieval2008}. However, we would also like to know how important a term is not only in one document, but in the whole dataset. That's where another weight score, \textit{inverse document frequency} (IDF) comes to play. First, let us define \textit{document frequency} (DF). Document frequency $df_t$ is defined as the number of documents in the collection that contain the term $t$. Then the inverse document frequency $df_t$ of the term $t$ is defined as: 
 
 \begin{gather}
     idf_t = \log{\dfrac{N}{df_t}}
@@ -282,7 +320,7 @@ By the definition, TF-IDF weighting of a term $t$ in document $d$ is a product o
     \label{formula:tfidf}
 \end{gather}
 
-The intuition behind the components of TF-IDF weight is that the term frequency gives higher weight to terms that are frequently occurring in a single document. On the contrary, inverse document frequency gives lover score to words that are frequently occurring in the whole collection. Thus, the $tf\text{-}idf_{t, d}$ weight of the term $t$ in document $d$ is 
+The intuition behind the components of TF-IDF weight is that the term frequency gives higher weight to terms that are frequently occurring in a single document. On the contrary, inverse document frequency gives lower score to words that are frequently occurring in the whole collection. Thus, the $tf\text{-}idf_{t, d}$ weight of the term $t$ in document $d$ is 
 
 \begin{enumerate}
     \item higher, if the term $t$ is frequently occurring in the small number of documents
@@ -392,20 +430,17 @@ The final step is calculating the product $TF \times IDF$ and the values are sho
     \label{tab:tfidfexample4}
 \end{table}
 
-\begin{figure}[!h] \centering {
-    \includegraphics[width=\textwidth]{img/feature-extraction.pdf}		    \caption{An example of encoding log sequence into two types of feature vectors: \textit{Event count vector} and \textit{TF-IDF vector}. We assume that there is $8$ event templates in the collection, thus the output vectors are also of length $8$.}
-	\label{fig:feature-extraction}
-	}
-\end{figure}
+We assume that by using TF-IDF weighting, we will provide an extra information about the event type distribution not only in terms of log sequences, but also in the whole data set, that could potentially increase ML model's performance. 
 
 \section{Anomaly detection}
 % Describe the implementation of algorithms that we use (Logpai)
 
+After creating the weighted feature matrix \todo{finish}
 For our experiments, we are using an open-source machine learning toolkit \textit{Loglizer}. 
 
 \subsection{Loglizer}
 
-Loglizer is an open-source machine learning based log analysis toolkit for automated anomaly detection written in Python \cite{he2016}. Loglizer was developed for automated anomaly detection as a part of LogPAI \footnote{http://www.logpai.com}, which is collection of AI-based log analytics solutions. these log analysis tools have been used by industrial teams in Microsoft and Huawei. It includes three supervised anomaly detection models (\textit{Logistic Regression, Decision Tree, Support Vector Machine}) and six unsupervised anomaly detection models (\textit{Local Outlier Factor, One-Class SVM, Isolation Forest, Principal Component Analysis, Invariants Mining, Clustering}). At the time of writing this thesis, another two unsupervised models were in the development (\textit{DeepLog, AutoEncoder}). \\
+Loglizer is an open-source machine learning based log analysis toolkit for automated anomaly detection written in Python \cite{he2016}. Loglizer was developed for automated anomaly detection as a part of LogPAI \footnote{\url{http://www.logpai.com}}, which is collection of AI-based log analytics solutions. these log analysis tools have been used by industrial teams in Microsoft and Huawei. It includes three supervised anomaly detection models (\textit{Logistic Regression, Decision Tree, Support Vector Machine}) and six unsupervised anomaly detection models (\textit{Local Outlier Factor, One-Class SVM, Isolation Forest, Principal Component Analysis, Invariants Mining, Clustering}). At the time of writing this thesis, another two unsupervised models were in the development (\textit{DeepLog, AutoEncoder}). \\
 
 We decided to leverage a third-party toolkit for several reason. Firstly, as the algorithms we are using in our experiments have been already implemented, there is no need to completely reinvent the wheel and write the implementation ourselves. This way we can avoid a time consuming process and rather focus on the main intention of our research - to investigate if applying various anomaly detection techniques on a real-life dataset can lead to successful results \todo{redefine}.
 

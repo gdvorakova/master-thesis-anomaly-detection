@@ -1,0 +1,20 @@
+\begin{tikzpicture} [
+    serviceNode/.style={circle,draw=customDarkBlue,fill=white,thick,inner sep=0pt,minimum size=8mm, thin},
+    condition/.style={diamond, thin, draw=black,fill=white,inner sep=0pt,minimum width=3cm, minimum height=1cm, draw=customBlue},
+    arrow/.style={thin, -latex, color=customGrey}
+]
+    % output invisible node
+    \node[serviceNode] (E) at (10, 3) {\tiny E};
+    \node[serviceNode] (D) at (8, 1) {\tiny D};
+    \node[serviceNode] (C) at (8, 5) {\tiny C};
+    \node[condition] (cond) at (6, 3) {\small \textcolor{customDarkBlue}{Condition}};
+    \node[serviceNode] (B) at (2, 3) {\tiny B};
+    \node[serviceNode] (A) at (0, 3){\tiny A};
+    
+    \draw [arrow] (A) -- (B);
+    \draw [arrow] (B) -- (cond);
+    \draw [arrow] (cond) |-  node[anchor=south] {\textcolor{black}{\small $x = 0$}} (C);
+    \draw [arrow] (cond) |- node[anchor=north] {\textcolor{black}{\small $x \neq 0$}} (D);
+    \draw [arrow] (C) -- (E);
+    \draw [arrow] (D) -- (E);
+\end{tikzpicture}

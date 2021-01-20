@@ -1,14 +1,53 @@
 \chapter{Introduction}
 \label{introduction}
 
-Software systems and internet are nowadays omnipresent. 
+Software systems and internet are nowadays omnipresent.
+
 Even in an old-fashioned field like communication over push-to-talk devices, that used to be carried out only through analogue networks can be today complemented by software that detects poor coverage and eventually switches to digital connection. 
-This is what Motorola SmartConnect system has been developed for. Since this software system serves people in critical job positions such as policemen, policewomen or firefighters, it is crucial that SmartConnect's infrastructure is as robust as possible. If something goes wrong it is desirable to, first, recognize that a problem happened and, ideally, to be able to target the problem where it happened in order to act upon it.
-For observing and troubleshooting a system's state, it is a good practice for developers to introduce logs.
-However, in a complex system like SmartConnect, comprised of many different services which produce gigabytes of raw textual data per day in logs, it is becoming unfeasible to track down and figure out solutions to issues by humans.
-Not only that there is way too much information in terms of size, logs from different services may be located at different places and it is unrealistic to expect from a person to uncover the internal relationships by which the services are affecting one another.
-To automate this process we aim to invent a tool that would be able to carry out this heavy cumbersome work automatically, monitor Motorola's production system and raise alarm when an anomaly is detected.
+
+This is what Motorola SmartConnect system has been developed for. Since this software system serves people in critical job positions such as policemen, policewomen or firefighters, it is crucial that SmartConnect's infrastructure is as robust as possible.
+
+If something goes wrong, it is desirable to firstly recognize that a problem happened and, ideally, to be able to target the problem where it happened in order to act upon it.
+
+For observing and troubleshooting software system's state, it is a good practice for developers to introduce logs.
+However, in a complex system like Motorola SmartConnect is, comprised of many different services which produce gigabytes of raw textual data per day in logs, it is becoming unfeasible to track down and figure out solutions to issues by humans.
+
+Not only that there is way too much information in terms of size, logs from different services may be located at different places and it is unrealistic to expect from a person to uncover the internal relationships between various services which lead to errors.
+
+The goal of our thesis is to investigate, whether a reliable solution that could automate the troubleshooting process could be developed using anomaly detection techniques. The solution should be of help for developers and customer support working in the SmartConnect team.
+
+Looking at the logs produced by the telecommunication system as time series data should allow us to experiment with machine learning models detecting scenarios that include erroneous runs of the system.
+
+After proving that this is possible, we aim to invent a tool that would be able to carry out this heavy cumbersome work automatically, monitor Motorola's production system and raise an alarm when an anomaly is detected, or, even better, predicted.
+
 From there a responsible person can pick up the issue with narrowed scope and investigate further on the alleged issue.
+
+In the thesis, we aim to define steps that are necessary to proceed in order to deliver such solution. We also show what possible strategies and tools can be deployed in each of the steps and reason which possibilities are the optimal for this use case.
+
+\section{Domain Description}
+
+\subsection{Two-Way Radio}
+Two-way radio (also push-to-talk, informally walkie-talkie\footnote{https://www.motorolasolutions.com/en\_xu/solutions/what-is-two-way-radio.html}, is an electronic device that enables a group of people to communicate.
+
+A two-way radio works by converting audio signal to radio waves that are transmitted through the air to receivers. On the receiving end, the waves are converted back to audio signal allowing the recipients to hear the original message.
+There is two alternatives of what signal is being transmitted through the air - it can be either analogue or digital.
+The advantage of radios that support digital signal is that they can transfer various types of data over the channel, not only the audio.
+
+Two-way radios are using frequencies between 30MHz and 1000MHz. The interval between 30MHz and 300MHz is referred to as Very High Frequency and the remaining upper part is called Ultra High Frequency.
+
+
+
+\subsection{Motorola SmartConnect}
+
+SmartConnect is a product by company Motorola Solutions. 
+The state of the art Motorola two-way radios\todo{\url{https://www.motorolasolutions.com/en_xa/products/p25-products/apx-story.html}} support automatic switching to the strongest signal.
+
+The classical of interconnecting a set of walkie-talkies is through narrowband land mobile radio (LMR) sites. 
+However, due to specifics of the network, there is many use-cases where a push-to-talk device is out of range of LMR. A radio with SmartConnect support is able to automatically switch to LTE, Wi-Fi or satellite ensuring continuity of push-to-talk voice communications. It then switches back to LMR when the signal returns with no user intervention required.\footnote{\url{https://www.daywireless.com/downloads/motorola/motorola-apx-next-smartconnect-fact-sheet.pdf}}
+\todo{\url{https://www.businesswire.com/news/home/20191024005280/en/Motorola-Solutions\%E2\%80\%99-Next-Generation-APX-NEXT-Smart-Radio-Brings-New-Intelligence-and-Technology-to-Public-Safety}}
+
+Therefore, SmartConnect helps team to stay connected no matter where they are located by leveraging multiple channels of communication. 
+
 
 
 \section{Goals}

@@ -151,29 +151,7 @@ Intuitively, invariant mining reveals the linear relationships between the logs 
 In invariant mining, anomalies are detected by checking on the invariant rules broken by some log events. Because of that, not only an anomaly is detected, but we can also see the logical reasoning behind an anomaly by looking at the invariants.  
 
 \begin{figure}\centering
-	\tikzstyle{serviceNode}=[circle,draw=black,fill=customBlue,thick,inner sep=0pt,minimum size=8mm]
-		\tikzstyle{condition}=[diamond,draw=black,fill=customRed,thick,inner sep=0pt,minimum width=3cm, minimum height=1cm]
-		\tikzstyle{post}=[->,shorten >=1pt,thick]
-		\tikzstyle{inEdge}=[->,shorten >=1pt,thick,color=customGrey!50]
-		\tikzstyle{arrow} = [thick,->,>=stealth]
-	    \begin{tikzpicture}
-		
-		% output invisible node
-		\node[serviceNode] (E) at (11, 3) {E};
-		\node[serviceNode] (D) at (8, 0) {D};
-	    \node[serviceNode] (C) at (8, 6) {C};
-		\node[condition] (cond) at (6, 3) {Condition};
-		\node[serviceNode] (B) at (2, 3) {B};
-		\node[serviceNode] (A) at (0, 3){A};
-		
-		\draw [arrow] (A) -- (B);
-		\draw [arrow] (B) -- (cond);
-		\draw [arrow] (cond) |-  node[anchor=south] {$X == 0$} (C);
-		\draw [arrow] (cond) |- node[anchor=north] {$X != 0$} (D);
-		\draw [arrow] (C) -- (E);
-		\draw [arrow] (D) -- (E);
-		\end{tikzpicture}
-
+	\input{en/figures/literature-review/invariantMiningExecutionFlow.tikz}
 	\caption{An example of an execution flow.}.
 	\label{figure:invariantMiningExecutionFlow}
 \end{figure}
@@ -363,7 +341,7 @@ According to the log parsing technique, parsers can be divided into four main gr
 Log-based anomaly detection has been widely studied. Anomaly detection research usually follows similar steps. At first, log parser is used to extract log templates from unstructured log data. Then the logs are transformed into a numerical feature vector using the log templates. Lastly, anomaly detection techniques are applied. A crucial assumption is that event types are extracted correctly. Various approaches to each of these steps were presented in previous work on this topic. 
 
 
-Xu et al. \cite{xu2009} was one of the first ones to apply Principal Component Analysis (PCA) to achieve anomaly detection in log data. He generated event templates based on the source code  and used event count matrix as an input to PCA. To form an input, Xu uses the concept of windowing by sessions, where all the logs sharing the same session id are grouped together. Event count matrix is constructed such that each vector in a row represents events in one session id and each column vector is an event type. 
+Xu et al. \cite{xu2009} was one of the first ones to apply Principal Component Analysis (PCA) to achieve anomaly detection in log data. They generated event templates based on the source code  and used event count matrix as an input to PCA. To form an input, Xu uses the concept of windowing by sessions, where all the logs sharing the same session ID are grouped together. Event count matrix is constructed such that each vector in a row represents events in one session ID and each column vector is an event type. The dataset used for their experiments were collected from the Hadoop Distributed File System (HDFS).
 Similar approach was employed by He, \cite{he2016}, who also used event count matrix. In order to extract features, they groups log data into three groups: fixed windows, sliding windows, and session windows. 
 
 Invariant Mining (IM) method was proposed by Lou et al. \cite{lou2010} while also using log event count matrix as an input. IM mines the invariants among log events from log event count vectors. Event count vectors that do not satisfy mined invariants are considered anomalies. 
