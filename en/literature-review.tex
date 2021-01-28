@@ -5,7 +5,7 @@
 \subsection{Overview}
 
 % definition of anomaly detection
-\textis{Anomaly detection} is a problem of finding patterns in data that do not follow expected normal behavior represented by the majority of the data points. It follows that defining normal behaviour is one of the crucial challenges of anomaly detection. The unusual patterns are also called \textit{outliers} or \textit{anomalies} and anomaly detection is referred to as \textit{outlier detection}. Outlier was defined by \cite{ORD1996175} as an outlying observation that appears to deviate markedly from other members of the sample in which it occurs. In other words, statistical properties of the anomalous data points are not in alignment with the rest of the data. Outliers vary depending on the domain and may arise due to various reasons, such as fraudulent behaviour in credit card fraud, intrusion in computer networks, system failures, mechanical faults in industrial applications, deviations caused by natural behaviour or human error. Initially, outliers would be detected manually by the hand of a domain expert. Nowadays, anomaly detection's focus is identifying anomalous behavior automatically. Anomaly detection is also related to \textit{noise}. Noise is defined as an unwanted phenomenon in data, which is not of interest to the analyst, but acts as a hindrance to data analysis \cite{cvbakv2009}. Noise is  caused by an external factor not related to the distribution that generates the data \cite{ggh2017} and leads to excessively complex models with deteriorated performance \cite{wu2007}. 
+\textit{Anomaly detection} is a problem of finding patterns in data that do not follow expected normal behavior represented by the majority of the data points. It follows that defining normal behaviour is one of the crucial challenges of anomaly detection. The unusual patterns are also called \textit{outliers} or \textit{anomalies} and anomaly detection is referred to as \textit{outlier detection}. Outlier was defined by \cite{ORD1996175} as an outlying observation that appears to deviate markedly from other members of the sample in which it occurs. In other words, statistical properties of the anomalous data points are not in alignment with the rest of the data. Outliers vary depending on the domain and may arise due to various reasons, such as fraudulent behaviour in credit card fraud, intrusion in computer networks, system failures, mechanical faults in industrial applications, deviations caused by natural behaviour or human error. Initially, outliers would be detected manually by the hand of a domain expert. Nowadays, anomaly detection's focus is identifying anomalous behavior automatically. Anomaly detection is also related to \textit{noise}. Noise is defined as an unwanted phenomenon in data, which is not of interest to the analyst, but acts as a hindrance to data analysis \cite{cvbakv2009}. Noise is  caused by an external factor not related to the distribution that generates the data \cite{ggh2017} and leads to excessively complex models with deteriorated performance \cite{wu2007}. 
 
 In our thesis we focus on anomaly detection in time series data. Time series outlier analysis examines anomalies in the behavior of the data across time \cite{gupta2014}. An outlier in time series data is a data point, which is not following a common behaviour, either a general long-term trend or a tendency of the data to increase or decrease in seasonal patterns. 
 
@@ -68,7 +68,7 @@ Supervised methods require pre-labelled data, where labels describe whether the 
  %https://www.usenix.org/legacy/event/sysml08/tech/full_papers/xu/xu.pdf
  A problem with high dimensional data is that they are often noisy and even redundant. That's where dimension reduction comes in handy. Principal Component Analysis (PCA) is one of the most commonly utilized dimension reduction methods. Reduction is performed by projecting the data to a lower dimensional subspace which captures the “essence” of the data \cite{murphy2013machine}. The similarities and differences in the data are revealed in the new coordinate system. 
  
- PCA uses projection methods on a given set of input data points with many input features. It looks for correlations in the original feature space and finds the combination of variables that maximizes the variance in order to preserve all information with minimum redundancy. A new, more representative and compact feature space is generated. This feature space of lower dimensions is called the \textit{principal components}. Features in principal components are uncorrelated and ordered by the amount of data variance that each captures.\\
+ PCA uses projection methods on a given set of input data points with many input features. Once a PCA model is obtained, a distance from test log entries (either positive or negative) to the normal space can be calculated to detect anomalies. It looks for correlations in the original feature space and finds the combination of variables that maximizes the variance in order to preserve all information with minimum redundancy. A new, more representative and compact feature space is generated. This feature space of lower dimensions is called the \textit{principal components}. Features in principal components are uncorrelated and ordered by the amount of data variance that each captures.\\
  
  To put it formally ,let's say we have a $m$-dimensional vector $\mathbf{Y} \in \mathbb{R^n}$ with $n$ standardized input features in original data. PCA model decomposes $\mathbf{Y}$ into two parts \cite{pca1997}: 
  
@@ -116,7 +116,7 @@ where $\delta^2$ is a threshold for the error. A standard implementation of the 
 
  \subsubsection{Invariant Mining}
  
-A linear program invariant is a predicate that always holds the same value under different normal executions - different workloads or inputs. The first one to propose automatic anomaly detection by mining linear invariants from logs was Lou et al. \cite{lou2010}. It is based on the assumption that log sequences provide enough information for the system execution paths. Linear invariants are extracted from the properties of execution path by analyzing log sequences, which follow the logic of the workflow. An example of a linear relationship between logs can be also found in the dataset produced by Motorola SmartConnect's production system. \todo{add example}. The log message "EXAMPLE" is produced along side with the log message "EXAMPLE" after executing \todo{add details}, and their pair-wise appearance is an expected normal behaviour. Therefore the number of these event types should be the same in one execution of the program. 
+A linear program invariant is a predicate that always holds the same value under different normal executions - different workloads or inputs. The first one to propose automatic anomaly detection by mining linear invariants from logs was Lou et al. \cite{lou2010}. It is based on the assumption that log sequences provide enough information for the system execution paths. Linear invariants are extracted from the properties of execution path by analyzing log sequences, which follow the logic of the workflow. The ideal candidate for dataset for invariant mining are true log samples. An example of a linear relationship between logs can be also found in the dataset produced by Motorola SmartConnect's production system. \todo{add example}. The log message "EXAMPLE" is produced along side with the log message "EXAMPLE" after executing \todo{add details}, and their pair-wise appearance is an expected normal behaviour. Therefore the number of these event types should be the same in one execution of the program. 
 
 We can formally define a linear invariant as a linear equation: 
 
@@ -137,7 +137,7 @@ where $x_i$ is the event count of the event type with identifier $i$ and $\theta
 \theta = 0
 \end{gather}
 
-Log datasets that contain an information about the specific execution flow, such as session ID or job ID, are the most suitable for invariant mining, as they reflect the execution flow of that session or job. An execution work flow is comprised of smaller elementary units that are called elementary work flow structures, such as \textit{sequential}, \textit{branched}, \texit{joint} or \textit{looping} structures. For example, in the execution flow shown in Figure \ref{figure:invariantMiningExecutionFlow}, we can see sequential work flow structure of A to B, branched work flow structure from B to C or D and joint work flow structure of C to E or from D to E. Several execution instances of the program may be running at the same time, they may execute different branches of the flow and the produced logs may intersperse. In any case, the following should hold:
+Log datasets that contain an information about the specific execution flow, such as session ID or job ID, are the most suitable for invariant mining, as they reflect the execution flow of that session or job. An execution work flow is comprised of smaller elementary units that are called elementary work flow structures, such as \textit{sequential}, \textit{branched}, \textit{joint} or \textit{looping} structures. For example, in the execution flow shown in Figure \ref{figure:invariantMiningExecutionFlow}, we can see sequential work flow structure of A to B, branched work flow structure from B to C or D and joint work flow structure of C to E or from D to E. Several execution instances of the program may be running at the same time, they may execute different branches of the flow and the produced logs may intersperse. In any case, the following should hold:
 
 \begin{align}
     c(A) &= c(B) = c(E) \\
@@ -156,13 +156,54 @@ In invariant mining, anomalies are detected by checking on the invariant rules b
 	\label{figure:invariantMiningExecutionFlow}
 \end{figure}
 
-The workflow of the invariant mining anomaly detection approach is partially identical to other methods described in our thesis. Unstructured free-form log messages are parsed into a structured form. The second step requires message grouping. The grouping is performed on log messages that contain cogenetic parameters (e.g. session ID). For each group, an event count vector is generated. Next, sparse, integer valued invariants are discovered using a greedy invariant mining algorithm on the event count vectors. Finally, learned invariant rules are used to perform anomaly detection.
+The workflow of the invariant mining anomaly detection approach is partially identical to other methods described in our thesis. Unstructured free-form log messages representing normal behaviour are parsed into a structured form. The second step requires message grouping. The grouping is performed on log messages that contain cogenetic parameters (e.g. session ID). For each group, an event count vector is generated. Next, sparse, integer valued invariants are discovered using a greedy invariant mining algorithm on the event count vectors. Finally, learned invariant rules are used to perform anomaly detection.
 \newpage
 
- \subsubsection{Local Outlier Factor Based Methods}
- % http://norma.ncirl.ie/3894/1/suyashsharma.pdf
- 
- \subsubsection{Log Clustering}
+\subsubsection{Log Clustering}
+Clustering based approaches to anomaly detection are based on an intuitive principle. Normal data samples generate clusters, and data that do not conform to these clusters (they are far away from them) are considered anomalies. LogCluster is a tool developed by Lin et al. \cite{logCluster2016}, which facilitates unsupervised anomaly detection by clustering log sequences that are similar. 
+
+LogCluster consists of two phases: \textit{construction} phase and \textit{production} phase. 
+
+\subsubsection*{Construction Phase}
+The construction phase can be again divided into fours steps: log vectorization, log clustering, representative log sequence extraction and recurrence checking. The logs are collected from the testing environment. 
+
+\begin{enumerate}
+    \item \textbf{Log vectorization}: In the log vectorization step, unstructured log messages are parsed into numerical vectors by abstracting log events. Subsequently, log sequences are obtained by grouping together logs with the same task ID and vectorize by counting the event ID frequency in the log sequence. Event ID frequency is further weighted using the Inverse Document Frequency-based weighting. The Inverse Document Frequency (IDF) weighting technique is used also in our research and we describe it more thoroughly in Section \ref{subsection:features}.
+    
+    While in our research, we combine the IDF weight with the event type frequency per log sequence, in LogCluster they use \textit{contrast-based} weight. The intuition behind contrast-based weight is the observation, that an event that appears in both testing and production environments is less discriminative for anomaly detection than an event that appears in production environment only. The events only in production are assigned a higher weight as they are assumed to better reflect failures. 
+    
+    \item \textbf{Log clustering}: Vectorized representation of log sequences allows computing distances between two vectors $A$ and $B$ of $n$ dimensions. Measure of similarity used in LogCluster is a cosine similarity:
+
+    \begin{align*}
+        similarity(A, B) = cos(\theta) &= \dfrac{A \cdot B}{\|A \| \|B\|} \\
+        &= \dfrac{\sum_{i=1}^n A_i B_i}{\sqrt{\sum_{i=1}^n A_i^2} \sqrt{\sum_{i=1}^n B_i^2}}
+    \end{align*}
+    
+    Normal and anomalous log sequences are separated into clusters using the agglomerative hierarchical clustering technique \cite{ahc1969}. At first, each log sequence belongs to its own cluster. The closest pair of clusters is then merged. The metric to measure a distance between two clusters is defined as the maximum distance of all element pairs between two clusters. The stop-criteria for agglomerative hierarchical clustering is given by a distance threshold $\theta$ set empirically, but initialized to $0.5$. An example in Figure \ref{figure:hierarchicalClustering} shows the process of producing clusters using agglomerative hierarchical clustering.
+    
+    \item \textbf{Representative log sequence extraction}: In this step, one representative log sequence called \textit{centroid} needs to be picked for each of the obtained clusters.
+    
+    A centroid is a log sequence with a minimal score, which is calculated for each log sequence in the cluster as its average distance to the rest of the log sequences within the same cluster. Formally, we compute the score for a log sequence $L_i$ in a cluster as the following:
+    
+    \begin{align*}
+        score(i) = \dfrac{1}{m - 1} \sum_{j = 1}^m (1 - similarity(L_i, L_j))
+    \end{align*}
+    
+    where $m$ is the number of log sequences in the cluster.
+    
+    \item \textbf{Recurrence checking}: In the next and final step of the construction phase, for each of cluster it is checked if it is a recurrent cluster by querying a knowledge base. Knowledge base stores centroids of the log clusters from the past executions. If a cluster is not considered a recurrent failure, it is returned to engineers to be manually examined.
+\end{enumerate}
+
+\begin{figure}\centering
+	\input{en/figures/literature-review/agglomerativeHierarchicalClustering.tikz}
+	\caption{A visualization of the agglomerative hierarchical clustering. At the beginning, every object is a cluster. In every step two closest clusters are merged. The process finishes when maximum distance between clusters reaches threshold $\theta$. This figure illustrates the case without a stopping criteria, where the process terminates when all the objects are in one cluster.}
+	\label{figure:hierarchicalClustering}
+\end{figure}
+
+%https://netman.aiops.org/~peidan/ANM2019/6.LogAnomalyDetection/LectureCoverage/2016ICSE_Log%20Clustering%20based%20Problem%20Identification%20for%20Online%20Service%20Systems%20.pdf page 5
+
+\subsubsection*{Production Phase}
+In the production phase, the logs are collected from the actual production environment. The process is then the same as in the construction phase: logs are vectorized into log sequences and log sequences are clustered. For each cluster a representative is extracted and it is checked if previously appeared in the knowledge base and the knowledge base is updated with new clusters.
  
 \section{Log Parsing}
 
@@ -225,7 +266,7 @@ Therefore, we say that two logs have the same event type if their messages match
     % MANUAL 
     % AUTOMATED - OFFLINE
     %           - ONLINE
-\textit{Log-template mining} is a process for extracting an information about the event from unstructured log files by separating its constant and its variable part. A high accuracy of log parsing is of huge importance for an effective log mining \cite{logParsingEvaluation2016}. For that reason we will provide a brief overview and evaluation of several log parsing approaches proposed and used in the past. \\
+\textit{Log-template mining} is a process for extracting an information about the event from unstructured log messages by separating its constant and its variable parts. A high accuracy of log parsing is of huge importance for an effective log mining \cite{logParsingEvaluation2016}. For that reason we will provide a brief overview and evaluation of several log parsing approaches proposed and used in the past. \\
     
 Originally, log parsing relied on regular expressions written manually by developers themselves. As we may assume, manual parsing is not an ideal solution for several reasons. Designing regular expressions by hand is indeed a very error-prone and time-consuming process, as the size of the code can be too large for one developer to comprehend. The ever increasing complexity of modern software systems makes it also recognizably more difficult to update and maintain these regular expressions. According to Xu et al. \cite{xu2009}, the number of new logs introduced to newly developed Google's system goes to around hundred each month. \\
 \\
@@ -272,7 +313,7 @@ According to the log parsing technique, parsers can be divided into four main gr
        \item In the second step, another pass over the data is made to build all cluster candidates into a candidate table. The whole data set is processed such that a cluster candidate is formed out of the line if a combination of the dense 1-regions occurs on the line. If the cluster candidate is present, it is inserted into the table within incremented support value. Otherwise it is inserted into the table with support value $1$.  
        
        \item As a final step, the cluster candidates are inspected, and all candidates with support values equal or greater than the support threshold value are reported as clusters. 
-   \end{enumerate} \\
+   \end{enumerate}
    
     
     \subsubsection*{Heuristics}
@@ -336,16 +377,3 @@ According to the log parsing technique, parsers can be divided into four main gr
     \end{table} 
     
     After understanding and comparing the characteristics of different log parsing tools described in this section, as well as detailed evaluation of these tools on various systems in the paper by Zhu et al. \cite{zhlhxzl2018}, we chose Drain. The benchmarking results have shown that Drain is superior in terms of accuracy, robustness, and efficiency. In addition, its online character is of huge practical importance for our research, considering that Motorola SmartConnect system is constantly subject to changes. Also, we often work with smaller time intervals of data, therefore log lines generated in different time windows may lead to different event template set. Not having to provide the whole log data set before parsing is an undeniable advantage.
-
-\section{Related Work}
-Log-based anomaly detection has been widely studied. Anomaly detection research usually follows similar steps. At first, log parser is used to extract log templates from unstructured log data. Then the logs are transformed into a numerical feature vector using the log templates. Lastly, anomaly detection techniques are applied. A crucial assumption is that event types are extracted correctly. Various approaches to each of these steps were presented in previous work on this topic. 
-
-
-Xu et al. \cite{xu2009} was one of the first ones to apply Principal Component Analysis (PCA) to achieve anomaly detection in log data. They generated event templates based on the source code  and used event count matrix as an input to PCA. To form an input, Xu uses the concept of windowing by sessions, where all the logs sharing the same session ID are grouped together. Event count matrix is constructed such that each vector in a row represents events in one session ID and each column vector is an event type. The dataset used for their experiments were collected from the Hadoop Distributed File System (HDFS).
-Similar approach was employed by He, \cite{he2016}, who also used event count matrix. In order to extract features, they groups log data into three groups: fixed windows, sliding windows, and session windows. 
-
-Invariant Mining (IM) method was proposed by Lou et al. \cite{lou2010} while also using log event count matrix as an input. IM mines the invariants among log events from log event count vectors. Event count vectors that do not satisfy mined invariants are considered anomalies. 
-
-Recently, as deep learning outperforms the traditional machine learning as the scale of data increases \cite{Sydney2019DeepLF}, neural networks have been also applied to the problem of anomaly detection in system logs. 
-
-Du et al. \cite{duLSTM2017} used deep neural network (DNN) model composed of Long Short-Term Memory (LSTM) units to model logs as natural language sequence. The model is trained using non-anomalous log data. This way, LSTM can automatically learn normal behaviour, forecast the next event type and identify anomalies if it differs from the actual event type. Similarly, Zhang et al. \cite{zhang2016} and DeepLog \cite{deeplog2017} also use LSTM deep learning approach. The former borrowed an idea from term frequency-inverse document frequency (TF-IDF) by taking all the logs in each time window as a document and use TF-IDF weight as a feature representation. The latter work differs from other DNN approaches, as it retains timestamp when encoding log message and performs anomaly detection for each log entry, rather than for each session.

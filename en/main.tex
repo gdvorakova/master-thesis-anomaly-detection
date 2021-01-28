@@ -6,6 +6,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{wallpaper}
 \usepackage{palatino}
+\usepackage[toc,page]{appendix}
+
 
 
 % \openright makes the following text appear on a right-hand page
@@ -105,8 +107,8 @@ To compare the performance between different anomaly detection methods in our re
 
 %%% Each chapter is kept in a separate file
 \include{introduction}
+\include{motorola-smart-connect}
 \include{literature-review}
-%\include{motorola-smart-connect}
 \include{dataset}
 \include{methodology}
 \include{experiments}
@@ -119,6 +121,11 @@ To compare the performance between different anomaly detection methods in our re
 
 %%% Figures used in the thesis (consider if this is needed)
 \listoffigures
+
+\begin{appendices}
+\include{en/appendix-dataset}
+\include{en/appendix-experiments}
+\end{appendices}
 
 \end{document}
 %%  ==================================================================

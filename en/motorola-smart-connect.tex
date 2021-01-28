@@ -1,1 +1,53 @@
+\chapter{Motorola SmartConnect}
+In this chapter, we introduce the reader with 
 
+\section{Domain Description}
+
+\textit{Two-way radio} (also push-to-talk, informally walkie-talkie\footnote{https://www.motorolasolutions.com/en\_xu/solutions/what-is-two-way-radio.html}, is an electronic device that enables a group of people to communicate.
+
+A two-way radio works by converting audio signal to radio waves that are transmitted through the air to receivers. On the receiving end, the waves are converted back to audio signal allowing the recipients to hear the original message.
+There is two alternatives of what signal is being transmitted through the air - it can be either analogue or digital.
+The advantage of radios that support digital signal is that they can transfer various types of data over the channel, not only the audio.
+
+Two-way radios are using frequencies between 30MHz and 1000MHz. The interval between 30MHz and 300MHz is referred to as Very High Frequency and the remaining upper part is called Ultra High Frequency.
+
+
+
+\subsection{Motorola SmartConnect}
+
+SmartConnect is a product by company Motorola Solutions. 
+The state of the art Motorola two-way radios\todo{\url{https://www.motorolasolutions.com/en_xa/products/p25-products/apx-story.html}} support automatic switching to the strongest signal.
+
+The classical of interconnecting a set of walkie-talkies is through narrowband land mobile radio (LMR) sites. 
+However, due to specifics of the network, there is many use-cases where a push-to-talk device is out of range of LMR. A radio with SmartConnect support is able to automatically switch to LTE, Wi-Fi or satellite ensuring continuity of push-to-talk voice communications. It then switches back to LMR when the signal returns with no user intervention required.\footnote{\url{https://www.daywireless.com/downloads/motorola/motorola-apx-next-smartconnect-fact-sheet.pdf}}
+\todo{\url{https://www.businesswire.com/news/home/20191024005280/en/Motorola-Solutions\%E2\%80\%99-Next-Generation-APX-NEXT-Smart-Radio-Brings-New-Intelligence-and-Technology-to-Public-Safety}}
+
+Therefore, SmartConnect helps team to stay connected no matter where they are located by leveraging multiple channels of communication. 
+
+\subsection{Architecture}
+
+Now we are going to explain some of the concepts that are crucial for SmartConnect as a software system. 
+Having familiarity with architecture of SmartConnect is important for our anomaly detection problem. It gives us better understanding of what are the weak link that are prone to error with the software. Also, this in this thesis we want to target anomalies based on logs. Knowing the architecture also helps with identifying what parts of the system produce logs that can be collected and extracted information from.
+
+The software follows the \textit{Microservices Architecture}.
+Nadareishvili et al. \cite{nadareishvili2016microservice} define a \textit{microservice} as an independently deployable component of bounded scope that supports interoperability through message-based communication. 
+
+Fowler \cite{fowler2014microservices} understands the microservice architectural style (MSA) as a way of building a single application by connecting a set of small services. Each of the services runs in its own process and communicates with lightweight mechanisms.
+
+Another attribute of such an architecture is that management of the service is decentralized, therefore it allows for the individual service to be written if various programming languages and use different technologies for storing their data.
+
+Collection of services that communicate together form a \textit{system} \cite{indrasiri2018microservices}.
+
+\subsection{Messaging}
+As mentioned, services in an MSA application may be designed in a different way and two services may be using a dissimilar set of technologies. That makes communication within a system more complicated than calling a function just like one would do in a traditional, monolithic architecture.
+
+Two main strategies of passing messages within a system are \textit{synchronous} and \textit{asynchronous} communication. One of the most common types of synchronous communication is Representational state transfer (REST) \cite{indrasiri2018microservices}.
+
+On the other hand, asynchronous communication promotes autonomy between services as the communicating client does not need to wait for the response. 
+For implementation of asynchronous protocols the concept of a \textit{broker} is introduced. A broker is a centralized entity with high-availability \cite{indrasiri2018microservices}.
+
+In SmartConnect, services are passing values asynchronously. In order to obtain some high level goal, services form chains from 1 or more microservices. Then each link of the chain gets input, processes it and if needed forwards the output through a broker to another microservice(s) that take(s) this data as input.
+
+\subsection{Storing Data}
+In microservices architecture systems, microservices that are immutable and stateless are favoured \cite{indrasiri2018microservices}. Therefore, data that needs to be persisted has to be stored in memory that is external to memory of a microservice process.
+\todo{redis + db}.

@@ -1,0 +1,122 @@
+\begin{tikzpicture} [
+    object/.style={circle,fill=customBlue,inner sep=0pt,minimum size=1mm, thin},
+    singleCluster/.style={circle,draw=customBlue,inner sep=0pt,minimum size=3mm, thin},
+    doubleCluster/.style={ellipse, draw=customGreen, thin},
+    threeCluster/.style={ellipse, draw=customRed, thin},
+    fourCluster/.style={ellipse, draw=customDarkBlue, thin},
+    arrow/.style={thin, -latex, color=customGrey}
+]
+    % 1
+    \node[singleCluster] (aCluster) at (0, 0) {};
+    \node[object] (a) at (0, 0) {};
+    
+    \node[singleCluster] (bCluster) at (0.3, -0.5) {};
+    \node[object] (b) at (0.3, -0.5) {};
+    
+    \node[singleCluster] (cCluster) at (1.2, -0.4) {};
+    \node[object] (c) at (1.2, -0.4)  {};
+    
+    \node[singleCluster] (dCluster) at (1.3, -1.7) {};
+    \node[object] (d) at (1.3, -1.7)  {};
+    
+    \node[singleCluster] (eCluster) at (1.6, -2) {};
+    \node[object] (e) at (1.6, -2)  {};
+    
+    \node[singleCluster] (fCluster) at (0, -1.8) {};
+    \node[object] (f) at (0, -1.8)  {};
+    
+    \node[draw=none] (arrow1S) at (2, -1) {};
+    \node[draw=none] (arrow1E) at (3, -1) {};
+    \draw [arrow] (arrow1S) -- (arrow1E);
+    
+    % 2
+    \node[singleCluster] (aCluster) at (3.5, 0) {};
+    \node[object] (a) at (3.5, 0) {};
+    
+    \node[singleCluster] (bCluster) at (3.8, -0.5) {};
+    \node[object] (b) at (3.8, -0.5) {};
+    
+    \draw[doubleCluster] (3.65, -0.25) ellipse (13pt and 14pt);
+    
+    \node[singleCluster] (cCluster) at (4.7, -0.4) {};
+    \node[object] (c) at (4.7, -0.4)  {};
+    
+    \node[singleCluster] (dCluster) at (4.8, -1.7) {};
+    \node[object] (d) at (4.8, -1.7)  {};
+    
+    \node[singleCluster] (eCluster) at (5.1, -2) {};
+    \node[object] (e) at (5.1, -2)  {};
+    
+    \draw[doubleCluster] (4.95, -1.9) ellipse (13pt and 15pt);
+    
+    \node[singleCluster] (fCluster) at (3.5, -1.8) {};
+    \node[object] (f) at (3.5, -1.8)  {};
+    
+    \node[draw=none] (arrow1S) at (5.5, -1) {};
+    \node[draw=none] (arrow1E) at (6.5, -1) {};
+    \draw [arrow] (arrow1S) -- (arrow1E);
+    
+    % 3
+    \node[singleCluster] (aCluster) at (7, 0) {};
+    \node[object] (a) at (7, 0) {};
+    
+    \node[singleCluster] (bCluster) at (7.3, -0.5) {};
+    \node[object] (b) at (7.3, -0.5) {};
+    
+    \draw[doubleCluster] (7.15, -0.25) ellipse (13pt and 14pt);
+    
+    \node[singleCluster] (cCluster) at (8.2, -0.4) {};
+    \node[object] (c) at (8.2, -0.4)  {};
+    
+    \draw[threeCluster] (7.6, -0.25) ellipse (28pt and 18pt);
+    
+    \node[singleCluster] (dCluster) at (8.3, -1.7) {};
+    \node[object] (d) at (8.3, -1.7)  {};
+    
+    \node[singleCluster] (eCluster) at (8.6, -2) {};
+    \node[object] (e) at (8.6, -2)  {};
+    
+    \draw[doubleCluster] (8.45, -1.9) ellipse (13pt and 15pt);
+    
+    \node[singleCluster] (fCluster) at (7, -1.8) {};
+    \node[object] (f) at (7, -1.8)  {};
+    
+    \draw[threeCluster] (7.8, -1.9) ellipse (35pt and 21pt);
+    
+    \node[draw=none] (arrow1S) at (5.5, -1) {};
+    \node[draw=none] (arrow1E) at (6.5, -1) {};
+    
+     % 4
+    
+    \node[draw=none] (arrow1S) at (1.5, -4.5) {};
+    \node[draw=none] (arrow1E) at (2.5, -4.5) {};
+    \draw [arrow] (arrow1S) -- (arrow1E);
+    
+     % 5
+    \node[singleCluster] (aCluster) at (3.5, -3.5) {};
+    \node[object] (a) at (3.5, -3.5) {};
+    
+    \node[singleCluster] (bCluster) at (3.8, -4) {};
+    \node[object] (b) at (3.8, -4) {};
+    
+    \draw[doubleCluster] (3.65, -3.75) ellipse (13pt and 14pt); \draw[threeCluster] (4.1, -3.75) ellipse (28pt and 18pt);
+    
+    \node[singleCluster] (cCluster) at (4.7, -3.9) {};
+    \node[object] (c) at (4.7, -3.9)  {};
+    
+    \node[singleCluster] (dCluster) at (4.8, -5.2) {};
+    \node[object] (d) at (4.8, -5.2)  {};
+    
+    \node[singleCluster] (eCluster) at (5.1, -5.5) {};
+    \node[object] (e) at (5.1, -5.5)  {};
+    
+    \draw[doubleCluster] (4.95, -5.4) ellipse (13pt and 15pt);
+    \draw[threeCluster] (4.3, -5.4) ellipse (35pt and 21pt);
+    
+    \node[singleCluster] (fCluster) at (3.5, -5.3) {};
+    \node[object] (f) at (3.5, -5.3)  {};
+    
+    \draw[fourCluster] (4.25, -4.6) ellipse (45pt and 48pt);
+    
+    
+\end{tikzpicture}

@@ -1,0 +1,105 @@
+\chapter{Experiments}
+
+\section{Experiment Set-Up}
+
+\subsection{Directory structure used with Makefile}
+\label{appendix:dir_structure}
+ 
+ \dirtree{%
+.1 /. 
+.2 data. 
+.3 features. 
+.4 tf. 
+.4 tfidf. 
+.3 labels. 
+.3 preprocessed. 
+.3 raw. 
+.2 models. 
+.3 tf. 
+.3 tfidf. 
+.2 results. 
+.3 metrics. 
+.4 tf. 
+.4 tfidf. 
+.3 predictions. 
+.4 tf. 
+.4 tfidf. 
+.2 src. 
+.3 data. 
+.4 categorization.py. 
+.4 feature\textunderscore extraction.py. 
+.4 template\textunderscore mine.py. 
+.3 models. 
+.4 invariant\textunderscore mining.py. 
+.4 isolation\textunderscore forest.py. 
+.4 log\textunderscore clustering.py. 
+.4 train.py. 
+.4 evaluate.py. 
+.4 pca.py. 
+.2 Makefile. 
+}
+
+\subsection{Makefile for running experiments}
+\label{appendix:makefile}
+
+\begin{lstlisting}
+.PHONY: all clean data train evaluate
+
+#################################################################################
+# GLOBALS                                                                       #
+#################################################################################
+
+RAW_DATA_DIR=data/raw/
+PREPROCESSED_DATA_DIR=data/preprocessed/
+FEATURES_DATA_DIR=data/features/
+LABELS_DATA_DIR=data/labels/
+
+METRICS_DIR=results/metrics/
+PREDICTIONS_DIR=results/predictions/
+
+MODELS=isolation_forest log_clustering pca #invariant_mining 
+
+TF_DIR=tf/
+TFIDF_DIR=tfidf/
+
+MODELS_DIR=models/
+
+#################################################################################
+# COMMANDS                                                                      #
+#################################################################################
+
+clean:
+	rm -f data/preprocessed/$(DATASET)-preprocessed.pickle
+	rm -f data/preprocessed/$(DATASET)-preprocessed.csv
+	rm -f data/features/tf/$(DATASET).npy
+	rm -f data/features/tf/$(DATASET).csv
+	rm -f data/features/tfidf/$(DATASET).npy
+	rm -f data/features/tfidf/$(DATASET).csv
+	rm -f models/tf/*.model
+	rm -f models/tfidf/*.model
+
+all: evaluate
+
+data: data/features/%.npy
+
+train: models/tf/%.model models/tfidf/%.model
+
+evaluate: results/%.csv
+
+data/preprocessed/%.pickle: $(RAW_DATA_DIR)$(DATASET)-raw.json
+	python3 src/data/template_mine.py $< $(PREPROCESSED_DATA_DIR)$(DATASET)-preprocessed.pickle --csv $(PREPROCESSED_DATA_DIR)$(DATASET)-preprocessed.csv
+
+data/features/%.npy: data/preprocessed/%-preprocessed.pickle
+	python3 src/data/feature_extract.py $(PREPROCESSED_DATA_DIR)$(DATASET)-preprocessed.pickle 5S --csv --tf $(FEATURES_DATA_DIR)$(TF_DIR)$(DATASET).npy --tf_idf $(FEATURES_DATA_DIR)$(TFIDF_DIR)$(DATASET).npy
+
+models/tf/%.model: data/features/tf/%.npy
+	$(foreach model,$(MODELS),python3 src/models/train_$(model)_model.py $(FEATURES_DATA_DIR)$(TF_DIR)$(DATASET).npy models/tf/$(model).model;)
+
+models/tfidf/%.model: data/features/tfidf/%.npy
+	$(foreach model,$(MODELS),python3 src/models/train_$(model)_model.py $(FEATURES_DATA_DIR)$(TFIDF_DIR)$(DATASET).npy models/tfidf/$(model).model;)
+
+results/%.csv: models/tf/%.model models/tfidf/%.model
+	$(foreach model,$(MODELS),python3 src/models/evaluate_$(model)_model.py models/tf/$(model).model $(FEATURES_DATA_DIR)$(TF_DIR)$(DATASET)-test.npy $(LABELS_DATA_DIR)$(DATASET)-test-labels.npy $(METRICS_DIR)$(TF_DIR)$(DATASET)-$(model)-metrics.csv $(PREDICTIONS_DIR)$(TF_DIR)$(DATASET)-$(model)-predictions.csv;)
+	$(foreach model,$(MODELS),python3 src/models/evaluate_$(model)_model.py models/tf/$(model).model $(FEATURES_DATA_DIR)$(TFIDF_DIR)$(DATASET)-test.npy $(LABELS_DATA_DIR)$(DATASET)-test-labels.npy $(METRICS_DIR)$(TF_DIR)$(DATASET)-$(model)-metrics.csv $(PREDICTIONS_DIR)$(TFIDF_DIR)$(DATASET)-$(model)-predictions.csv;)
+
+\end{lstlisting}

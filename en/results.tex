@@ -24,9 +24,9 @@ Many meaningful measures can be extracted out of the confusion matrix. The evalu
 
 \textit{Accuracy} is the most general metrics to measure performance. It simply measures the fraction of correct predictions from all the available data points. The computation of accuracy in binary classification is done as shown in the following equation:
 
-%\begin{align}
- %   Accuracy = \dfrac{TP + TN}{TP + TN + FP + FN}
-%\end{align}
+\begin{align}
+    Accuracy = \dfrac{TP + TN}{TP + TN + FP + FN}
+\end{align}
 
 However, accuracy alone does not exactly reflect the real performance of a system designed to correctly detect anomalies. It does not differentiate between the number of correct predictions of different classes \cite{performanceEvaluation2006}. The reason why accuracy measure is not enough in the majority of ML applications will be explained in the remainder of this section. 
 
@@ -46,7 +46,9 @@ Let's look at the mathematical formulas for calculating evaluation measures:
     F_{\beta}-measure &= (\beta^2 + 1) \cdot \dfrac{Precision \times Recall }{\beta^2 \cdot Precision + Recall} 
 \end{align}
 
-The reason for $F_{\beta}$ score is that improving either precision or recall on their own is a trivial task, but the goal is to optimize both of them at the same time. Accuracy metrics is more useful when true positives and true negatives are more important. However, false positives and false negatives are considered to be crucial in most of the classification problems. Thus, in these cases, $F_{\beta}$ score happens to be a  better evaluation metrics. False negatives and false positives are given more weight while not letting large numbers of true negatives to influence the score.
+The reason for $F_{\beta}$ score is that improving either precision or recall on their own is a trivial task, but the goal is to optimize both of them at the same time. Accuracy metrics is more useful when true positives and true negatives are more important. However, false positives and false negatives are considered to be crucial in most of the classification problems. Thus, in these cases, $F_{\beta}$ score happens to be a better evaluation metrics. False negatives and false positives are given more weight while not letting large numbers of true negatives to influence the score.
+
+In addition, as anomalies occur much less frequently than normal data samples, we can easily achieve a high accuracy without catching anomalies. That's why we will not use accuracy metrics for evaluation in this thesis.
 
 \todo{ROC curve evaluation?}
 %https://reader.elsevier.com/reader/sd/pii/S0167404818306333?token=86A40DFE4370A7717E0B15DEAAD2B345D4CC6B9710DBAF61E109BBCB91AF725627908E3B8838A3472D5D1E42201C1845

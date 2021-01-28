@@ -1,47 +1,103 @@
 \chapter{Dataset}
 
-The primary dataset contains log traces gathered from multiple services comprising Motorola SmartConnect's Cloud Infrastructure Engineering development environment.\\
-The services producing the logs are ran within Kubernetes Pods \cite{K8s:pods}. In order to obtain the logs, we came up with a pipeline that periodically connects to the pods\todo[]{depends on where we are getting logs from - not settled yet}, gathers and preprocesses them into such form that the data can be fed to selected machine learning algorithms or plotted. More on the preprocessing step can be found in Chapter \ref{methodology}. \\
-In this chapter, we pay attention to what important properties of the logs can be retrieved from the raw raw data in the first place.
-Kubernetes records 16 properties per single log entry\todo[]{depends on where we are getting logs from - not settled yet}.\\
-Timestamps are in the format \texttt{YYYY-MM-DDTHH:mm:SS.sssZ} - therefore year (YYYY) is a four digit zero padded number, month (\texttt{MM}), day (\texttt{DD}), hour (\texttt{HH}), minutes (\texttt{mm}) and seconds (\texttt{SS}) are two digit zero padded numbers and milliseconds(\texttt{ssss}) is a three digit zero padded number. The time part is separated from date by a single \texttt{T} character and the whole timestamp ends with a letter \texttt{Z}.\todo{also depends on where we get the logs from}\\
+The primary dataset contains log traces gathered from multiple microservices comprising Motorola SmartConnect's Cloud Infrastructure Engineering development environment.
 
-The dataset contains no labeling of the logs, however, we strove to obtain solely anomaly free data from the expected behavior of the system.\\
-At night, the system undergoes tests. During the testing, normal behavior of the telecommunication system is mimicked - all the required set up of infrastructure takes place and simulations of calls between groups of push-to-talk radios are happening. This way, the system produces logs that our machine learning models are compatible with.
-In case the nightly tests are all passed, it should be sound that the collected data are either completely free of anomalies, respectively contain only very small percentage of them therefore we train our models on vastly anomaly free dataset. This statement strongly relies on the assumption that the functionality of the system is well covered by the tests. 
-Furthermore, we assume that if a test succeeds, the execution of the test represents an anomaly free scenario.
+The services producing those logs are ran within Kubernetes Pods \cite{K8s:pods}. 
+In order to obtain the logs, we came up with a pipeline (specifics of the pipeline are described in Chapter~\ref{data_collection}) that connects to the system, gathers and preprocesses them into such form that the data can be fed to selected machine learning algorithms or plotted.
+More on the preprocessing step can be found in Chapter \ref{methodology}.
 
-We gathered the data throughout \todo[]{n} nightly test runs between dates \todo[]{date-start - date-end}.
+In this chapter, we will provide information regarding the datasets that we used in our research. We will describe how we obtained a labeled dataset for testing and also mention a weakness that comes with that dataset. We will take a look at the important properties of the logs. Lastly, we will pay attention to some known anomaly scenarios that may occur in our data.  
 
+\section{Datasets}
+The data we feed to machine learning models make a great deal of difference. Therefore, we need to look at what data we are able to collect from the system in a both high level and also what are the properties of a single log entry.
 
-\section{Data Characteristics}
-\todo{add the amount of data we have in numbers}
-Out of the 16 log properties, we decided to look only at \texttt{msg} and \texttt{timestamp} as the others (such as kubernetes pod name, process id of the service generating the log, etc. all off the properties are listed in Appendix \todo{appendix with log properties}) or are too specific, such as \texttt{pod}. 
-Including fewer predictor variables should in general avoid us overfitting and make the final model more transparent.
-Therefore, in order to produce as general solution as possible, we stick only to those two predictors.\\
+The anomaly detection task can be reformulated as a classification problem with two classes: \textit{negative} class and \textit{positive} class. 
 
-The data that the system under test is producing, however slightly differ from the live production environment.
-The main difference is that the scenarios that the test suit generates are serialized meaning that maximum one call is taking place at each moment.
-On the other hand, the production environment is not limiting the number broadcasts at a time. Therefore, the logs of the production environment may include much higher counts of some events. \todo[]{plots showing events in serialized calls vs overlapping ones}\\
-\todo[]{do we do something about the serialization like trying to modify timestamps in the data to "parallelize" the calls?}
+\textit{Negative} or \textit{normal} class is a category of a set of data, that is free of anomalies and represent expected (or normal) behaviour of system that produces those logs. Negative data samples are labeled as $0$. \textit{Positive}, \textit{anomalous} or \textit{abnormal} class is the target class that we are interested in. It is assigned to log sequences which contain anomalies as $1$. The goal is to train the classifier to distinguish between positive and negative samples.
+
+\subsection{Daily Dataset} 
+The historical log data that SmartConnect's system produces are available for a period of one month. Considering that there is approximately $20000$ logs per minute, \todo{this number is taken from the nightly data} there is an abundance of data for our experiments. Live production system produces logs that reflect the real-world environment, for which it is natural that anomalies may occur. 
+
+We call such data such data set of system logs a \textit{Daily} dataset and we may also refer to it as \textit{mixed}, as it may contain both positive and negative data samples. 
+
+Unfortunately, such dataset in unlabelled, as it would require experts going through millions of lines of unstructured log messages to obtain them. 
+
+\subsection{Nightly Dataset}
+At night, the system we are experimenting with undergoes tests. This phase of system's health check includes mimicking normal behavior of the telecommunication system. All the required set up of infrastructure takes place and simulations of calls between groups of push-to-talk radios are happening. These tests are being re-run every night as a part of the nightly test suite. 
+
+In case the nightly tests are all passed, it should be sound that the collected data are either completely free of anomalies, respectively contain only very small percentage of them. Therefore, we assume that the data collected during the nightly test phase that passes successfully contains a vast majority of negative data samples and represent a normal, anomaly-free behaviour of the system. This statement strongly relies on the assumption that the functionality of the system is well covered by the tests. 
+
+Hence, for our use case, we may also refer to \textit{negative} or \textit{normal} dataset as \textit{Nightly} dataset interchangeably.
+
+Therefore, the logs that are collected at night from a system like this should be suitable candidates for one-class learning algorithms as well as generating a labeled dataset for testing purposes, which we will explain further below in this chapter.
+
+However, the data that the system under the nightly testing is producing, slightly differ from the live production environment. The main difference is that the scenarios the test suite generates are serialized, meaning that maximum one call is taking place at each moment. 
+
+On the other hand, the live production environment is not limiting the number of broadcasts at a time. Therefore, the logs of the production environment may include much higher counts of some events. \todo[]{plots showing events in serialized calls vs overlapping ones}
+
+Although this might be argued as a weakness of our Nightly dataset, as we will describe windowing operation of our preprocessing phase in Chapter \ref{methodology}, we will always consider a sequence of logs and the counts of event types in that log sequence in a fixed time window. Therefore, even if the data will look different in terms of individual log entries, we believe the final feature representation passed to the ML algorithm should be very similar.   
+
+As it is incredibly challenging to obtain labels in log data, we have decided to use the Nightly data despite it's possible drawbacks and slightly artificial character.
+
+\section{Log Properties}
+The services record 33 properties per single log entry. Out of the 33 log properties, we decided to look only at \texttt{msg} and \texttt{timestamp} as the others (such as kubernetes pod name, process id of the service generating the log, etc. full list of the individual log properties are attached in Appendix~\ref{appendix:log-properties}) or are too specific, such as \texttt{pod}.
+Including fewer predictor variables should in general avoid us overfitting, make the final model more transparent and easier to troubleshoot.
+Therefore, in order to produce as general solution as possible, we stick only to those two predictors.
+
+\subsection{Format of Log Properties}
+Messages are strings and we assume they follow the logic that we described in Section~\ref{log_template_mining} on log template mining. In other words, we expect that they are generated by code written in such a way that it makes sense to think of them as a product of constant and variable parts. Consequently, log messages can be further categorized using event types.
+
+Timestamps are in the format of \texttt{YYYY-MM-DD'T'HH:mm:SS.sss'Z'}. The format string specifies that year (YYYY) is a four digit zero padded number, month (\texttt{MM}), day (\texttt{DD}), hour (\texttt{HH}), minutes (\texttt{mm}) and seconds (\texttt{SS}) are two digit zero padded numbers and milliseconds(\texttt{ssss}) is a three digit zero padded number. The time part is separated from date by a single \texttt{T} character and the whole timestamp ends with a letter \texttt{Z}.
+
+\section{Description of Data Sets}
+\begin{table}[!h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Dataset Name} & \textbf{Log Entries}       & \textbf{Size}           \\ \toprule
+The Daily    & 21309120      & 2019389 GB     \\
+The Nightly      & $1\,362\,004$ & $4.24$ GB
+\end{tabular}
+\caption{Dataset}
+\label{table:datasets}
+\end{table}
+\todo{fill in the tables correctly and specify dates when collected}
+
+\section{Labels}
+In our thesis, the majority of data are unlabeled data. In order to validate the proposed approaches, we had to develop the evaluation dataset ourselves. In Table \ref{table:datasets} is a summary of all datasets used in this thesis. Testing dataset should contain data with evenly distributed classes.
+
+Getting the negative class representation is trivial. As we mentioned earlier in this chapter, we consider Nightly data obtained from the testing phase as normal data samples. To create the normal part of the dataset, we gather another set of data from the testing, that were previously unseen in the training phase. 
+
+On the other hand, the positive samples need to be manually labeled. To avoid error while assigning labels, we introduce some known anomaly scenarios, which are expected to occur in our real-life dataset. These scenarios can be reproduced, we can gather the data and label them as anomalies. 
+
+This is not an ideal testing dataset, but not all anomalies are known and can be obtained. It provides a reasonable tool to measure how well our models are doing. We will also test the models on solely normal data to detect false positives. 
+
+Let's have a look at some anomalies that can occur in SmartConnect's system.
 
 \section{Types of Anomalies}
 In this section, we present a couple of known anomalies as a motivation for what anomaly scenarios we aim to target with our solution.
 Also, we are going to benchmark our approaches and models against these anomalies, however the objective is to be also able to detect anomalies that we do not have prior knowledge of. 
 In other words, we aim to identify even anomalous scenarios that are spotted for the first time in the production environment and do not appear in our dataset.
 
-
-\subsection{Database Outage}
+\subsection{Redis Outage}
 The first anomaly that we describe is not something that we would expect happen too often in the production system. 
 However, it is an easy use case to observe through collected logs. 
-In this anomaly, a database that is orchestrating the call logic is taken down and radios that are in a call at that moment bonk as they're unable to communicate with each other. 
-In response to that, the database recovers itself in no more than 2 seconds mostly. After that broadcast should continue.
+In this anomaly, a cache that is orchestrating the call logic is taken down and radios that are in a call at that moment bonk as they're unable to communicate with each other.
+In response to that, the storage service recovers itself in no more than 2 seconds mostly. After that broadcast should continue.
 
 \todo{Figure with plots comparing anomaly and normal behavior}
 
+\subsection{Message Broker Out of Service}
+As 
+
 \subsection{Weakening Connection}
+\todo{this may be not relevat}
 A user with radio moves and his connection to the internet is getting worse - he is getting away from his source of internet connection. This should eventually lead to an increased loss of data packets delivered to the user. For him, this ultimately results in receiving distorted audio from other members of the broadcast.
 
 \todo{Figure with plots comparing anomaly and normal behavior}
 
 \todo{Out of date credentials scenario}
+
+\section{Exploration}
+\todo{some graphs maybe?}
+% https://pure.tue.nl/ws/portalfiles/portal/142685995/sci_2019_Lomagin_Egor.pdf

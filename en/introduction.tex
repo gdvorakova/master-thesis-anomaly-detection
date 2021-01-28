@@ -1,3 +1,4 @@
+
 \chapter{Introduction}
 \label{introduction}
 
@@ -24,41 +25,46 @@ From there a responsible person can pick up the issue with narrowed scope and in
 
 In the thesis, we aim to define steps that are necessary to proceed in order to deliver such solution. We also show what possible strategies and tools can be deployed in each of the steps and reason which possibilities are the optimal for this use case.
 
-\section{Domain Description}
 
-\subsection{Two-Way Radio}
-Two-way radio (also push-to-talk, informally walkie-talkie\footnote{https://www.motorolasolutions.com/en\_xu/solutions/what-is-two-way-radio.html}, is an electronic device that enables a group of people to communicate.
-
-A two-way radio works by converting audio signal to radio waves that are transmitted through the air to receivers. On the receiving end, the waves are converted back to audio signal allowing the recipients to hear the original message.
-There is two alternatives of what signal is being transmitted through the air - it can be either analogue or digital.
-The advantage of radios that support digital signal is that they can transfer various types of data over the channel, not only the audio.
-
-Two-way radios are using frequencies between 30MHz and 1000MHz. The interval between 30MHz and 300MHz is referred to as Very High Frequency and the remaining upper part is called Ultra High Frequency.
-
-
-
-\subsection{Motorola SmartConnect}
-
-SmartConnect is a product by company Motorola Solutions. 
-The state of the art Motorola two-way radios\todo{\url{https://www.motorolasolutions.com/en_xa/products/p25-products/apx-story.html}} support automatic switching to the strongest signal.
-
-The classical of interconnecting a set of walkie-talkies is through narrowband land mobile radio (LMR) sites. 
-However, due to specifics of the network, there is many use-cases where a push-to-talk device is out of range of LMR. A radio with SmartConnect support is able to automatically switch to LTE, Wi-Fi or satellite ensuring continuity of push-to-talk voice communications. It then switches back to LMR when the signal returns with no user intervention required.\footnote{\url{https://www.daywireless.com/downloads/motorola/motorola-apx-next-smartconnect-fact-sheet.pdf}}
-\todo{\url{https://www.businesswire.com/news/home/20191024005280/en/Motorola-Solutions\%E2\%80\%99-Next-Generation-APX-NEXT-Smart-Radio-Brings-New-Intelligence-and-Technology-to-Public-Safety}}
-
-Therefore, SmartConnect helps team to stay connected no matter where they are located by leveraging multiple channels of communication. 
-
-
-
-\section{Goals}
+\section{Research Questions}
 % In this paper, we explore anomalies in log data and existing anomaly detection techniques [3].
 % He: To bridge this gap, in this paper, we provide a detailed review and evaluation of log-based anomaly detection, as well as release an open-source toolkit1 for anomaly detection. Our goal is not to improve any specific method, but to portray an overall picture of current research on log analysis for anomaly detection. We believe that our work can benefit researchers and practitioners in two aspects: The review can help them grasp a quick understanding of current anomaly detection methods; while the open-source toolkit allows them to easily reuse existing methods and make further customization or improvement. This helps avoid time-consuming yet redundant efforts for re-implementation.
-With our master thesis, we are trying to answer the following questions: 
-\begin{itemize}
-    \item Which anomaly detection techniques exist?
-    \item Can machine learning techniques be applied for anomaly detection in our log dataset?
-    \item 
-\end{itemize}
+
+% check log_anomaly-new paper as inspiration
+With our master thesis, we are trying to answer the following research questions: 
+
+Firstly, we conducted review of literature on research that has been previously done in the field of anomaly detection on log data. There has been good amount of work done before us, therefore we are able to evaluate which methods are used on problems that are similar to ours and what is their advantages and disadvantages. Based on that we pick some methods that seem to be well suited and we argue why we it makes sense to apply them on our data.\\
+
+% Maybe something more general, like can anomaly detection be applied on Motorola SmartConnect log data? Applying on real-world data. Are their logs informative enough for anomaly detection? 
+
+% Then order the questions in the same way as our anomaly detection workflow. First Log abbstraction and feature extraction -> RQ3 first. 
+
+% Then the anomaly detection method themselves.
+    
+    \textit{RQ1: Which anomaly detection techniques are applicable on time series data produced by Motorola SmartConnect system in unsupervised manner?}\\
+    
+After that, we proceed with selected techniques and conduct series of experiments.\\
+
+    \textit{RQ2: How are the techniques performing on the given log dataset and why they do or do not they yield satisfying results? If not, what could be improved about the log that would increase the performance of anomaly detection?}\\ 
+    
+    \textit{RQ3: Does a weighted event vector representation of raw logged messages logged by Motorola Solution's SmartConnect production system provide sufficient information for anomaly detection?}
+    
 \section{Glossary}
 
+\glsaddall
+\printglossaries
+
+
 \section{Outline}
+
+\section{Related Work}
+Log-based anomaly detection has been widely studied. Anomaly detection research usually follows similar steps. At first, log parser is used to extract log templates from unstructured log data. Then the logs are transformed into a numerical feature vector using the log templates. Lastly, anomaly detection techniques are applied. A crucial assumption is that event types are extracted correctly. Various approaches to each of these steps were presented in previous work on this topic. 
+
+Xu et al. \cite{xu2009} was one of the first ones to apply Principal Component Analysis (PCA) to achieve anomaly detection in log data. They generated event templates based on the source code and used event count matrix as an input to PCA. To form an input, Xu uses the concept of windowing by sessions, where all the logs sharing the same session ID are grouped together. Event count matrix is constructed such that each vector in a row represents events in one session ID and each column vector is an event type. The dataset used for their experiments were collected from the Hadoop Distributed File System (HDFS).
+Similar approach was employed by He, \cite{he2016}, who also used event count matrix. In order to extract features, they groups log data into three groups: fixed windows, sliding windows, and session windows. 
+
+Invariant Mining (IM) method was proposed by Lou et al. \cite{lou2010} while also using log event count matrix as an input. IM mines the invariants among log events from log event count vectors. Event count vectors that do not satisfy mined invariants are considered anomalies. 
+
+Recently, as deep learning outperforms the traditional machine learning as the scale of data increases \cite{Sydney2019DeepLF}, neural networks have been also applied to the problem of anomaly detection in system logs. 
+
+Du et al. \cite{duLSTM2017} used deep neural network (DNN) model composed of Long Short-Term Memory (LSTM) units to model logs as natural language sequence. The model is trained using non-anomalous log data. This way, LSTM can automatically learn normal behaviour, forecast the next event type and identify anomalies if it differs from the actual event type. Similarly, Zhang et al. \cite{zhang2016} and DeepLog \cite{deeplog2017} also use LSTM deep learning approach. The former borrowed an idea from term frequency-inverse document frequency (TF-IDF) by taking all the logs in each time window as a document and use TF-IDF weight as a feature representation. The latter work differs from other DNN approaches, as it retains timestamp when encoding log message and performs anomaly detection for each log entry, rather than for each session.

@@ -1,0 +1,54 @@
+\begin{tikzpicture} [
+    edge/.style={-latex,shorten >=1pt, thin, color=customGrey},
+    line/.style={-,shorten >=1pt, thin, color=customGrey},
+    fileTarget/.style={rectangle, draw=customBlue, align=left, minimum width=55mm, minimum height=7mm},
+    phonyTarget/.style={rectangle, draw=customRed, align=left, minimum width=20mm, minimum height=7mm}
+]
+
+\node[fileTarget, align=center] (root) at (0, 0) {\tiny data/raw/\$(DATASET)-raw.json};
+
+\node[fileTarget, align=center] (preprocessed_tf) at (-3, -1.5) {\tiny data/preprocessed/tf/\%-preprocessed.pickle};
+
+\node[fileTarget, align=center] (preprocessed_tfidf) at (3, -1.5) {\tiny data/preprocessed/tfidf/\%-preprocessed.pickle};
+
+\draw[edge] (root) -- (preprocessed_tf);
+\draw[edge] (root) -- (preprocessed_tfidf);
+
+\node[fileTarget, align=center] (features_tf) at (-3, -3) {\tiny data/features/tf/\%.npy};
+
+\node[fileTarget, align=center] (features_tfidf) at (3, -3) {\tiny data/features/tfidf/\%.npy};
+
+\draw[edge] (preprocessed_tf) -- (features_tf);
+\draw[edge] (preprocessed_tfidf) -- (features_tfidf);
+
+\node[phonyTarget, align=center] (data) at (0, -4.5) {\tiny data};
+
+\draw[edge] (features_tf) -- (data);
+\draw[edge] (features_tfidf) -- (data);
+
+\node[fileTarget, align=center] (model_tf) at (-3, -6) {\tiny models/tf/\%.model};
+
+\node[fileTarget, align=center] (model_tfidf) at (3, -6) {\tiny models/tfidf/\%.model};
+
+\draw[edge] (features_tf) -- (model_tf);
+\draw[edge] (features_tfidf) -- (model_tfidf);
+
+\node[phonyTarget, align=center] (train) at (0, -7.5) {\tiny train};
+
+\draw[edge] (model_tf) -- (train);
+\draw[edge] (model_tfidf) -- (train);
+
+\node[fileTarget, align=center] (results) at (0, -9) {\tiny results/\%.csv};
+
+\draw[edge] (model_tf) -- (results);
+\draw[edge] (model_tfidf) -- (results);
+
+\node[phonyTarget, align=center] (evaluate) at (0, -10.5) {\tiny evaluate};
+
+\draw[edge] (results) -- (evaluate);
+
+\node[phonyTarget, align=center] (all) at (0, -12) {\tiny all};
+
+\draw[edge] (evaluate) -- (all);
+
+\end{tikzpicture}

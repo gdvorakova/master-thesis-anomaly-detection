@@ -13,6 +13,7 @@
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{glossaries}
 \usepackage{hyperref}
 \def\UrlBreaks{\do\/\do-}
 \newcommand\TODO[1]{\textcolor{red}{#1}}
@@ -29,6 +30,19 @@
 \usepackage{tabularx}
 \usepackage{diagbox}
 \usetikzlibrary{shapes.geometric, arrows, fit}
+\usepackage{dirtree}
+\usepackage{minted}
+\usepackage{listings}
+
+\usepackage[htt]{hyphenat}
+
+\newcommand*\justify{%
+  \fontdimen2\font=0.4em% interword space
+  \fontdimen3\font=0.2em% interword stretch
+  \fontdimen4\font=0.1em% interword shrink
+  \fontdimen7\font=0.1em% extra space
+  \hyphenchar\font=`\-% allowing hyphenation
+}
 
 % Colors
 \definecolor{customGreen}{HTML}{6a9981} %{97C4AD} 
@@ -155,3 +169,9 @@
 %%% Various table goodies
 \newcommand{\pulrad}[1]{\raisebox{1.5ex}[0pt]{#1}}
 \newcommand{\mc}[1]{\multicolumn{1}{c}{#1}}
+
+%%% Glossary
+\makeglossaries
+\newacronym{msi}{MSI}{Motorola Solution}
+\newacronym{sc}{SC}{SmartConnect}
+\newacronym{msa}{MSA}{Microservices Architecture}
