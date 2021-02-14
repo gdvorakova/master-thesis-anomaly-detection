@@ -1,5 +1,55 @@
 \chapter*{Conclusion}
-\section*{Future Work}
 
+\section*{Future Work}
+\subsection*{Anomaly Detection Pipeline}
+\label{future:pipeline}
+For now, our solution serves only to its experimental purpose. 
+As discussed earlier in Section~\ref{dataset}, our anomaly detection tool yet observes only the experimental environment designated for developers to try new features. 
+
+This is just a proof of concept use of our solution, for taking full advantage of an automated anomaly detection product it needs be deployed in the production environment. However, in a big company as Motorola Solution is, this takes more than just a few months that we had at our disposal for this thesis.
+
+Let us illustrate what processes are required to improve our solution so that it can be useful in production.
+
+In the first place, a proper pipeline for continuous training of the model(s) has to be developed. We came up with the basis, however, what is left to do is to automate the process of checking whether nightly tests have passed correctly and if yes, the log samples from that night are downloaded, labeled and added to the training data set. The model needs to be retrained and updated in production. In this stage, also questions regarding how much training is too much must be targeted.
+
+At the same time, we have not covered in our research what would be the specific ways of raising an alarm upon every finding of an anomaly. Then, a mechanism for handling the detected problem must be triggered, whether it means a program trying to heal the problem or notifying a person in charge of observing state of the system.
+
+
+\subsection*{Code Coverage}
+\label{code_coverage}
+We decided to apply one-class learning (classification) methods for detecting anomalies after gaining familiarity with Motorola SmartConnect system. 
+Knowing the domain proved to be crucial since it enabled us to exploit the fact that we could gather data from nightly tests. 
+Afterwards, we selected machine learning algorithms that we fed only negative data to.
+
+We based our solution on some assumptions about the logs we collect from passing tests:
+\begin{enumerate}
+
+    \item If a test is passing, it contains no anomalies whatsoever.
+    %\item The code under the test is actually related to the one that is being monitored.
+    \item The tests are “sufficiently” covering the code and examine to large extent the data paths that can be executed within the system. 
+
+\end{enumerate}
+
+The first assumption basically says that even if the tests are mimicking scenarios where a fault is simulated and the system is able to recover from that fault, we do not want to consider it an anomaly. 
+No alarm will be raised on that occasion because the system does not need any human intervention an is prepared to cope with the problem.
+
+%Secondly, % if they drift apart
+
+Finally, the last point brings us to an interesting feature of our solution that opens a whole new way of looking at our product.
+By the nature of the embedding we selected and the examined machine learning methods, the models will report false positives in case that a scenario that is anomaly free and was not sufficiently present in the training data set (or better, could not be inferred from the data set) appears in the system that is being monitored by our anomaly detection tool.\todo{super long sentence}\\
+However, in our specific we can reformulate the statement into the claim, that if the model frequently reports anomalies which in reality are not (false positives), it can be converted into  a valuable piece of information about the tests themselves. 
+Specifically, it means that the tests are not examining some features of the system and are prone to drag errors into the product. 
+This observation, together with our anomaly detection solution, can be used as a foundation of a tool that could be plugged in a system monitoring process.
+\section{Conclusion}
 
 \addcontentsline{toc}{chapter}{Conclusion}
+Based on the conducted results of the experiments on the proposed feature extraction methods that we have proposed in our thesis on Motorola Solutions, we can answer the research questions outlined in Chapter \ref{introduction}. In this section we will provide a short answer to each of the research questions.
+
+\textbf{RQ1}: \textit{Can anomaly detection be applied on the log data that are at the moment produced by Motorola SmartConnect
+system?}
+
+\textbf{RQ2}: \textit{Does a weighted event vector representation of raw log messages logged by Motorola Solution’s SmartConnect production system provide sufficient information for spotting anomalous outliers in the data?}
+
+\textbf{RQ3}: \textit{Does a weighted event vector representation of raw log messages logged by Motorola Solution’s SmartConnect production system provide sufficient information for spotting anomalous outliers in the data?}
+
+\textbf{RQ4}: \textit{Which anomaly detection techniques and approaches are applicable on time series data produced by Motorola SmartConnect system?}

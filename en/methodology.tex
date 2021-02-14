@@ -1,6 +1,9 @@
 \chapter{Methodology}
 \label{methodology}
 
+In this chapter we will provide an outline of the proposed approach. We will discuss an illustrative example with the goal of explaining the idea behind getting log messages into more organized structures. Each step of our approach will be explained in detail in the rest of this chapter.
+
+
 \section{Overview of the Proposed Approach}
 The goal of our approach is to fulfil the objective of the thesis as described in Chapter \ref{introduction}. Specifically, \todo{continue...}
 
@@ -23,20 +26,6 @@ Figure \ref{fig:worklowOverview} shows the high-level pipeline of the four main 
 \end{enumerate}
 
 Throughout this chapter, we will provide a detailed description of these steps.
-
-\subsection{Software}
-To develop data preprocessing scripts and to conduct our experiments, Python 3.6.9 was used as a primary programming language. In addition, we used the following Python libraries: 
-
-\begin{itemize}
-    \item pandas 1.1.3
-    \item numpy 1.19.2
-    \item torch 1.7.1
-    \item plotly 4.12.0
-    \item matplotlib 3.3.2
-    \item jupyterlab 2.2.8
-\end{itemize}
-
-Exploratory analysis and data plotting along with the preparations of scripts for the ML pipeline are performed using Jupyter Notebook with a Jupyter Lab interface for browsing files. Jupyter Notebook is a web-based interactive computational environment for writing python code, that operates in a web-based environment. The biggest advantage in using Jupyter Notebook instead of writing Python scripts directly is the ability to execute inline code and see the result directly beneath it. It also allows to add formatted texts that improves the readability and reasoning behind the analysis steps.
 
 
 \subsection{Toy Example}
@@ -186,16 +175,17 @@ On the other hand, the third option is a more difficult one to automate, however
 
 In Motorola, developers review logs stored in their \texttt{Elasticsearch} engine through \texttt{Kibana} web user interface. The UI makes it easy to visualize and filter log data but on the down side its export options are not well suited for structured way of downloading the data. Regardless of these constraints, there must be a size limit set on the size of the exports. The limit is advised not to be much larger than the default 10MB as it may potentially affect negatively Kibana and Elasticsearch in terms of performance \footnote{\url{https://www.elastic.co/guide/en/kibana/current/reporting-settings-kb.html}}
 
-Another option, using \textt{ELK} stack would be to make use of \texttt{Elasticsearch}'s REST APIs \footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html}}. However, for security reasons, some companies may opt out from exposing this API to the internet - Motorola being among them.
+Another option, using \texttt{ELK} stack would be to make use of \texttt{Elasticsearch}'s REST APIs \footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html}}. However, for security reasons, some companies may opt out from exposing this API to the internet - Motorola being among them.
 The only way to access the application's programming interface is thus to make the calls from inside of the cluster.
 
 We deployed a service called \texttt{elk-query-service} inside of the cluster that handles search requests on the \texttt{Elasticsearch}. Our service exposes a minimalistic functionality that can be accessed within the company.
-\texttt{elk-query-service} can be called with two date arguments specifying the time window. Logs between the start and end date are downloaded to the \texttt{elk-query-service} pod and can be transferred to the node where they can be further used in our machine learning anomaly detection pipeline\todo{link to where the pipeline is described}. The high level architecture of our solution for data collection is schematically presented in Figure~\ref{fig:data_collection_elastic}.
+\texttt{\justify elk-query-service} can be called with two date arguments specifying the time window. Logs between the start and end date are downloaded to the \texttt{elk-query-service} pod and can be transferred to the node where they can be further used in a machine learning anomaly detection pipeline as proposed for future work in Section~\ref{future:pipeline}. The high level architecture of our solution for data collection is schematically presented in Figure~\ref{fig:data_collection_elastic}.
 
-\begin{figure}[!tbp]
-    \includegraphics[width=\textwidth]{img/data-collection.png}		    
-    \caption{The implemented solution for collecting log data. Node with privileges to access to the Kubernetes cluster calls an orchestrating script with two arguments - start and end date. \texttt{elk-query-service} downloads the desired logs that meet the date requirements. The script saves the response on the machine learning mode that can proceed to next step - training and evaluation of ML models.}
+\begin{figure}[!tbp] \centering {
+   \input{en/figures/methodology/dataGathering.tikz}
+   \caption{The implemented solution for collecting log data. Node with privileges to access to the Kubernetes cluster calls an orchestrating script with two arguments - start and end date. \texttt{elk-query-service} downloads the desired logs that meet the date requirements. The script saves the response on the machine learning mode that can proceed to next step - training and evaluation of ML models.}
 	\label{fig:data_collection_elastic}
+	}
 \end{figure}
 
 \newpage
@@ -271,9 +261,7 @@ Logs are grouped together into smaller blocks called \textit{windows}, where eac
 
 Log data are also non-evenly spaced time series data, as there is naturally generated a time of occurrence of each log. As a result, another intuitive and frequently used approach is to generate a set of subsequences of time series. For example, let's say we have log lines ordered by the timestamp and the length of time window is $q$. Then the log line number $1$ to log line number $q$ will be included in the same time window $1$ and encoded as the first row of the resulting feature matrix. The goal of the next anomaly detection step is to tell for each subsequence if it contains an anomaly or not. In our thesis, we use windowing based on timestamp, which is also described in the next part of the text. \todo{update if we decide to use an identifier}   
 
-Set of time series subsequences can be generated using \textbf{sliding windows}.
-
-Let us consider a time series $\mathbf{x} = x_1, x_2, ..., x_n$ of length $n$. We want to extract subsequences $\mathbf{x_i}$ of length $m$. In other words, we want to apply sliding windows of length $m$ and move over the time series until we reach the end of the data set. We shift the window $r$ time steps to the right in each movement. As a result, we get $p$ windows, where $p$ is defined as 
+Set of time series subsequences can be generated using \textbf{sliding windows}. Let us consider a time series $\mathbf{x} = x_1, x_2, ..., x_n$ of length $n$. We want to extract subsequences $\mathbf{x_i}$ of length $m$. In other words, we want to apply sliding windows of length $m$ and move over the time series until we reach the end of the data set. We shift the window $r$ time steps to the right in each movement. As a result, we get $p$ windows, where $p$ is defined as 
     \begin{gather*}
         p = \dfrac{n - m}{r} + 1
     \end{gather*}
@@ -312,9 +300,12 @@ In our thesis, instead of setting the number of log lines in each window, we con
 	}
 \end{figure}
 
-\subsection{Feature Matrix Description}
+\subsubsection{Optimal Time Window}
+\todo{write}
+
+\subsection{Feature embedding}
 \label{subsection:features}
-After applying the sliding window to generate the log sequences, the final step of feature extraction is to construct the feature matrix. In our thesis, we experiment with two types of feature matrices, where both representations describe a group of logs in log sequences: \textit{event count matrix} and \textit{TF-IDF weighted matrix}. Figure \ref{fig:feature-extraction} illustrates an example of a generation process of one single log sequence into a feature matrix. We assume that the logs in sequences are highly correlated.
+After applying the sliding window to generate the log sequences, the final step of feature extraction is to construct the feature matrix that can be fed as an input to ML algorithms. In our thesis, we experiment with two types of embeddings, where both representations describe a group of logs in log sequences: \textit{event count matrix} and \textit{TF-IDF weighted matrix}. Figure \ref{fig:feature-extraction} illustrates an example of a generation process of one single log sequence into a feature matrix. We assume that the logs in sequences are highly correlated.
 
 \begin{figure}[!h] \centering {
    \input{en/figures/methodology/featureExtraction.tikz}
@@ -521,7 +512,7 @@ Clustering        & 1.000              & 0.720           & 0.837       \\ \botto
 \end{table}
 
 \subsection{Experiment Workflow}
-Running machine learning experiments is usually an iterative process, where each iteration requires different configuration parameters, input training and testing datasets and a lot of file handling. The same holds for our anomaly detection experiments. We obtained several raw datasets from the SmartConnect's system. We picked four anomaly detection methods \todo{check if 4 is an up-to-date information}, where each method might require a different dataset as well as its own parameter configuration. Every raw dataset needs to parsed from its initial JSON into a unified structure, it needs to be cleaned and faulty log entries need to be removed. Then a log parser program is applied to obtain an event type identifier for each log message. Finally, we use two different feature matrix representations as an input for anomaly detection methods. After obtaining trained models for every dataset follows the evaluation. Having so many dependent processes to perform for each experiment iteration where things can get messy very easily, makes it desirable to have an automated workflow system. Despite our thesis not being a software engineering thesis, thus the focus was not on having a perfectly extensible workflow, we attempted to come up with a solution that saves time required to run experiments.
+Running machine learning experiments is usually an iterative process, where each iteration requires different configuration parameters, input training and testing datasets and a lot of file handling. The same holds for our anomaly detection experiments. We obtained several raw datasets from the SmartConnect's system. We picked four anomaly detection methods\todo{check if 4 is an up-to-date information}, where each method might require a different dataset as well as its own parameter configuration. Every raw dataset needs to parsed from its initial JSON into a unified structure, it needs to be cleaned and faulty log entries need to be removed. Then a log parser program is applied to obtain an event type identifier for each log message. Finally, we use two different feature matrix representations as an input for anomaly detection methods. After obtaining trained models for every dataset follows the evaluation. Having so many dependent processes to perform for each experiment iteration where things can get messy very easily, makes it desirable to have an automated workflow system. Despite our thesis not being a software engineering thesis, thus the focus was not on having a perfectly extensible workflow, we attempted to come up with a solution that saves time required to run experiments.
 
 We created a Makefile-based pipeline comprising a set of Python scripts to facilitate experiments. The goal was to have a reproducible, modular and scalable solution to deal with the complexity of conducting experiments. In this section, we will briefly describe the architecture of this pipeline and the implementation of the experiment scripts.
  

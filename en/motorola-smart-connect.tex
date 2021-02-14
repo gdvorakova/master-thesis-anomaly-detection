@@ -1,12 +1,12 @@
 \chapter{Motorola SmartConnect}
-In this chapter, we introduce the reader with 
+In this chapter, we introduce the reader with \todo{cont.}
 
 \section{Domain Description}
 
 \textit{Two-way radio} (also push-to-talk, informally walkie-talkie\footnote{https://www.motorolasolutions.com/en\_xu/solutions/what-is-two-way-radio.html}, is an electronic device that enables a group of people to communicate.
 
 A two-way radio works by converting audio signal to radio waves that are transmitted through the air to receivers. On the receiving end, the waves are converted back to audio signal allowing the recipients to hear the original message.
-There is two alternatives of what signal is being transmitted through the air - it can be either analogue or digital.
+There are two alternatives of what kind of signal is being transmitted through the air - it can be either analogue or digital.
 The advantage of radios that support digital signal is that they can transfer various types of data over the channel, not only the audio.
 
 Two-way radios are using frequencies between 30MHz and 1000MHz. The interval between 30MHz and 300MHz is referred to as Very High Frequency and the remaining upper part is called Ultra High Frequency.
@@ -15,30 +15,55 @@ Two-way radios are using frequencies between 30MHz and 1000MHz. The interval bet
 
 \subsection{Motorola SmartConnect}
 
-SmartConnect is a product by company Motorola Solutions. 
-The state of the art Motorola two-way radios\todo{\url{https://www.motorolasolutions.com/en_xa/products/p25-products/apx-story.html}} support automatic switching to the strongest signal.
+SmartConnect is a software product by company Motorola Solutions. 
+The state of the art Motorola two-way radios\footnote{\url{https://www.motorolasolutions.com/en_xa/products/p25-products/apx-story.html}} support automatic switching in favor of the source strongest signal.
 
-The classical of interconnecting a set of walkie-talkies is through narrowband land mobile radio (LMR) sites. 
-However, due to specifics of the network, there is many use-cases where a push-to-talk device is out of range of LMR. A radio with SmartConnect support is able to automatically switch to LTE, Wi-Fi or satellite ensuring continuity of push-to-talk voice communications. It then switches back to LMR when the signal returns with no user intervention required.\footnote{\url{https://www.daywireless.com/downloads/motorola/motorola-apx-next-smartconnect-fact-sheet.pdf}}
-\todo{\url{https://www.businesswire.com/news/home/20191024005280/en/Motorola-Solutions\%E2\%80\%99-Next-Generation-APX-NEXT-Smart-Radio-Brings-New-Intelligence-and-Technology-to-Public-Safety}}
+\todo{Following from the slides, cite properly}
 
-Therefore, SmartConnect helps team to stay connected no matter where they are located by leveraging multiple channels of communication. 
+%% TODO review this
+The classical way of interconnecting a set of walkie-talkies is through narrowband land mobile radio (LMR) sites.
+However, due to specifics of the network, there is many use-cases where a push-to-talk device is out of range of LMR. 
 
-\subsection{Architecture}
+% Use cases
+There is many different environments where customers of Motorola Solution's operate and it must be made sure that they get the best connectivity possible. Not everywhere LMR coverage is sufficient.  Indoor areas such as hospitals, offices or schools are usually equipped with high quality WiFi connection which can be exploited. If LTE is more accessible than LMR, cellular data can be also taken advantage of. And for the least accessible areas, radio may connect to a satellite modem to ensure the customer doesn't lose contact with colleagues. 
 
-Now we are going to explain some of the concepts that are crucial for SmartConnect as a software system. 
-Having familiarity with architecture of SmartConnect is important for our anomaly detection problem. It gives us better understanding of what are the weak link that are prone to error with the software. Also, this in this thesis we want to target anomalies based on logs. Knowing the architecture also helps with identifying what parts of the system produce logs that can be collected and extracted information from.
+Motorola products are compliant with Project 25 (P25 for short), which is an LMR standard well suited for fast, secure and interoperable connection. \footnote{}{\url{https://www.viavisolutions.com/en-us/project-25}}
 
-The software follows the \textit{Microservices Architecture}.
+A radio with SmartConnect support is able to automatically switch to LTE, Wi-Fi, satellite broadband or even wired internet connection ensuring continuity of push-to-talk voice communications in case strength of the LMR signal drops below specified RSSI (received signal strength indication) threshold. 
+The radio is able to switches back to LMR when the signal strengthens with no user intervention required.\footnote{\url{https://www.daywireless.com/downloads/motorola/motorola-apx-next-smartconnect-fact-sheet.pdf}}
+\footnote{\url{https://www.businesswire.com/news/home/20191024005280/en/Motorola-Solutions\%E2\%80\%99-Next-Generation-APX-NEXT-Smart-Radio-Brings-New-Intelligence-and-Technology-to-Public-Safety}}
+The structure of a Motorola PTT radio network is schematically explained in Figure~\ref{smart-connect:smart-connect-architecture}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{img/motorola-smart-connect-architecture.pdf}
+    \caption{Overview of Motorola two-way radio network.}
+    \label{smart-connect:smart-connect-architecture}
+\end{figure}
+\todo{cite the slides for the picture}
+
+When a radio utilizes the SmartConnect technology, voice packets are being transferred through the broadband bearer to a cloud-based gateway. This gateway in the cloud connects to the LMR master site. This allows the radios communicating over SmartConnect call back in the LMR system. \todo{cite the slides}
+
+Therefore, Motorola Solution's SmartConnect helps teams stay connected no matter where they are located by leveraging various means of voice packet transmission.
+
+\subsection{Architecture of the Software}
+
+Now let's have a look at the core concepts that forms the whole cloud based gateway functionality from the software architecture perspective. 
+
+Having familiarity with the architecture of SmartConnect is important for our anomaly detection problem. It gives us a better understanding of what are the weak links that are prone to error with the software. 
+In this thesis we want to target anomalies based on logs. Knowing the architecture also helps with identifying what parts of the system produce logs that can be collected and extracted information from.
+
+The software follows the \textit{Microservices Architecture} (MSA).
 Nadareishvili et al. \cite{nadareishvili2016microservice} define a \textit{microservice} as an independently deployable component of bounded scope that supports interoperability through message-based communication. 
 
-Fowler \cite{fowler2014microservices} understands the microservice architectural style (MSA) as a way of building a single application by connecting a set of small services. Each of the services runs in its own process and communicates with lightweight mechanisms.
+Fowler \cite{fowler2014microservices} understands the microservice architectural style as a way of building a single application by connecting a set of small services. Each of the services runs in its own process and communicates with lightweight mechanisms.
 
 Another attribute of such an architecture is that management of the service is decentralized, therefore it allows for the individual service to be written if various programming languages and use different technologies for storing their data.
 
 Collection of services that communicate together form a \textit{system} \cite{indrasiri2018microservices}.
 
 \subsection{Messaging}
+\label{architecture:messaging}
 As mentioned, services in an MSA application may be designed in a different way and two services may be using a dissimilar set of technologies. That makes communication within a system more complicated than calling a function just like one would do in a traditional, monolithic architecture.
 
 Two main strategies of passing messages within a system are \textit{synchronous} and \textit{asynchronous} communication. One of the most common types of synchronous communication is Representational state transfer (REST) \cite{indrasiri2018microservices}.
@@ -46,8 +71,19 @@ Two main strategies of passing messages within a system are \textit{synchronous}
 On the other hand, asynchronous communication promotes autonomy between services as the communicating client does not need to wait for the response. 
 For implementation of asynchronous protocols the concept of a \textit{broker} is introduced. A broker is a centralized entity with high-availability \cite{indrasiri2018microservices}.
 
-In SmartConnect, services are passing values asynchronously. In order to obtain some high level goal, services form chains from 1 or more microservices. Then each link of the chain gets input, processes it and if needed forwards the output through a broker to another microservice(s) that take(s) this data as input.
+In SmartConnect, services are passing values asynchronously. In order to obtain some high level goal, services form chain of $1$ or more microservices. Each link of the chain gets input, processes it and if needed forwards the output through a broker to another microservice(s) that take(s) this data as input.
+
+For dealing with asynchronous messages, \texttt{RabbitMQ} brokers are deployed. 
+\texttt{RabbitMQ} is an open-source publisher/subscriber message broker.\todo{reference \url{https://rabbitmq.com/documentation.html}}
+
+
 
 \subsection{Storing Data}
-In microservices architecture systems, microservices that are immutable and stateless are favoured \cite{indrasiri2018microservices}. Therefore, data that needs to be persisted has to be stored in memory that is external to memory of a microservice process.
-\todo{redis + db}.
+\label{architecture:caching}
+In microservices architecture systems, microservices that are immutable and stateless are favoured \cite{indrasiri2018microservices}. 
+Therefore, data that comprise the internal state of a microservice needs to be persisted in storage that is external to memory of a microservice application.
+
+Traditionally, a database is utilized for persisting data externally to the application. However, it is well known that there are major set back when it comes to performance of read/write operations that can be improved by deploying supporting caches \cite{elhardt1984database}.
+
+Performance of the system is fairly crucial as, among others, UDP (user datagram protocol) audio packets of push-to-talk radio calls are being transferred and processed in the system. 
+In order to satisfy strict requirements for jitter in the voice data, a NoSQL data storage Redis\footnote{https://redis.io/} service is running inside of the Kubernetes cluster to serve requests for the stored data rapidly.

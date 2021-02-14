@@ -1,0 +1,73 @@
+\begin{tikzpicture} [
+    edge/.style={-latex,shorten >=1pt, thin, color=customGrey},
+    line/.style={-,shorten >=1pt, thin, color=customGrey},
+    mainRectangle/.style={rectangle, draw=customBlue, align=left},
+]
+
+\node[inner sep=0pt] (mlHost) at (-2,0) {\includegraphics[width=.12\textwidth]{img/computer-icon.png}};
+\node[align=center,anchor=north] (lab) at (mlHost.south) {\footnotesize Machine Learning\\\footnotesize Host};
+    
+\node[mainRectangle, minimum width={20mm}, label={[label distance=2mm]below: \footnotesize MSI Kubernetes Cluster}] (kubernetesCluster) at (4, 0) {
+    \begin{tikzpicture}[node distance=1cm,outer sep=0pt, align=left]
+        \node[inner sep=0pt, label={[label distance=2mm]below:\footnotesize elk-query-service}] (pod1) at (-2,0)
+        {\includegraphics[width=.08\textwidth]{img/pod.png}};   
+        
+        \node[inner sep=0pt, label={[label distance=2mm]below:\footnotesize elastic-search}] (pod2) at (2,0)
+    {\includegraphics[width=.08\textwidth]{img/pod.png}};
+    
+        \node[draw=none] (a) at (-2.5, 0) {};
+        \node[draw=none] (b) at (2.5, 0) {};
+        \draw [edge] (a) -- node[anchor=south] {\tiny \textcolor{customDarkRed}{Search Query}} (b);
+        \node[draw=none] (c) at (-2.5, -0.3) {};
+        \node[draw=none] (d) at (2.5, -0.3) {};
+        \draw [edge] (d) -- node[anchor=south] [label=below:\tiny \textcolor{customDarkRed}{Response}]{} (c);
+        
+        \node[mainRectangle, minimum width={10mm}, label={[label distance=2mm]below: \footnotesize Observed System}] (system) at (0, -3.5) {
+            \begin{tikzpicture}[node distance=1cm,outer sep=0pt, align=left]
+                \node[inner sep=0pt] (pod3) at (2,0)
+                {\includegraphics[width=.06\textwidth]{img/pod.png}};
+                \node[inner sep=0pt] (pod4) at (2.8,0)
+                {\includegraphics[width=.06\textwidth]{img/pod.png}};
+                \node[inner sep=0pt] (pod5) at (3.6,0)
+                {\includegraphics[width=.06\textwidth]{img/pod.png}};
+                \node[draw=none] (dots) at (4.2, 0) {...};
+                \node[inner sep=0pt] (pod3) at (4.8,0)
+                {\includegraphics[width=.06\textwidth]{img/pod.png}};
+                \node[inner sep=0pt] (pod4) at (5.6,0)
+                {\includegraphics[width=.06\textwidth]{img/pod.png}};
+                \node[inner sep=0pt] (pod5) at (6.4,0)
+                {\includegraphics[width=.06\textwidth]{img/pod.png}};
+            \end{tikzpicture} 
+        };
+        
+        \node[draw=none] (es) at (2.2, -1.2) {};
+        \node[draw=none] (p1) at (-2.5, -3.3) {};
+        \draw [edge] (p1) -- node[anchor=south] {} (es);
+        
+        \node[draw=none] (p2) at (-1.7, -3.3) {};
+        \draw [edge] (p2) -- node[anchor=south] {} (es);
+        
+        \node[draw=none] (p3) at (-0.9, -3.3) {};
+        \draw [edge] (p3) -- node[anchor=south] {} (es);
+        
+        \node[draw=none] (p4) at (0.4, -3.3) {};
+        \draw [edge] (p4) -- node[anchor=south] {} (es);
+        
+        \node[draw=none] (p5) at (1.3, -3.3) {};
+        \draw [edge] (p5) -- node[anchor=south] {} (es);
+        
+        \node[draw=none] (p6) at (2.15, -3.3) {};
+        \draw [edge] (p6) -- node[anchor=south] {} (es);
+     
+    \end{tikzpicture} 
+};
+    
+    \node[draw=none] (eqs) at (1.6, 2) {};
+    \node[draw=none] (mlHostStart1) at (-1.3, 0.8) {};
+    \node[draw=none] (mlHostStart2) at (-1.3, 0.5) {};
+    \draw [edge] (mlHostStart1) -- node[anchor=south, rotate=22] {\tiny \textcolor{customDarkRed}{Start Date, End Date}} (eqs);
+    
+    \node[draw=none] (eqs2) at (1.6, 1.7) {};
+    \draw [edge] (eqs2) -- node[anchor=north, rotate=22] {\tiny \textcolor{customDarkRed}{Logs}} (mlHostStart2);
+
+\end{tikzpicture}

@@ -1,7 +1,121 @@
 \chapter{Experiments}
 
-\section{Experiment Set-Up}
+\section{Experiment Set Up}
 
+\subsection{Hyperparameter Tuning}
+\label{appendix:hyperparameterTuning}
+\subsubsection{Log Clustering}
+\begin{table}[h]
+\centering
+\resizebox{\textwidth}{!}{\begin{tabular}{@{}cccccc@{}}
+\toprule
+Max distance & Anomaly threshold & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{Accuracy} \\ \midrule
+0.3          & 0.3               & 100.00\%                  & 100.00\%               & 100.00\%           & 100.00\%                 \\
+0.3          & 0.5               & 100.00\%                  & 100.00\%               & 100.00\%           & 100.00\%                 \\
+0.5          & 0.3               & 100.00\%                  & 100.00\%               & 100.00\%           & 100.00\%                 \\
+0.5          & 0.5               & 100.00\%                  & 100.00\%               & 100.00\%           & 100.00\%                 \\ \bottomrule
+\end{tabular}}
+    \caption{Precision, Recall, F1-score and Accuracy of the test dataset on Log Clustering model with different hyperparameter values.}
+    \label{tab:pca_tuning}
+\end{table}
+
+\subsubsection{Invariant Mining}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}cccccc@{}}
+\toprule
+Percentage & Epsilon & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{Accuracy} \\ \midrule
+0.98       & 5       & 22.22\%               & 100.00\%               & 36.36\%      & 25.19\%            
+\end{tabular}
+    \caption{Precision, Recall, F1-score and Accuracy of the test dataset on Invariants Mining model and its hyperparameter values.}
+    \label{tab:pca_tuning}
+\end{table}
+
+\subsubsection{PCA}
+
+\begin{table}[h]
+\centering
+\resizebox{\textwidth}{!}{\begin{tabular}{@{}ccccccc@{}}
+\toprule
+Number of components & Threshold & Alpha  & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{Accuracy} \\ \midrule
+0.85                 & auto      & 0.0001 & 100.00\%           & 75.00\%         & 85.71\%     & 94.66\%           \\
+0.85                 & auto      & 0.001  & 100.00\%           & 85.71\%         & 92.30\%     & 96.95\%           \\
+0.85                 & auto      & 0.005  & 100.00\%           & 92.86\%         & 96.30\%     & 98.47\%           \\
+0.85                 & auto      & 0.01   & 100.00\%           & 92.86\%         & 96.30\%     & 98.47\%           \\
+0.90                 & auto      & 0.0001 & 100.00\%           & 75.00\%         & 85.71\%     & 94.66\%           \\
+0.90                 & auto      & 0.001  & 100.00\%           & 85.71\%         & 92.31\%     & 96.94\%           \\
+0.90                 & auto      & 0.005  & 100.00\%           & 92.86\%         & 96.30\%     & 98.47\%           \\
+0.90                 & auto      & 0.01   & 100.00\%           & 92.86\%         & 96.30\%     & 98.47\%           \\
+0.95                 & auto      & 0.0001 & 100.00\%           & 92.86\%         & 96.30\%     & 98.47\%           \\
+0.95                 & auto      & 0.001  & 100.00\%           & 96.43\%         & 98.18\%     & 99.23\%           \\
+\textcolor{customDarkRed}{\textbf{0.95}}                 & \textcolor{customDarkRed}{\textbf{auto}}      &  \textcolor{customDarkRed}{\textbf{0.005}} & \textcolor{customDarkRed}{\textbf{100.00\%}}           & \textcolor{customDarkRed}{\textbf{100.00\%}}        & \textcolor{customDarkRed}{\textbf{100.00\%}}    & \textcolor{customDarkRed}{\textbf{100.00\%}    }      \\
+\textcolor{customDarkRed}{\textbf{0.95}}                 & \textcolor{customDarkRed}{\textbf{auto}}      & \textcolor{customDarkRed}{\textbf{0.01}}   & \textcolor{customDarkRed}{\textbf{100.00\%}}          & \textcolor{customDarkRed}{\textbf{100.00\%}}        & \textcolor{customDarkRed}{\textbf{100.00\%}}    & \textcolor{customDarkRed}{\textbf{100.00\%}}          \\ \bottomrule
+\end{tabular}}
+    \caption{Precision, Recall, F1-score and Accuracy of the test dataset on PCA model with different hyperparameter values.}
+    \label{tab:pca_tuning}
+\end{table}
+
+\subsubsection{Isolation Forest}
+\begin{table}[h]
+\centering
+\resizebox{\textwidth}{!}{\begin{tabular}{cccccccc}
+\hline
+Number of estimators & Max samples & Contamination & Max features & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{Accuracy} \\ \hline
+50                   & 150         & 0             & 3693         & 100.00\%           & 10.71\%         & 19.35\%     & 80.92\%           \\
+50                   & 150         & 0.02          & 3693         & 66.67\%            & 7.14\%          & 12.90\%     & 79.34\%           \\
+50                   & 150         & 0.03          & 3693         & 50.00\%            & 14.29\%         & 22.22\%     & 78.63\%           \\
+50                   & 150         & 0.1           & 3693         & 71.42\%            & 3.57\%          & 4.76\%      & 69.47\%           \\
+50                   & 180         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+50                   & 180         & 0.02          & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 76.33\%           \\
+50                   & 180         & 0.03          & 3693         & 33.33\%            & 7.14\%          & 11.76\%     & 77.10\%           \\
+\textcolor{customDarkRed}{\textbf{50}}                   & \textcolor{customDarkRed}{\textbf{180} }        & \textcolor{customDarkRed}{\textbf{0.1}}           & \textcolor{customDarkRed}{\textbf{3693} }        & \textcolor{customDarkRed}{\textbf{80.00\%}}            & \textcolor{customDarkRed}{\textbf{57.14\%}}         & \textcolor{customDarkRed}{\textbf{66.67\%} }    & \textcolor{customDarkRed}{\textbf{87.79\%} }          \\
+50                   & 201         & 0             & 3693         & 78.63\%            & 0.00\%          & 0.00\%      & 0.00\%            \\
+50                   & 201         & 0.02          & 3693         & 66.67\%            & 14.23\%         & 23.53\%     & 80.15\%           \\
+50                   & 201         & 0.03          & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 75.57\%           \\
+50                   & 201         & 0.1           & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 67.94\%           \\
+100                  & 150         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+100                  & 150         & 0.02          & 3693         & 57.14\%            & 14.23\%         & 22.86\%     & 79.39\%           \\
+100                  & 150         & 0.03          & 3693         & 40.00\%            & 7.14\%          & 12.12\%     & 77.86\%           \\
+\textcolor{customDarkRed}{\textbf{100}}                  & \textcolor{customDarkRed}{\textbf{150}}         & \textcolor{customDarkRed}{\textbf{0.1}   }        & \textcolor{customDarkRed}{\textbf{3693}}         & \textcolor{customDarkRed}{\textbf{65.51\%}}            & \textcolor{customDarkRed}{\textbf{67.86\%}}         & \textcolor{customDarkRed}{\textbf{66.67\%}}    & \textcolor{customDarkRed}{\textbf{85.50\%}}           \\
+100                  & 180         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+100                  & 180         & 0.02          & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 77.86\%           \\
+100                  & 180         & 0.03          & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 76.34\%           \\
+100                  & 180         & 0.1           & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 71.76\%           \\
+100                  & 201         & 0             & 3693         & 100.00\%           & 3.57\%          & 6.90\%      & 79.39\%           \\
+100                  & 201         & 0.02          & 3693         & 90.00\%            & 32.14\%         & 47.37\%     & 84.73\%           \\
+100                  & 201         & 0.03          & 3693         & 50.00\%            & 7.14\%          & 12.50\%     & 78.63\%           \\
+100                  & 201         & 0.1           & 3693         & 66.67\%            & 50.00\%         & 57.14\%     & 83.97\%           \\
+150                  & 150         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+150                  & 150         & 0.02          & 3693         & 50.00\%            & 7.14\%          & 12.50\%     & 78.63\%           \\
+150                  & 150         & 0.03          & 3693         & 33.33\%            & 7.14\%          & 11.76\%     & 77.10\%           \\
+150                  & 150         & 0.1           & 3693         & 33.33\%            & 21.42\%         & 26.10\%     & 74.04\%           \\
+150                  & 180         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+150                  & 180         & 0.02          & 3693         & 66.67\%            & 7.14\%          & 12.90\%     & 79.38\%           \\
+150                  & 180         & 0.03          & 3693         & 50.00\%            & 14.29\%         & 22.22\%     & 78.63\%           \\
+150                  & 180         & 0.1           & 3693         & 43.75\%            & 25\%            & 31.82\%     & 77.10\%           \\
+150                  & 201         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+150                  & 201         & 0.02          & 3693         & 50.00\%            & 7.14\%          & 12.50\%     & 78.63\%           \\
+150                  & 201         & 0.03          & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 76.34\%           \\
+150                  & 201         & 0.1           & 3693         & 20.00\%            & 10.71\%         & 13.95\%     & 71.76\%           \\
+201                  & 150         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+201                  & 150         & 0.02          & 3693         & 77.78\%            & 25.00\%         & 37.84\%     & 82.44\%           \\
+201                  & 150         & 0.03          & 3693         & 71.43\%            & 17.43\%         & 28.57\%     & 80.92\%           \\
+201                  & 150         & 0.1           & 3693         & 35.30\%            & 21.43\%         & 26.67\%     & 74.81\%           \\
+201                  & 180         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+201                  & 180         & 0.02          & 3693         & 50.00\%            & 7.14\%          & 12.50\%     & 78.63\%           \\
+201                  & 180         & 0.03          & 3693         & 40.00\%            & 7.14\%          & 12.12\%     & 77.86\%           \\
+201                  & 180         & 0.1           & 3693         & 38.89\%            & 25.00\%         & 30.43\%     & 75.57\%           \\
+201                  & 201         & 0             & 3693         & 0.00\%             & 0.00\%          & 0.00\%      & 78.63\%           \\
+201                  & 201         & 0.02          & 3693         & 66.67\%            & 14.29\%         & 23.53\%     & 80.15\%           \\
+201                  & 201         & 0.03          & 3693         & 42.86\%            & 10.71\%         & 17.14\%     & 77.86\%           \\
+201                  & 201         & 0.1           & 3693         & 57.69\%            & 53.57\%         & 55.56\%     & 81.68\%          
+\end{tabular}}
+    \caption{Precision, Recall, F1-score and Accuracy of the test dataset on Isolation Forest model with different hyperparameter values.}
+    \label{tab:pca_tuning}
+\end{table}
+
+\newpage
 \subsection{Directory structure used with Makefile}
 \label{appendix:dir_structure}
  
@@ -42,12 +156,13 @@
 \subsection{Makefile for running experiments}
 \label{appendix:makefile}
 
+\lstset{language=[gnu] make}
 \begin{lstlisting}
 .PHONY: all clean data train evaluate
 
-#################################################################################
-# GLOBALS                                                                       #
-#################################################################################
+#################################################
+# GLOBALS                                       #
+#################################################
 
 RAW_DATA_DIR=data/raw/
 PREPROCESSED_DATA_DIR=data/preprocessed/
@@ -57,16 +172,16 @@ LABELS_DATA_DIR=data/labels/
 METRICS_DIR=results/metrics/
 PREDICTIONS_DIR=results/predictions/
 
-MODELS=isolation_forest log_clustering pca #invariant_mining 
+MODELS=isolation_forest log_clustering pca invariant_mining 
 
 TF_DIR=tf/
 TFIDF_DIR=tfidf/
 
 MODELS_DIR=models/
 
-#################################################################################
-# COMMANDS                                                                      #
-#################################################################################
+#################################################
+# COMMANDS                                      #
+#################################################
 
 clean:
 	rm -f data/preprocessed/$(DATASET)-preprocessed.pickle

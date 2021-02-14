@@ -13,7 +13,7 @@
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{glossaries}
+\usepackage{acronym}     
 \usepackage{hyperref}
 \def\UrlBreaks{\do\/\do-}
 \newcommand\TODO[1]{\textcolor{red}{#1}}
@@ -113,6 +113,14 @@
 \lstset{frame=tb}
 \lstset{numbers=left,xleftmargin=2em,framexleftmargin=0em,numberstyle=\footnotesize\ttfamily}
 \lstset{escapeinside={<@}{@>}}
+
+\lstset{language=[gnu] make}
+\lstset{
+   language=[gnu] make,
+   keywordstyle=\color{teal}\textbf,
+   stringstyle=\color{blue},
+   identifierstyle=\itshape
+}
  
 
 %%% Macros for definitions, theorems, claims, examples, ... (requires amsthm package)
@@ -170,8 +178,6 @@
 \newcommand{\pulrad}[1]{\raisebox{1.5ex}[0pt]{#1}}
 \newcommand{\mc}[1]{\multicolumn{1}{c}{#1}}
 
-%%% Glossary
-\makeglossaries
-\newacronym{msi}{MSI}{Motorola Solution}
-\newacronym{sc}{SC}{SmartConnect}
-\newacronym{msa}{MSA}{Microservices Architecture}
+%%% Variables
+
+\def\featureVectorLength{$3\,963$}
