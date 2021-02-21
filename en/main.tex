@@ -97,8 +97,27 @@ Dedication
 
 % Abstract (recommended length around 80-200 words; this is not a copy of your thesis assignment!)
 \def\Abstract{
+In software systems, logging is traditionally introduced to trace what was executed by the program. Usually, the logs are analyzed by humans after an obvious error arises or is reported by an end user. 
+However, as the software grows, it is becoming unfeasible to monitor and troubleshoot the application's behaviour by the naked eye. 
+Machine learning based anomaly detection can overcome these problems and eventually provide a tool for catching errors in an early stage while they are relatively harmless.
+In our thesis, we analyze time series log data produced by Motorola Solution's SmartConnect system. We want to prove that it is possible to detect anomalies in a log dataset produced by a real-world system consisting of two main actors - infrastructure and Push-To-Talk devices connected to the infrastructure. We propose an architecture of anomaly detection consisting of collecting data from the system, applying log parsing, feature extraction and feeding the extracted form to various machine learning models. We employ four anomaly detection techniques: Isolation Forest, PCA, Invariants Mining and Log Clustering.
+
+Since the domain is highly confidential, we had to find an efficient way of training machine learning models purely based on dataset produced in a testing phase, which may differ from the dataset that is produced in the production environment. 
+Our approach showed to be highly accurate in predicting unknown anomalies we studied.
+Finally, we observed that our models that monitor the system may be also used for getting an insight in code coverage of the system's tests.
+
 To compare the performance between different anomaly detection methods in our research, we adopt the standard evaluation scores: accuracy, F1-score, precision and recall.
 }
+
+\def\RQFirst{Can anomaly detection be applied on the log data that are at the moment produced by Motorola Solutions SmartConnect
+system?}
+
+\def\RQSecond{Does a weighted event vector representation of raw log messages logged by Motorola Solution’s SmartConnect production system provide sufficient information for spotting anomalous outliers in the data?}
+
+\def\RQThird{Which anomaly detection techniques and approaches are applicable on time series data produced by Motorola SmartConnect system?}
+
+\def\RQFourth{How are the techniques performing on the given log dataset and why they do or do not they yield satisfying results? If not, what could be improved about the log that would increase the performance of anomaly detection?}
+
 
 % Definitions of macros (see description inside)
 \include{macros}
@@ -135,6 +154,7 @@ To compare the performance between different anomaly detection methods in our re
 \begin{appendices}
 \include{en/appendix-dataset}
 \include{en/appendix-experiments}
+\include{en/appendix-results}
 \end{appendices}
 
 \end{document}

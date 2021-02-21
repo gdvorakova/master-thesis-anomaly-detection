@@ -7,7 +7,7 @@ Nowadays, internet and software systems are utilized even in an old-fashioned fi
 This is what Motorola SmartConnect system has been developed for. 
 Since this software system serves people in critical job positions such as policemen, policewomen or firefighters, it is crucial that SmartConnect's infrastructure is as robust as possible.
 
-To improve robustness of the solution, we try to propose a solution that is able to speed up and automatize the process of dealing with an error.
+To improve robustness of the solution, we try to propose a solution that is able to speed up and automate the process of dealing with an error.
 
 If something goes wrong, it is firstly needed to identify that a problem occurred. 
 Afterwards, it is desired to be able to answer when and where the problem took place in order to act upon it.
@@ -26,9 +26,9 @@ The solution should be of help for Motorola SmartConnect's developers, customer 
 
 Looking at the logs produced by the telecommunication system as time series data should allow us to experiment with machine learning techniques detecting scenarios that lead to erroneous runs of the system.
 
-After proving that it is actually possible to observe anomalies in such data, we aim to propose an automated tool that would be able to carry out this heavy cumbersome work on its own, monitor Motorola SmartConnect software system and raise an alarm when an anomaly is detected, or even better, predicted.
+After proving that it is actually possible to observe anomalies in such data, we aim to propose an automated tool that would be able to carry out this heavy cumbersome work on its own, monitor Motorola SmartConnect software system and raise an alarm to the presence of a critical finding.
 
-The output of our tool should serve would in the beginning serve as a rather specific piece of information that a responsible person can use and proceed with tackling the issue with significantly narrowed scope of the problem and investigate further on the alleged issue.
+The output of our tool would in the beginning serve as a rather specific piece of information that a responsible person can use and proceed with tackling the issue with significantly narrowed scope of the problem and investigate further on the alleged issue.
 
 In the thesis, we aim to define steps that are necessary to proceed in order to deliver such a solution. We also show what possible strategies and tools can be deployed in each of the steps and reason which possibilities are the optimal for our use case.
 
@@ -38,34 +38,42 @@ In the thesis, we aim to define steps that are necessary to proceed in order to 
 % Main goal
 In the thesis, we will look at anomalies in Motorola SmartConnect's logs and apply machine learning based anomaly detection techniques on the dataset.
 
-Firstly, we conducted review of literature on research that has been previously done in the field of anomaly detection on log data. There has been a good amount of work done before us, therefore we are able to evaluate which methods are used on problems that are similar to ours and what are their advantages and disadvantages. Based on that we pick some methods that seem to be well suited and we argue why we it makes sense to apply them on our data.
+Firstly, we conducted review of literature on research that has been previously done in the field of anomaly detection on log data. There has been a good amount of work done before us, therefore we are able to evaluate which methods are used on problems that are similar to ours and what are their advantages and disadvantages. Based on that we pick some methods that seem to be well suited and we argue why we is it reasonable to apply them on our data.
 
 % Then the anomaly detection method themselves
-Since the main goal of our thesis is to apply anomaly detection methods on a real-world data set, it may be noisy, which is often the case for big system's logs that were not designed to be input for machine learning based anomaly detection. 
+Since the main goal of our thesis is to apply anomaly detection methods on a real-world data set, it may be noisy, which is often the case for big system's logs that were not designed to be input for machine learning based anomaly detection in the first place. 
 Furthermore, we need to find out if the logs are generated in a way that is suitable and sufficient for anomaly detection. Thus, our first research question is:\\
 
-\textbf{RQ1}: \textit{Can anomaly detection be applied on the log data that are at the moment produced by Motorola SmartConnect system?}\\
+\textbf{RQ1}: \textit{\RQFirst}\\
     
-In order to answer the first question, we need to conduct a series of experiments. As the challenging part of the experiments is to design a proper embedding of logs after extracting log templates, our second research question is:\\ 
+In order to answer the first question, we need to find means of telling if MSI SmartConnect log data can be modeled in such way, that normal logs are being grouped together, whereas anomalous logs form their own clusters. To be able to prove that, we need to embed the log data into numerical vectors and answer the question via exploration of the dataset or via conducting experiments. As the challenging part of the experiments is to design a proper embedding of logs after extracting log templates, our second research question is:\\ 
 
-\textbf{RQ2}: \textit{Does a weighted event vector representation of raw log messages logged by Motorola Solution's SmartConnect production system provide sufficient information for spotting anomalous outliers in the data?}\\
+\textbf{RQ2}: \textit{\RQSecond}\\
 
 If it is the case and we are able to recognize the outliers in plots that are based on our embedding, it should be possible to find an algorithm, that can do this task automatically. Since we have big datasets at our disposal, we plan to exploit machine learning algorithms that should in theory be more scalable and flexible for this kind of problems in big software systems.
 Therefore, we seek an answer to this question:\\
 
 
-\textbf{RQ3}: \textit{Which anomaly detection techniques and approaches are applicable on time series data produced by Motorola SmartConnect system?}\\
+\textbf{RQ3}: \textit{\RQThird}\\
     
-After that, assuming we find some algorithms which do live up to our expectations and can be well used for this use case, we proceed with the selected and conduct series of experiments.
+After that, assuming we find some algorithms which do live up to our expectations and can be well used for this use case, we proceed with the selected and conduct a series of experiments.
 We will evaluate them and justify the results. In case of poor results we will elaborate on what could be improved about the machine learning approaches or what would be a better logging strategy that would enable us to obtain better results.
 Hence, the last question to be elaborated in the thesis is:\\
 
-\textbf{RQ4} \textit{How are the techniques performing on the given log dataset and why they do or do not they yield satisfying results? If not, what could be improved about the log that would increase the performance of anomaly detection?}\\ 
+\textbf{RQ4} \textit{\RQFourth}\\ 
     
 %To validate results and evaluate the machine learning techniques used, we have created a manually labeled dataset.
 
 \section{Outline}
-\todo{Complete once there's a firm structure}
+In Chapter~\ref{smart-connect}, we start by describing Motorola Solution's SmartConnect whose log data we will study in the thesis, we also introduce reader into the domain of SmartConnect and its software architecture.\\
+In the following chapter, Chapter~\ref{chapter:literatureReview}, we review the related work that has been conducted by researchers before us. Methods that are relevant for our thesis and will be used in our approach are analyzed in depth.\\
+Methodology (Chapter \ref{methodology}), explains precisely how we proceeded with out solution. It start with a simple example that provides motivation for an anomaly detection tool in SmartConnect. Afterwards, we outline the exacts steps we conducted and describe them comprehensively. More specifically, it consists of data collection, log oarsing, feature engineering, anomaly detection and finally mapping predictions back to log entries.\\
+Then in Chapter~\ref{dataset}, we describe the data that are using throughout our solution, from testing dataset to those that are used for validating. Some specific examples of anomalies that tend to occur in the logs are presented.\\
+Experiments chapter (Chapter~\ref{chapter:experiments}) discusses in detail what we can learn from the datasets by examining the data using data exploration techniques.
+It gives a strong intuition behind what we expect to obtain when applying machine learning before actually doing so. Metrics that we use for evaluation are explained along with elaboration of set up for experiments.\\
+Chapter~\ref{results} presents the results we managed to obtain by applying four different machine learning techniques on our anomaly detection problem. We explain what's the rationale why different machine learning methods give slightly more or less accurate results on our datasets.
+Finally, Chapter~\ref{conclusion} we reflect on our research and propose new questions that follow from our work and we think might by worth exploring in the future.
+
 
 \section{Related Work}
 Log-based anomaly detection has been widely studied. Anomaly detection research usually follows similar steps. At first, log parser is used to extract log templates from unstructured log data. Then the logs are transformed into a numerical feature vector using the log templates. Lastly, anomaly detection techniques are applied. A crucial assumption is that event types are extracted correctly. Various approaches to each of these steps were presented in previous work on this topic. 

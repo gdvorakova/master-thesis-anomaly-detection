@@ -1,5 +1,10 @@
 \chapter{Motorola SmartConnect}
-In this chapter, we introduce the reader with \todo{cont.}
+\label{smart-connect}
+In this chapter, we introduce the reader to the domain of the analyzed product.
+We aim to detect anomalies on logs produced by software system called SmartConnect by company Motorola Solutions.
+
+We will introduce the business perspective of the product which should help the reader gain insight into why the mission critical system would benefit from an anomaly detection tool.
+Also, we will have a high level introduction into the software architecture of the solution that is crucial to understanding what anomalies can happen, where logs are created and how to collect them.
 
 \section{Domain Description}
 
@@ -18,20 +23,18 @@ Two-way radios are using frequencies between 30MHz and 1000MHz. The interval bet
 SmartConnect is a software product by company Motorola Solutions. 
 The state of the art Motorola two-way radios\footnote{\url{https://www.motorolasolutions.com/en_xa/products/p25-products/apx-story.html}} support automatic switching in favor of the source strongest signal.
 
-\todo{Following from the slides, cite properly}
-
-%% TODO review this
+\todo{Following is obtained from the marketing slides, cite properly}
 The classical way of interconnecting a set of walkie-talkies is through narrowband land mobile radio (LMR) sites.
 However, due to specifics of the network, there is many use-cases where a push-to-talk device is out of range of LMR. 
 
 % Use cases
 There is many different environments where customers of Motorola Solution's operate and it must be made sure that they get the best connectivity possible. Not everywhere LMR coverage is sufficient.  Indoor areas such as hospitals, offices or schools are usually equipped with high quality WiFi connection which can be exploited. If LTE is more accessible than LMR, cellular data can be also taken advantage of. And for the least accessible areas, radio may connect to a satellite modem to ensure the customer doesn't lose contact with colleagues. 
 
-Motorola products are compliant with Project 25 (P25 for short), which is an LMR standard well suited for fast, secure and interoperable connection. \footnote{}{\url{https://www.viavisolutions.com/en-us/project-25}}
+Motorola products are compliant with Project 25 (P25 for short), which is an LMR standard well suited for fast, secure and interoperable connection. \footnote{\url{https://www.viavisolutions.com/en-us/project-25}}
 
 A radio with SmartConnect support is able to automatically switch to LTE, Wi-Fi, satellite broadband or even wired internet connection ensuring continuity of push-to-talk voice communications in case strength of the LMR signal drops below specified RSSI (received signal strength indication) threshold. 
-The radio is able to switches back to LMR when the signal strengthens with no user intervention required.\footnote{\url{https://www.daywireless.com/downloads/motorola/motorola-apx-next-smartconnect-fact-sheet.pdf}}
-\footnote{\url{https://www.businesswire.com/news/home/20191024005280/en/Motorola-Solutions\%E2\%80\%99-Next-Generation-APX-NEXT-Smart-Radio-Brings-New-Intelligence-and-Technology-to-Public-Safety}}
+The radio is able to switches back to LMR when the signal strengthens with no user intervention required\footnote{\url{https://www.daywireless.com/downloads/motorola/motorola-apx-next-smartconnect-fact-sheet.pdf}}
+\footnote{\url{https://www.businesswire.com/news/home/20191024005280/en/Motorola-Solutions\%E2\%80\%99-Next-Generation-APX-NEXT-Smart-Radio-Brings-New-Intelligence-and-Technology-to-Public-Safety}}.
 The structure of a Motorola PTT radio network is schematically explained in Figure~\ref{smart-connect:smart-connect-architecture}.
 
 \begin{figure}[h]
@@ -46,7 +49,8 @@ When a radio utilizes the SmartConnect technology, voice packets are being trans
 
 Therefore, Motorola Solution's SmartConnect helps teams stay connected no matter where they are located by leveraging various means of voice packet transmission.
 
-\subsection{Architecture of the Software}
+\section{Software Architecture of SmartConnect}
+\label{smart-connect:architecture}
 
 Now let's have a look at the core concepts that forms the whole cloud based gateway functionality from the software architecture perspective. 
 
@@ -62,6 +66,23 @@ Another attribute of such an architecture is that management of the service is d
 
 Collection of services that communicate together form a \textit{system} \cite{indrasiri2018microservices}.
 
+\subsection{Deployment}
+
+In the analyzed system, the individual services are deployed as Docker\footnote{\url{https://www.docker.com/}} containers in Kubernetes Pods\footnote{\url{https://kubernetes.io/docs/concepts/workloads/pods/}} which are self-standing inside of Kubernetes\footnote{\url{https://kubernetes.io/}} clusters.
+
+This approach allows the services to be decoupled as each one resides in its own isolated virtual container.
+
+As described in more detail in Chapter~\ref{data_collection} on Data Collection, by default the services log each at a different location. 
+However, in order to analyze the behaviour of the system holistically, an extra layer for processing logs has to be introduced. SmartConnect, like many others, for this use-case utilize the Elasticsearch engine that also runs as one of the services in the cluster.
+
+High level view of a Motorola SmartConnect Kubernetes cluster is presented later when discussing the way we deployed our tool for downloading logs from the Elasticsearch service in Figure~\ref{fig:data_collection_elastic}.
+
+
+\subsection{Elasticsearch}
+\label{smart-connect:elastic-search}
+Elasticsearch is an open-source, distributed search engine. Gormley and Tong \cite{gormley2015elasticsearch} argue that it can be used for exploring data at unprecedented speed. It is mostly recognized for its exceptional performance on text based data. Operations such as full-text search, structured search and analysis are supported efficiently.
+It can also be defined as a NoSQL database since Elasticsearch gathers JSON based \texttt{documents} of a specific \texttt{type} together and multiple \texttt{types} are organized into \texttt{indices}\footnote{\url{https://www.elastic.co/blog/what-is-an-elasticsearch-index}}. 
+
 \subsection{Messaging}
 \label{architecture:messaging}
 As mentioned, services in an MSA application may be designed in a different way and two services may be using a dissimilar set of technologies. That makes communication within a system more complicated than calling a function just like one would do in a traditional, monolithic architecture.
@@ -74,9 +95,7 @@ For implementation of asynchronous protocols the concept of a \textit{broker} is
 In SmartConnect, services are passing values asynchronously. In order to obtain some high level goal, services form chain of $1$ or more microservices. Each link of the chain gets input, processes it and if needed forwards the output through a broker to another microservice(s) that take(s) this data as input.
 
 For dealing with asynchronous messages, \texttt{RabbitMQ} brokers are deployed. 
-\texttt{RabbitMQ} is an open-source publisher/subscriber message broker.\todo{reference \url{https://rabbitmq.com/documentation.html}}
-
-
+\texttt{RabbitMQ} is an open-source publisher/subscriber message broker\footnote{https://rabbitmq.com/documentation.html}.
 
 \subsection{Storing Data}
 \label{architecture:caching}

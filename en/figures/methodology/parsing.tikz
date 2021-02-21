@@ -1,0 +1,43 @@
+
+\begin{tikzpicture}
+
+\tikzumlset{draw=customBlue, fill class=white, }
+
+edge/.style={color=black}
+
+\umlclass[x=-9, y=0, width=5ex, name=logCategorizer, text=customDarkRed]{LogCategorizer}{}{
+\textcolor{black}{\footnotesize+ try\_insert\_new\_template(template: str)}\\
+\footnotesize{+ get\_all\_templates(): [(int, str)]} \\
+\footnotesize{+ process\_log\_message(log\_message: str): LogCategory}\\
+\footnotesize{+ process\_log\_messages(log\_messages: [str]): [LogCategory]}\\
+\footnotesize{+ process\_file(file\_name: str): [LogCategory]}}
+
+\umlclass[x=-9, y=-4, width=5ex, name=logCategory, text=customDarkRed]{LogCategory}{
+\textcolor{black}{\footnotesize{+ category\_id: int}}\\
+\footnotesize{+ template: str}}{}
+
+\umlclass[x=0, y=0, name=logParser, text=customDarkRed, type=interface]{LogParser}{}{
+\textcolor{black}{\footnotesize{+ get\_all\_templates(): [str]}}\\
+\footnotesize{+ process\_log\_message(log\_message: str): str}}
+
+\umlclass[x=0, y=-4, name=drain3Parser, text=customDarkRed]{Drain3Parser}{
+\textcolor{black}{\footnotesize{- template\_miner: TemplateMiner}}}
+{
+\textcolor{black}{\footnotesize{+ get\_all\_templates(): [str]}}\\
+\footnotesize{+ process\_log\_message(log\_message: str): str}
+}
+
+\umlclass[x=0, y=-8, name=templateMiner, text=customDarkRed]{TemplateMiner}
+{
+\textcolor{black}{\footnotesize{+ clusters}}\\
+\footnotesize{+ persistence}}
+{
+\textcolor{black}{\footnotesize{+ add\_log\_message(log\_message: str)}}
+}
+
+\umluniassoc [color=customGrey] {LogCategorizer}{LogCategory}
+\umluniassoc [color=customGrey] {LogCategorizer}{LogParser}
+\umluniassoc [color=customGrey] {Drain3Parser}{TemplateMiner}
+\umldep [color=customGrey] {Drain3Parser}{LogParser}
+
+\end{tikzpicture}

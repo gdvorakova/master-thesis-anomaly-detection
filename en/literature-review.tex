@@ -1,14 +1,27 @@
 \chapter{Literature Review}
 \label{chapter:literatureReview}
 
+Before we start developing our anomaly detection tool we first need to establish some core concepts and review the good work that has already been done in the field.
+
+Therefore, the following sections, we are going to introduce the term of anomaly detection along all the concepts that the reader is required to become acquainted with to understand techniques for detecting anomalies.
+
+After that, we explain the three main approaches machine learning categories - supervised, semi-supervised and unsupervised and what are their specifics when applied in the anomaly detection domain. 
+After that we review in depth four learning different algorithms and argue why they are the most suitable candidates for our task.
+
+Moreover, we explain what we understand by a log, log template and review the most common techniques for log parsing and its subcategory log-template mining.
+
+We conclude the chapter with an analysis of different log parsing tool that enables us to pick the most suitable log parser for our application.
+
 \section{Anomaly Detection}
 \label{section:anomalyDetectionLiteratureReview}
-\subsection{Overview}
 
 % definition of anomaly detection
-\textit{Anomaly detection} is a problem of finding patterns in data that do not follow expected normal behavior represented by the majority of the data points. It follows that defining normal behaviour is one of the crucial challenges of anomaly detection. The unusual patterns are also called \textit{outliers} or \textit{anomalies} and anomaly detection is referred to as \textit{outlier detection}. Outlier was defined by \cite{ORD1996175} as an outlying observation that appears to deviate markedly from other members of the sample in which it occurs. In other words, statistical properties of the anomalous data points are not in alignment with the rest of the data. Outliers vary depending on the domain and may arise due to various reasons, such as fraudulent behaviour in credit card fraud, intrusion in computer networks, system failures, mechanical faults in industrial applications, deviations caused by natural behaviour or human error. Initially, outliers would be detected manually by the hand of a domain expert. Nowadays, anomaly detection's focus is identifying anomalous behavior automatically. Anomaly detection is also related to \textit{noise}. Noise is defined as an unwanted phenomenon in data, which is not of interest to the analyst, but acts as a hindrance to data analysis \cite{cvbakv2009}. Noise is  caused by an external factor not related to the distribution that generates the data \cite{ggh2017} and leads to excessively complex models with deteriorated performance \cite{wu2007}. 
+\textit{Anomaly detection} is a problem of finding patterns in data that do not follow expected normal behavior represented by the majority of the data points. It follows that defining normal behaviour is one of the crucial challenges of anomaly detection. The unusual patterns are also called \textit{outliers} or \textit{anomalies} and anomaly detection is referred to as \textit{outlier detection}. Outlier was defined by Ord \cite{ORD1996175} as an outlying observation that appears to deviate markedly from other members of the sample in which it occurs. 
+In other words, statistical properties of the anomalous data points are not in alignment with the rest of the data. Outliers vary depending on the domain and may arise due to various reasons, such as fraudulent behaviour in credit card fraud, intrusion in computer networks, system failures, mechanical faults in industrial applications, deviations caused by natural behaviour or human error. 
 
-In our thesis we focus on anomaly detection in time series data. Time series outlier analysis examines anomalies in the behavior of the data across time \cite{gupta2014}. An outlier in time series data is a data point, which is not following a common behaviour, either a general long-term trend or a tendency of the data to increase or decrease in seasonal patterns. 
+Initially, outliers would be detected manually by the hand of a domain expert. Nowadays, anomaly detection's focus is identifying anomalous behavior automatically. Anomaly detection is also related to \textit{noise}. Noise is defined as an unwanted phenomenon in data, which is not of interest to the analyst, but acts as a hindrance to data analysis \cite{cvbakv2009}. Noise is  caused by an external factor not related to the distribution that generates the data \cite{ggh2017} and leads to excessively complex models with deteriorated performance \cite{wu2007}. 
+
+In our thesis we focus on anomaly detection in \textit{time series} data. Time series outlier analysis examines anomalies in the behavior of the data across time \cite{gupta2014}. An outlier in time series data is a data point, which is not following a common behaviour, either a general long-term trend or a tendency of the data to increase or decrease in seasonal patterns. 
 
 \\
 We can classify anomaly detection methods into three broad categories: \textit{supervised}, \textit{semi-supervised} and \textit{unsupervised} anomaly detection. Supervised learning algorithms are trained by examples and require dataset, that is already labeled. On the other hand, unsupervised methods don't require labeled data at all. Semi-supervised methods combine both approaches by assuming that normal class instances are labeled.
@@ -21,7 +34,17 @@ Supervised methods require pre-labelled data, where labels describe whether the 
  \subsection{Semi-supervised Anomaly Detection}
  %https://www-users.cs.york.ac.uk/vicky/myPapers/Hodge+Austin_OutlierDetection_AIRE381.pdf
  %https://researchbank.swinburne.edu.au/file/cee84793-6f09-49ce-a099-41451c803b81/1/mostafa_farshchi_thesis.pdf
- Semi-supervised approaches assume that some portion of training data is labeled. Only labels for instances of normal class are provided, while labels for classes describing anomaly are not required. The rest of the data is unlabeled. Thus, in a semi-supervised mode, the model capturing normal behavior is built and used to identify anomalous behaviour. A class describing normal data is most commonly used primarily because it is more readily available, whereas labeled data set that would cover every anomaly is difficult to obtain.  \cite{anomalyDetectionSurvey}. 
+ Semi-supervised learning is defined as a machine a learning paradigm that studies how computers or even natural systems just like humans learn in the presence of both labeled and unlabeled data \cite{zhu2009introduction}.
+ 
+
+ \subsubsection{One-Class Classification}
+ \todo{which category - I would say supervised}
+ When it comes to anomaly detection, a common practice is to make use of a specific semi-supervised method referred to as One-Class Classification (or One-Class Learning) formulated by Tax \cite{tax2002occ}. 
+ 
+ In OCC, only labels for instances of normal class are provided, while labels for classes describing anomaly are not required. In fact, they are discouraged to occur in the training dataset. Only so few instances of outliers should be present that they do not form a statistically representative sample of the negative concept \cite{khan_madden_2014}.
+ 
+ Thus, in a semi-supervised mode, the model capturing normal behavior is built and used to identify anomalous behaviour. A class describing normal data is most commonly used primarily because it is more readily available, whereas labeled data set that would cover every anomaly is difficult to obtain \cite{anomalyDetectionSurvey}.
+
  
 \subsection{Unsupervised Anomaly Detection}
  Unsupervised learning, unlike supervised learning, doesn't require any prior knowledge of the data. One of the main difficulties that anomaly detection has to face is unlabeled data. In most cases, logs with labeled anomalies are not available. The log annotating process would have to be executed manually by the experts - developers familiar with the system. Along with the volume of data growth, labeling gets very time consuming. Due to this fact, in practice, anomaly detection relies mostly on unsupervised learning to deal with unlabeled data. Unsupervised anomaly detection algorithms learn what normal behavior looks like. Based on these observation, unsupervised method based systems detect anomalies as outliers, that significantly differ from other examples. In addition, any type of anomaly can be detected by these systems. Thus, the main difference between supervised and unsupervised learning techniques is that the former focus on discriminating concept classes, while the latter rather focus on data characterization \cite{Goernitz_2013}. % They work based on the observation that an abnormal instance usually manifests as an outlier point that is distant from other instances. As such, unsupervised learning techniques, such as clustering, can be applied.
@@ -55,8 +78,26 @@ Supervised methods require pre-labelled data, where labels describe whether the 
  
  Isolation Forest algorithm operates in linear time complexity and is especially useful for large and high dimensional datasets due to its low memory requirements. It is proved to be an accurate and effective anomaly detector.
  
- \todo{One-Class Isolation Forest = Anomaly Detection Forest}
- %https://reader.elsevier.com/reader/sd/pii/S2405959520300643?token=53EDB6762F720D4E16B84D3ED31E25DF99A9FE863D455F6232C876EFC38583FB9DD7522F2F338E1E2033E327996A32A3
+ \subsubsection*{Anomaly Detection Forest}
+ Recently, a variant of the Isolation Forest algorithm for the specific use case of Anomaly Detection has been studied - Anomaly Detection Forest \cite{adForest}. 
+ It is also commonly referred to as One-Class Isolation Forest. 
+ Obviously, it falls under the category of One-Class Classification algorithms.
+ 
+ Sternby et al., claim the algorithm outperforms the state-of-the-art algorithms Isolation Forest and One-Class Random Forest for the task of anomaly detection
+in the one-class learning setting. They argue that the IF has an intrinsic bias towards labelling similar uncommon normal instances as anomalies \cite{adForest}.
+
+They try to improve that by introducing two new concepts \cite{adForest}:
+\begin{itemize}
+    \item \textit{Anomaly leaves} with
+        the objective of catching anomalies with feature values not contained
+        in the range of the tree training subsample of observations.
+    \item \textit{Isolation level}, which is a lower size bound on
+            the training samples in a node during training, determining when
+            anomaly leaves should be created instead of subdividing the training samples further.
+\end{itemize}
+
+Even though the results seem promising, we decided not to proceed with this algorithm as the reference implementation is proprietary.
+We aim to tweak the original IF algorithm to perform reasonably well when learning only from normal data.
  
  \subsubsection{PCA}
  \label{section:lrPCA}
@@ -65,7 +106,7 @@ Supervised methods require pre-labelled data, where labels describe whether the 
  
  PCA uses projection methods on a given set of input data points with many input features. Once a PCA model is obtained, a distance from test log entries (either positive or negative) to the normal space can be calculated to detect anomalies. It looks for correlations in the original feature space and finds the combination of variables that maximizes the variance in order to preserve all information with minimum redundancy. A new, more representative and compact feature space is generated. This feature space of lower dimensions is called the \textit{principal components}. Features in principal components are uncorrelated and ordered by the amount of data variance that each captures.\\
  
- To put it formally ,let's say we have a $m$-dimensional vector $\mathbf{Y} \in \mathbb{R^n}$ with $n$ standardized input features in original data. PCA model decomposes $\mathbf{Y}$ into two parts \cite{pca1997}: 
+ To put it formally, let's say we have a $m$-dimensional vector $\mathbf{Y} \in \mathbb{R^n}$ with $n$ standardized input features in original data. PCA model decomposes $\mathbf{Y}$ into two parts \cite{pca1997}: 
  
  \begin{gather}
      \mathbf{Y} = \mathbf{\hat{Y}} + \mathbf{\widetilde{Y}}
@@ -108,11 +149,14 @@ where $\delta^2$ is a threshold for the error. A standard implementation of the 
 \end{gather}
  
  where $Q_{\alpha}$ denotes a Q-value statistics providing a $(1 - \alpha)$ confidence level. 
+ 
+ 
+\todo{One-class PCA}
 
  \subsubsection{Invariants Mining}
  \label{section:lrInvariantMining}
  
-A linear program invariant is a predicate that always holds the same value under different normal executions - different workloads or inputs. The first one to propose automatic anomaly detection by mining linear invariants from logs was Lou et al. \cite{lou2010}. It is based on the assumption that log sequences provide enough information for the system execution paths. Linear invariants are extracted from the properties of execution path by analyzing log sequences, which follow the logic of the workflow. The ideal candidate for dataset for invariant mining are true log samples. We assume examples of a linear relationship between logs can be also found in the dataset produced by Motorola SmartConnect system. 
+A linear program invariant is a predicate that always holds the same value under different normal executions - different workloads or inputs. The first one to propose automatic anomaly detection by mining linear invariants from logs was Lou et al. \cite{lou2010}. It is based on the assumption that log sequences provide enough information for the system execution paths. Linear invariants are extracted from the properties of execution path by analyzing log sequences, which follow the logic of the workflow. The ideal candidate for dataset for invariant mining are true log samples. We know some examples of a linear relationship between logs can be also found in the dataset produced by Motorola SmartConnect system. 
 There are steps in the call logic, as subscribing to a call group, calling and unsubscribing that are recorded and maybe could be exploited in anomaly detection. Pair-wise appearance of the aforementioned messages is an expected normal behaviour. Therefore the number of these event types should be the same in one execution of the program. 
 
 We can formally define a linear invariant as a linear equation: 
@@ -155,7 +199,6 @@ In invariant mining, anomalies are detected by checking on the invariant rules b
 
 The workflow of the invariant mining anomaly detection approach is partially identical to other methods described in our thesis. Unstructured free-form log messages representing normal behaviour are parsed into a structured form. The second step requires message grouping. The grouping is performed on log messages that contain cogenetic parameters (e.g. session ID). For each group, an event count vector is generated. Next, sparse, integer valued invariants are discovered using a greedy invariant mining algorithm on the event count vectors. Finally, learned invariant rules are used to perform anomaly detection.
 
-\todo{One-class PCA}
 \subsubsection{Log Clustering}
  \label{section:lrLogClustering}
 
@@ -164,7 +207,7 @@ Clustering based approaches to anomaly detection are based on an intuitive princ
 LogCluster consists of two phases: \textit{construction} phase and \textit{production} phase. 
 
 \subsubsection*{Construction Phase}
-The construction phase can be again divided into fours steps: log vectorization, log clustering, representative log sequence extraction and recurrence checking. The logs are collected from the testing environment. 
+The construction phase can be again divided into fours steps: log vectorization, log clustering, representative log sequence extraction and recurrence checking.
 
 \begin{enumerate}
     \item \textbf{Log vectorization}: In the log vectorization step, unstructured log messages are parsed into numerical vectors by abstracting log events. Subsequently, log sequences are obtained by grouping together logs with the same task ID and vectorize by counting the event ID frequency in the log sequence. Event ID frequency is further weighted using the Inverse Document Frequency-based weighting. The Inverse Document Frequency (IDF) weighting technique is used also in our research and we describe it more thoroughly in Section \ref{subsection:features}.
@@ -202,7 +245,7 @@ The construction phase can be again divided into fours steps: log vectorization,
 %https://netman.aiops.org/~peidan/ANM2019/6.LogAnomalyDetection/LectureCoverage/2016ICSE_Log%20Clustering%20based%20Problem%20Identification%20for%20Online%20Service%20Systems%20.pdf page 5
 
 \subsubsection*{Production Phase}
-In the production phase, the logs are collected from the actual production environment. The process is then the same as in the construction phase: logs are vectorized into log sequences and log sequences are clustered. For each cluster a representative is extracted and it is checked if previously appeared in the knowledge base and the knowledge base is updated with new clusters.
+In the production phase, the logs are collected from the actual production environment (or more generally monitored environment). The process is then the same as in the construction phase: logs are vectorized into log sequences and log sequences are clustered. For each cluster a representative is extracted. After, the algorithm checks whether all the representatives fall under one of the previously seen clusters in the knowledge base and the knowledge base. Then engineers are required to manually examine for anomalies the log sequences that have not been seen previously. After the resolution, the knowledge base is updated with new clusters.
  
 \section{Log Parsing}
 
@@ -211,7 +254,7 @@ The time series data we work with is a sequence of \textit{logs} produced by a d
 
 Let's consider a set of log entries generated by a given system. Each log entry is recorded by the service handling the action described in the log. In general, a log typically includes a \textit{timestamp} (tracking the time of the occurence of given event) and a \textit{message} (free-form text describing the event). A log may as well contain additional metadata, such as \textit{log level} (log severity, describing how important a log message is, e.g. INFO, DEBUG, ERROR, WARN) or \textit{program name} (name of the node which caused the event). An example of a log entry produced by Motorola SmartConnect is described in Listing~\todo{add example of our data}.\\
 
-In our thesis, we are considering only the \textit{message} and \textit{timestamp} parts of the log. Since log messages are usually written by different developers in the source code, we defensively consider that logs contain only those two properties. \texit{Timestamp} is added by default by majority of the most widely used logging frameworks \cite{log4j:example} \cite{serilog:example} \cite{python_log:example}, so we may assume that \textit{timestamp} is present along with the necessary \textit{message}.
+In our thesis, we are considering only the \textit{message} and \textit{timestamp} parts of the log. Since log messages are usually written by different developers in the source code, we defensively consider that logs contain only those two properties. \textit{Timestamp} is added by default by majority of the most widely used logging frameworks \cite{log4j:example} \cite{serilog:example} \cite{python_log:example}, so we may assume that \textit{timestamp} is present along with the necessary \textit{message}.
 
 By Legeza et al. \cite{structured_logging}, structured logging is an approach, where each log entry is represented in a format that can be easily processed by a computer, such as XML, JSON or other well defined structures. If that is not a case, we call logs not following strict format \textit{unstructured}.
 
