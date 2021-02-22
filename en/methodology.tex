@@ -596,6 +596,7 @@ As one can see from the list above, each model also contains \texttt{save} and \
 As shown in the directory structure in the Appendix \ref{appendix:dir_structure}, preprocessed features, trained models and resulting metrics and predictions are stored in either \texttt{tf} or \texttt{tfidf} folder, depending to which feature extraction method the particular file belongs. \texttt{tf}, as an abbreviation for term frequency, is an equivalent of what we call in our thesis an \texttt{event count}, as we explained in detail in Section \ref{subsection:features}. We use \texttt{tf} in our file structure for the benefit of brevity.
 
 \subsection{Mapping from Prediction Back to Log Entry}
+\label{methodology:mapping-predictions-back}
 Once the output is computed, what we obtain is a prediction for each window of the input dataset. This is true regardless of the specific machine learning model used for the computation. 
 This kind of output that consists from ones and zeros is not very helpful if we want to understand why we got those results and if they are correct. Ideally, we want more elaborate information about the individual windows.
 Typically, the interesting part would be those windows, that were identified as anomalous as they are assumed to be less frequent and more important. However, there are use cases where we want to investigate all of them, especially in the debugging phase. 

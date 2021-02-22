@@ -8,7 +8,7 @@ Also, we will have a high level introduction into the software architecture of t
 
 \section{Domain Description}
 
-\textit{Two-way radio} (also push-to-talk, informally walkie-talkie\footnote{https://www.motorolasolutions.com/en\_xu/solutions/what-is-two-way-radio.html}, is an electronic device that enables a group of people to communicate.
+\textit{Two-way radio} (also push-to-talk, informally walkie-talkie\cite{twowayradio}, is an electronic device that enables a group of people to communicate.
 
 A two-way radio works by converting audio signal to radio waves that are transmitted through the air to receivers. On the receiving end, the waves are converted back to audio signal allowing the recipients to hear the original message.
 There are two alternatives of what kind of signal is being transmitted through the air - it can be either analogue or digital.
@@ -21,31 +21,28 @@ Two-way radios are using frequencies between 30MHz and 1000MHz. The interval bet
 \subsection{Motorola SmartConnect}
 
 SmartConnect is a software product by company Motorola Solutions. 
-The state of the art Motorola two-way radios\footnote{\url{https://www.motorolasolutions.com/en_xa/products/p25-products/apx-story.html}} support automatic switching in favor of the source strongest signal.
+The state of the art Motorola two-way radios\cite{apxp25radio} support automatic switching in favor of the source strongest signal.
 
-\todo{Following is obtained from the marketing slides, cite properly}
 The classical way of interconnecting a set of walkie-talkies is through narrowband land mobile radio (LMR) sites.
-However, due to specifics of the network, there is many use-cases where a push-to-talk device is out of range of LMR. 
+However, due to specifics of the network, there is many use-cases where a push-to-talk device is out of range of LMR \cite{apxnextslides}. 
 
 % Use cases
 There is many different environments where customers of Motorola Solution's operate and it must be made sure that they get the best connectivity possible. Not everywhere LMR coverage is sufficient.  Indoor areas such as hospitals, offices or schools are usually equipped with high quality WiFi connection which can be exploited. If LTE is more accessible than LMR, cellular data can be also taken advantage of. And for the least accessible areas, radio may connect to a satellite modem to ensure the customer doesn't lose contact with colleagues. 
 
-Motorola products are compliant with Project 25 (P25 for short), which is an LMR standard well suited for fast, secure and interoperable connection. \footnote{\url{https://www.viavisolutions.com/en-us/project-25}}
+Motorola products are compliant with Project 25 (P25 for short), which is an LMR standard well suited for fast, secure and interoperable connection \cite{project25}.
 
 A radio with SmartConnect support is able to automatically switch to LTE, Wi-Fi, satellite broadband or even wired internet connection ensuring continuity of push-to-talk voice communications in case strength of the LMR signal drops below specified RSSI (received signal strength indication) threshold. 
-The radio is able to switches back to LMR when the signal strengthens with no user intervention required\footnote{\url{https://www.daywireless.com/downloads/motorola/motorola-apx-next-smartconnect-fact-sheet.pdf}}
-\footnote{\url{https://www.businesswire.com/news/home/20191024005280/en/Motorola-Solutions\%E2\%80\%99-Next-Generation-APX-NEXT-Smart-Radio-Brings-New-Intelligence-and-Technology-to-Public-Safety}}.
+The radio is able to switches back to LMR when the signal strengthens with no user intervention required \cite{apxnextfactsheet} \cite{businesswireapxnext}.
 The structure of a Motorola PTT radio network is schematically explained in Figure~\ref{smart-connect:smart-connect-architecture}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{img/motorola-smart-connect-architecture.pdf}
-    \caption{Overview of Motorola two-way radio network.}
+    \caption{Overview of Motorola two-way radio network \cite{apxnextslides}.}
     \label{smart-connect:smart-connect-architecture}
 \end{figure}
-\todo{cite the slides for the picture}
 
-When a radio utilizes the SmartConnect technology, voice packets are being transferred through the broadband bearer to a cloud-based gateway. This gateway in the cloud connects to the LMR master site. This allows the radios communicating over SmartConnect call back in the LMR system. \todo{cite the slides}
+When a radio utilizes the SmartConnect technology, voice packets are being transferred through the broadband bearer to a cloud-based gateway. This gateway in the cloud connects to the LMR master site. This allows the radios communicating over SmartConnect call back in the LMR system \cite{apxnextslides}.
 
 Therefore, Motorola Solution's SmartConnect helps teams stay connected no matter where they are located by leveraging various means of voice packet transmission.
 
