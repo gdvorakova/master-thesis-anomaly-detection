@@ -1,108 +1,108 @@
 \chapter{Dataset}
 \label{chapter:dataset}
 
-In this chapter, we will provide information regarding the datasets that we used in our research. We will describe how we obtained a labeled dataset for training and also mention weaknesses that come with that dataset. We will take a look at the important properties of the logs. 
-Also, we will pay attention to a couple of known anomaly scenarios that may occur in the system logs, and we will go through the dataset where they are captured. 
-We use the anomalies for validation of our models. A validation dataset which contains anomaly free data will be described as well. 
+In this chapter we will provide information about the datasets we used in our research. We will describe how we obtained a labeled dataset for training and also mention the weaknesses associated with this dataset. We will take a look at the important properties of the logs. 
+We will also discuss some known anomaly scenarios that can occur in the system logs, and we will go through the dataset in which they are captured. 
+We use the anomalies to validate our models. A validation dataset that contains anomaly-free data will also be described. 
 
-All the datasets contain log traces gathered from multiple microservices comprising Motorola SmartConnect's Cloud Infrastructure Engineering development environments.
-In order to obtain the logs, we came up with a pipeline (specifics of the pipeline are described in Chapter~\ref{data_collection}) that connects to the system, gathers and preprocesses them into such a form that the data can be fed to selected machine learning algorithms or plotted.
-More on the preprocessing step can be found in Chapter \ref{methodology}.
+All datasets contain log traces collected from multiple microservices comprising the Motorola SmartConnect Cloud Infrastructure Engineering development environments.
+To obtain the logs, we developed a pipeline (the details of the pipeline are described in Chapter~\ref{data_collection}) that connects to the system, collects logs, and preprocesses them into such a form that the data can be passed to selected machine learning algorithms or plotted.
+More about the preprocessing step can be found in Chapter \ref{methodology}.
 
 \section{Datasets}
 \label{dataset}
-The data we feed to machine learning models make a great deal of difference. Therefore, we need to look at what data we are able to collect from the system in a both high level and also what are the properties of a single log entry.
+The data we feed machine learning models with makes a big difference. Therefore, we need to look at what data we can collect at a high level from the system and what properties an individual log entry has.
 
 The anomaly detection task can be reformulated as a classification problem with two classes: \textit{negative (anomaly)} class and \textit{positive (anomaly-free)} class. 
 
-\textit{Negative} or \textit{normal} class is a category of a set of data, that is free of anomalies and represents expected (or normal) behaviour of a system that produces those logs. Negative data samples are labeled as $0$. \textit{Positive}, \textit{anomalous} or \textit{abnormal} class is the target class that we are interested in. It is assigned to log sequences which contain anomalies as $1$. The goal is to train the classifier to distinguish between positive and negative samples.
+\textit{Negative} or \textit{normal} class is a category of a data set that is free of anomalies and represents the expected (or normal) behavior of a system that produces these logs. Negative data samples are labeled as $0$. The class \textit{Positive}, \textit{anomalous}, or \textit{abnormal} is the target class we are interested in. It is assigned to log sequences that contain anomalies as $1$. The goal is to train the classifier to distinguish between positive and negative samples.
 
-Motorola Solution's policy for storing historical data is that at every moment, we have at our disposal logs from before $30$ days until that moment. The stored interval can at times get even smaller if the amount of persisted logs exceeds a limit.
+Motorola Solution's policy for storing historical data is that we have logs available at any point in time from $30$ days ago to this point in time. The stored interval may at times become even smaller if the amount of persisted logs exceeds a limit.
 
-In Motorola, the development environment is further divided into two sub regions that we have access to. 
+In Motorola, the development environment is further divided into two subsections that we have access to. 
 Let's call them \textit{experimental} and \textit{stable}. 
 
-\textit{Stable} environment is in sync with master branches of the source code and is used for running exhaustive testing of the system every night. 
+The \textit{Stable} environment is synchronized with the master branches of the source code and is used to perform extensive testing of the system every night. 
 
-On the other hand, \textit{experimental} environment would be used by developers to deploy and examine side (feature) branches throughout their the day.
+On the other hand, the \textit{experimental} environment is used by the developers to deploy and explore side branches (features) during the day.
 
-Due to confidentiality reasons, we do not have logs from \textit{production} environment at our disposal. It is one of the major setbacks, as the assumption would be that it contains different traffic. It can be also assumed that distribution of anomalies in the production dataset is different from both \textit{experimental} (more anomalies, some of them related to ad-hoc deployment not in \textit{production}) and \textit{stable}(less anomalies, less traffic). In general, the development environment produces vast amount of data, thousands of log messages per minute.
+For confidentiality reasons, we do not have logs of the \textit{production} environment available. This is one of the major drawbacks, as it can be assumed that they contain different traffic. It can also be assumed that the distribution of anomalies in the production dataset is different from both \textit{experimental} (more anomalies, some related to ad hoc deployment, not in \textit{production}) and \textit{stable} (fewer anomalies, less traffic). In general, the development environment produces huge amounts of data, thousands of log messages per minute.
 
-Next, we will provide a detailed description of characteristics of each of the datasets and how it was obtained. In Table \ref{table:datasets} is a summary of all datasets used in this thesis.
+Next, we provide a detailed description of the characteristics of each dataset and how they were obtained. See Table \ref{table:datasets} for a summary of all datasets used in this work.
 
 \subsection{Dataset Daily} 
-This dataset reflects \textit{experimental} region of development environment. In such a setting it is natural (or even desired) for anomalies to occur.
+This dataset reflects the \textit{experimental} region of the development environment. In such an environment, it is natural (or even desirable) for anomalies to occur.
 
-We call the dataset of system logs produced by the region a \textit{Daily} dataset and we may also refer to it as \textit{mixed}, as it will contain both positive and negative data samples. 
-The system is active during a working day when developers are testing new features. The amount of logs varies a lot depending on the tasks of the team. 
+We refer to the dataset of system logs produced by the region as the \textit{Daily} dataset, and may also refer to it as \textit{mixed}, since it will contain both positive and negative data samples. 
+The system is active during a working day when developers are testing new features. The amount of logs varies greatly depending on the team's tasks. 
 However, we are talking about tens of thousands of log messages per hour, even when the system is idle.
 
-Unfortunately, such dataset in unlabeled, as it would require experts going through millions of lines of unstructured log messages to obtain them.
+Unfortunately, such a dataset is not labeled, as experts would have to go through millions of lines of unstructured log messages to obtain the labels.
 
 \subsection{Dataset Nightly}
-At night, the system we are experimenting with undergoes tests in the \textit{stable} region. This phase of system's health check includes mimicking normal behavior of the telecommunication system. All the required set up of the infrastructure takes place and simulations of calls between groups of push-to-talk radios are happening. 
-These tests are being re-run every night as a part of the nightly test suite. 
-Usually, the test pipeline takes around 7 hours and produces roughly 2 millions of log messages.
+At night, the system we are experimenting with goes through tests in the \textit{stable} region. This phase of health check of the system involves mimicking the normal behavior of the telecommunications system. All the necessary infrastructure setup takes place and simulations of calls between groups of push-to-talk radios are performed. 
+These tests are run again each night as part of the nightly test suite. 
+Typically, the test pipeline lasts about 7 hours and produces about 2 million log messages.
 
-In case the nightly tests are all passed, it should be sound that the collected data are either completely free of anomalies, respectively contain only a very small percentage of them. 
-Therefore, we assume that the data collected during the nightly test phase, and it passes successfully, contains a vast majority of negative data samples and represents a normal, anomaly-free behaviour of the system. This statement strongly relies on the assumption that the functionality of the system is well covered by the tests (the relationship of our approach to anomaly detection and test code coverage is elaborated in detail in Section~\ref{code_coverage}). 
+If the nightly tests all pass, the data collected should either be completely free of anomalies, or contain only a very small percentage of them. 
+Therefore, we assume that the data collected during the nightly testing phase, if passed successfully, will contain a large majority of negative data samples and represent normal anomaly-free behavior of the system. This statement relies heavily on the assumption that the functionality of the system is well covered by the tests (the relationship of our approach to anomaly detection and test code coverage is discussed in detail in Section~\ref{code_coverage}). 
 
-Hence, for our use case, we may also refer to \textit{negative} or \textit{normal} dataset as the \textit{Nightly} dataset interchangeably.
+Therefore, for our use case, we can also interchangeably refer to the dataset \textit{negative} or \textit{normal} dataset as the \textit{Nightly} dataset interchangeably.
 
-Therefore, the logs that are collected at night from a system like this should be suitable candidates for one-class classification algorithms, as well as generating a labeled dataset for testing purposes, which we will explain later in this chapter.
+Therefore, the logs collected at night by such a system should be suitable candidates for one-class classification algorithms as well as generate a labeled dataset for testing purposes, which we will explain later in this chapter.
 
-However, the data that the system under the nightly testing is producing, slightly differ from the live production environment. The main difference is that the scenarios the test suite generates are serialized, meaning that maximum one call is taking place at each moment. 
+However, the data generated by the system during nightly testing is slightly different from the live production environment. The main difference is that the scenarios generated by the test suite are serialized, meaning that there is at most one call at any given time. 
 
-On the other hand, the live production environment is not limiting the number of broadcasts at a time. Therefore, the logs of the production environment may include much higher counts of some events.
+On the other hand, in the live production environment, there is no limit to the number of broadcasts at a time. Therefore, the logs of the production environment can contain much higher counts of some events.
 
-Although this might be argued as a weakness of our nightly dataset, as we have described windowing operation of our preprocessing phase in Chapter \ref{methodology}, we will always consider a sequence of logs and the counts of event types in that log sequence in a fixed time window. Therefore, even if the data will look different in terms of individual log entries, we believe the final feature representation passed to the ML algorithm should be very similar.
+Although this could be argued as a weakness of our nightly dataset, as described windowing operation of our preprocessing phase in Chapter\ref{methodology}, we will always consider a sequence of logs and the number of event types in that log sequence in a fixed time window. Therefore, we believe that the final feature representation passed to the ML algorithm should be very similar, even though the data will look different with respect to individual log entries.
 
-As it is incredibly challenging to obtain labels in log data, we have decided to use the Nightly data, despite it's possible drawbacks and slightly artificial character.
+Since it is incredibly difficult to obtain labels in log data, we decided to use the Nightly data, despite its potential drawbacks and slightly artificial nature.
 
-The Nightly contains logs from the night of January 24, 2021.
+The Nightly data contains logs from the night of January 24, 2021.
 
 \subsection{Dataset Nightly Test}
-This dataset is collected the same way as the Nightly and should satisfy all the properties, however it has been recorded on a different day. Therefore the timing is different and the tests are benchmarking different version of source code of the SmartConnect system.
+This dataset was collected in the same way as the Nightly and should meet all the properties, but it was recorded on a different day. Therefore, the timing is different and the tests are testing a different version of the SmartConnect system source code.
 
-We use this Nightly Test mainly to show that similar distribution of arbitrary dataset gathered from nightly testing can be assumed.
+We use this Nightly Test mainly to show that a similar distribution of arbitrary records collected in the Nightly tests can be assumed.
 
 Nightly Check contains logs from the night of January 22, 2021.
 
 \subsection{Dataset Anomalies}
 
-This dataset contains versions of both of the anomaly scenarios described later in Section~\ref{anomaly_types}. 
-The anomalies were achieved by killing Kubernetes Pods responsible for correct operation of a specific type of service. 
+This dataset contains versions of the two anomaly scenarios described later in Section~\ref{anomaly_types}. 
+The anomalies were achieved by killing Kubernetes Pods, which is responsible for the correct operation of a particular service type. 
 At the same time, users were trying to establish, or were in a call.
 
-This dataset records in total 23 instances of anomaly scenarios and was created by merging logs from two days - 25th and 28th of January, 2021.
+This dataset captures a total of 23 instances of anomaly scenarios and was created by merging logs from two days - January 25 and 28, 2021.
 
 \subsection{Dataset Glostrup Calling}
 
-On the contrary, dataset Glostrup Calling is comprised of anomaly free calls between Motorola Solutions two-way radios. 
-The \textit{experimental} environment was set in such way that nothing else was interfering with the calls. Therefore the resulting logs can be considered \textit{normal} data.
+In contrast, the Glostrup Calling dataset consists of anomaly-free calls between Motorola Solutions two-way radios. 
+The \textit{experimental} environment was set so that nothing else interferes with the calls. Therefore, the resulting logs can be considered as \textit{normal} data.
 
-The trace records multiple calls that were carried out during 8 minutes on 3. February 2021.
+The trace records several calls that were carried out during 8 minutes on February 3, 2021.
 
 \section{Dataset Test with Labels} 
 \label{section:testset}
-Unsupervised learning does not require data to be labeled to detect anomalies, as it assumes that the majority of data points are normal. This is very beneficial in our situation, where obtaining labeled data is extremely difficult. However, an absence of labels represents a difficulty when it comes to model evaluation phase.
+Unsupervised learning does not require data to be labeled to detect anomalies, as it assumes that the majority of data points are normal.  This is very beneficial in our situation where it is extremely difficult to obtain labeled data. However, the lack of labels poses a difficulty when it comes to the model evaluation phase.
 
-Unlike a supervised learning, where one can compare predictions directly with the actual labels to assess the quality of the machine learning model, in unsupervised learning, there is no way to do that.
+Unlike supervised learning, where one can directly compare predictions with actual labels to assess the quality of the machine learning model, there is no way to do this in unsupervised learning.
 
-In our thesis, the majority of data are unlabeled data. In order to validate the proposed approaches, we had to develop the testing dataset ourselves.
+In our work, the majority of the data is unlabeled data. To validate the proposed approaches, we had to develop the test dataset ourselves.
 
-To get a better idea what kind of data comprises a manually generated testing dataset, we provide a pie chart of test set composition in Figure \ref{fig:testset-composition}. It is important to note here that the number $131$ represent the amount of extracted log sequence, therefore the number of underlying log message samples is much higher.
+To get a better idea of what kind of data constitutes a manually created test dataset, we provide a pie chart of the test set composition in Figure \ref{fig:testset-composition}. It is important to note that the number $131$ represents the amount of extracted log sequence, so the number of underlying log message samples is much higher.
 
-Getting the negative class representation is trivial. As we mentioned earlier in this chapter, we consider Nightly data obtained from the testing phase as normal data samples. To create the normal part of the dataset, we gather another set of data from the testing, that were previously unseen in the training phase. 
+Determining the negative class representation is trivial. As we mentioned earlier in this chapter, we consider the Nightly data from the testing phase as normal data samples. To create the normal part of the dataset, we collect another set of data from the testing phase that was previously unseen in the training phase. 
 
-On the other hand, the positive samples need to be manually labeled. To avoid error while assigning labels, we introduce some known anomaly scenarios, which are expected to occur in our real-life dataset. These scenarios can be reproduced, we can gather the data and label them as anomalies. 
+On the other hand, positive samples must be manually labeled. To avoid label assignment errors, we introduce some known anomaly scenarios that are expected to occur in our real dataset. These scenarios can be reproduced, we can collect the data and label them as anomalies. 
 
-This is not an ideal testing dataset, but not all anomalies are known and can be obtained. It provides a reasonable tool to measure how well our models are doing. We will also test the models on solely normal data to detect false positives. 
+This is not an ideal test dataset, but not all anomalies are known and can be sourced. It provides a reasonable tool to measure how well our models are performing. We will also test the models with only normal data to detect false positives. 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{img/testset-composition.pdf}
-    \caption{Testing dataset composition. A manually collected and labeled dataset is composed of 131 log sequences, with each log sequence gathered within two minute window. The value on each section of the pie chart gives the number of log sequences of a respective type of log messages it contains. Normal and Call sections of the pie chart both represent normal, anomaly-free behaviour, whereas Killing RabbitMQ and Killing Redis are anomalies. }
+    \caption{Testing dataset composition. A manually collected and labeled dataset consists of 131 log sequences, where each log sequence was collected within a two-minute time window. The value in each section of the pie chart indicates the number of log sequences of each type of log message it contains. The "Normal" and "Call" sections of the pie chart both represent normal, anomaly-free behavior, while " Killing RabbitMQ" and "Killing Redis" are anomalies.}
     \label{fig:testset-composition}
 \end{figure}
 
@@ -123,32 +123,31 @@ This is not an ideal testing dataset, but not all anomalies are known and can be
 \end{table}
 
 \section{Log Properties}
-The services record 33 properties per single log entry. Out of the 33 log properties, we decided to look only at \texttt{msg} and \texttt{timestamp} as the others (such as kubernetes pod name, process id of the service generating the log, etc. full list of the individual log properties are attached in Appendix~\ref{appendix:log-properties}) or are too specific, such as \texttt{pod}.
-Including fewer predictor variables should in general avoid us overfitting, make the final model more transparent and easier to troubleshoot.
-Therefore, in order to produce as general solution as possible, we stick only to those two predictors.
+The services record 33 properties per single log entry. Of the 33 log properties, we chose to consider only \texttt{msg} and \texttt{timestamp}, as the others (such as the name of the Kubernetes pod, the process ID of the service generating the log, etc.) are too specific. For the full list of the individual log properties see Appendix~\ref{appendix:log-properties}).
+Including fewer predictor variables should generally avoid overfitting, make the final model more transparent, and make debugging easier.
+Therefore, to obtain as general a solution as possible, we restrict ourselves to these two predictors.
 
 \subsection{Format of Log Properties}
-Messages are strings and we assume they follow the logic that we described in Section~\ref{log_template_mining} on log template mining. In other words, we expect that they are generated by code in such a way, that we can think of them as a product of constant and variable parts. Consequently, log messages can be further categorized using event types.
+Messages are strings and we assume that they follow the logic we described in Section~\ref{log_template_mining} on log template mining. In other words, we assume that they are generated by code in such a way that they can be thought of as a product of constant and variable parts. Consequently, log messages can be further categorized using event types.
 
-Timestamps are in the format of \texttt{YYYY-MM-DD'T'HH:mm:SS.sss'Z'}. The format string specifies that year (YYYY) is a four digit zero padded number, month (\texttt{MM}), day (\texttt{DD}), hour (\texttt{HH}), minutes (\texttt{mm}) and seconds (\texttt{SS}) are two digit zero padded numbers and milliseconds(\texttt{ssss}) is a three digit zero padded number. The time part is separated from date by a single \texttt{T} character and the whole timestamp ends with a letter \texttt{Z}.
+Timestamps have the format of \texttt{YYYY-MM- DD'T'HH:mm: SS.sss'Z'}. The format string indicates that the year (YYYY) is a four-digit number padded with zeros, the month (\texttt{MM}), the day (\texttt{ DD }), the hour (\texttt{HH}), the minutes (\texttt{mm}) and the seconds (\texttt{ SS }) are two-digit zero padded numbers and the milliseconds (\texttt{ssss}) are a three-digit number filled with zeros. The time part is separated from the date by a single \texttt{T} character and the entire timestamp ends with a letter \texttt{Z}.
 
 \section{Types of Anomalies}
 \label{anomaly_types}
-In this section, we present a couple of known anomalies that we will trace in order to test our solution.
-We are going to benchmark our approaches and models against these known anomalies that can be easily simulated and can reproducible. 
-However, the objective is to be also able to detect anomalies that we do not have a prior knowledge of.
-In other words, we aim to identify even anomalous scenarios that are spotted for the first time in the production environment and do not appear in our training and testing dataset.
+In this section, we present a set of known anomalies that we will trace in order to test our solution.
+We will benchmark our approaches and models to these known anomalies, which can be easily simulated and reproduced. 
+However, the goal is to also detect anomalies that we are not aware of.
+In other words, we also want to identify anomalous scenarios that appear for the first time in the production environment and do not appear in our training and testing dataset.
 
 \subsection{Cache Outage}
-In this anomaly, a cache storage that is orchestrating the call logic is taken down and radios that are in a call at that moment bonk as they are unable to communicate with each other.
-In response to that, the storage service recovers itself automatically, usually in no more than 2 seconds. After that, broadcast should continue.
+In this anomaly, a cache storage that orchestrates the call logic is taken down and the radios that are in a call at that moment bonk because they cannot communicate with each other.
+In response, the storage service automatically restores itself, usually in no more than 2 seconds. After that, broadcast should continue.
 
-As mentioned in Section~\ref{architecture:caching} on caching in Motorola SmartConnect, Redis is used for caching, therefore we may also refer to this anomaly as \textit{Killing Redis} or similar.
-
+As mentioned in Section~\ref{architecture:caching} about caching in Motorola SmartConnect, Redis is used for caching, so we can also call this anomaly \textit{ Killing Redis } or similar.
 
 \subsection{Message Broker Out of Service}
-Similarly, an important entity in the SmartConnect microservices system is the message broker that allows for communication across services. In this scenario, all the brokers are killed, therefore the network of microservices is broken and messages cannot be passed until the brokers recover.
+Similarly, an important entity in the SmartConnect microservices system is the message broker that enables inter-service communication. In this scenario, all brokers are terminated, therefore the microservices network is disrupted and messages cannot be forwarded until the brokers are restored.
 
-Again, in Section~\ref{architecture:messaging} we discuss how messages are passed in SmartConnect's microservices architecture. RabbitMQ is the specific message broker deployed, so we may refer to this anomaly as \textit{Killing RabbitMQ} in the text.
+Section~\ref{architecture:messaging} discusses again how messages are forwarded in SmartConnect's microservices architecture. RabbitMQ is the specific message broker that is used, so we can refer to this anomaly in the text as \textit{Killing RabbitMQ}.
 
 % https://pure.tue.nl/ws/portalfiles/portal/142685995/sci_2019_Lomagin_Egor.pdf

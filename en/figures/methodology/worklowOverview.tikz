@@ -74,13 +74,15 @@
             \draw[edge, solid] (featureMatrix) -- (1.4, -3);
         
          % ML METHODS
-        \node[mainRectangle, align=center, densely dashed, minimum width={30mm}, label={[label distance=0mm, align=center]{\scriptsize ML Methods}}] (mlMethods) at (0,-4) {
+        \node[mainRectangle, align=center, densely dashed, minimum width={30mm}, label={[label distance=0mm, align=center]{\scriptsize ML Methods}}] (mlMethods) at (0,-4.2) {
             \begin{tikzpicture}
                 \node[rectangle, draw=customDarkBlue, align=center, solid, minimum width={10mm}] (pca) at (0, 0) {\textcolor{customDarkBlue}{\tiny PCA}};
                 
                 \node[rectangle, draw=customDarkBlue, align=center, solid, minimum width={13mm}] at (1.4, 0) (isolationForest) {\textcolor{customDarkBlue}{\tiny ISOLATION}\\\textcolor{customDarkBlue}{\tiny FOREST}};
                 
                 \node[rectangle, draw=customDarkBlue, align=center, solid, minimum width={13mm}] at (3.15, 0) (invariantMining) {\textcolor{customDarkBlue}{\tiny INVARIANT}\\\textcolor{customDarkBlue}{\tiny MINING}};
+                
+                \node[rectangle, draw=customDarkBlue, align=center, solid, minimum width={13mm}] at (1.9, -0.69) (logClustering) {\textcolor{customDarkBlue}{\tiny LOG CLUSTERING}};
             
             \end{tikzpicture} 
         };
@@ -88,7 +90,7 @@
     };
     \draw[edge] (featureEngineering) -- (anomalyDetection);
     
-    \node[rectangle, draw=customGreen, align=center, solid, minimum width={10mm}] (result) at (0, -8.4) {\textcolor{customGreen}{\small Anomalies}};
+    \node[rectangle, draw=customGreen, align=center, solid, minimum width={10mm}] (result) at (0, -8.8) {\textcolor{customGreen}{\small Anomalies}};
     \draw[edge] (anomalyDetection) -- (result);
     
 \end{tikzpicture}

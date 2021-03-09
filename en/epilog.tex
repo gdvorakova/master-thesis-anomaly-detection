@@ -1,128 +1,135 @@
 \chapter{Conclusions and Future Work}
 \label{conclusion}
-In our thesis, we attempted to apply anomaly detection on a real-world dataset obtained in collaborations with Motorola Solution's Smart Connect. We have formulated a methodology to analyze unstructured system log data. 
+In our work, we have attempted to apply anomaly detection to a real-world dataset obtained in collaboration with Motorola Solution's Smart Connect. We have formulated a methodology for analyzing unstructured system log data. 
 
-Our methodology workflow is initiated by \textit{data collection}. The implemented solution for collecting log data produced by SmartConnect's microservices queries Elasticsearch from inside of the cluster. We gathered data instances representing normal behaviour of the system as well as some known anomalies that we have simulated on site.
+Our methodology workflow is initiated by \textit{data collection}. The implemented solution to collect log data produced by SmartConnect's microservices queries Elasticsearch within the cluster. We collected data instances representing the normal behavior of the system, as well as some known anomalies that we simulated on site.
 
-As logs typically contain variable parts that result in different log messages for the same log event type, a \textit{log parsing} technique is used to extract unique log event types. For this purpose an online Drain3 library parser is applied. 
+Since logs typically contain variable parts that result in different log messages for the same log event type, a \textit{log parsing} technique is used to extract unique log event types. For this purpose, an online parser of the Drain3 library is used. 
 
-We proposed two different approaches to \textit{feature extraction}, namely event count vector and weighted TF-IDF vector. Both representations are generated out of two minute windows. At each time window, occurrence of unique event types is counted and in case of TF-IDF, the counts are weighted. It has been shown that both representations are doing similarly well.
+We have proposed two different approaches for \textit{feature extraction}, namely the event count vector and the weighted TF-IDF vector. Both representations are generated from two minute windows. In each time window, the occurrence of unique event types is counted and in the case of TF-IDF, the counts are weighted. It has been shown that both representations perform similarly well.
 
-Finally, we have studied and compared four different \textit{anomaly detection} models along with an analysis of their architecture and hyperparameter selection. A model evaluation was a problematic part of our research, as there is a lack of known anomaly scenarios to test and therefore a lack of data labels. We performed an evaluation of the chosen algorithms on a task of unsupervised one-class anomaly detection on log data on a small, manually generated test dataset with two known anomalies. As a second step to evaluation, we asked experts to assess the predicted labels for unknown anomalies. We concluded that simple algorithms, such as Log Clustering and PCA performed very well on testing dataset.
+Finally, we examined and compared four different \textit{anomaly detection} models, along with an analysis of their architecture and hyperparameter selection. Model evaluation was a problematic part of our research, due to the lack of known anomaly scenarios to test and thus a lack of data labels as well. We performed an evaluation of the selected algorithms on a task of unsupervised one-class anomaly detection on log data on a small, manually generated test dataset with two known anomalies. In a second step of the evaluation, we asked experts to assess the predicted labels for unknown anomalies. We concluded that simple algorithms, such as Log Clustering and PCA, performed very well on the test dataset.
 
 During our research, we made the following main contributions:
 
 \begin{itemize}
-    \item Showed the applicability of our methodology to the real-world case analysis
+    \item Demonstrated the applicability of our methodology to real-world case analysis
     \item Implemented core anomaly detection components, that can be used for future anomaly detection pipeline in production dataset in Smart Connect
 \end{itemize}
 
-\section{Weaknesses and Limitations}
-While we managed to obtain some great results and discoveries throughout our methodology process, there is a range of possible improvements that could be made.
-In this section, we will address some of the weaknesses and limitations, that we have encountered during our research.
-
-\subsection{Evaluation}
-First and foremost, the most difficult part about the anomaly detection is actually verifying the results, as our labeled dataset and the set of known anomalies are of a very limited size. Because of that, we could not draw a conclusion about the performance on a real-world like dataset. However, the complexity of log data did not make it possible, as labeling data is extremely time consuming. Even though we have asked experts for a manual validation, relying on a human being as the one that validates the actual results and performance makes the whole process more prone to error and even more time consuming.
-
-\subsection{Dataset}
-The major limitation of our research is that we were not able to verify our results against dataset coming from live production environment. Instead, we have used log data generated in a testing and experimental environment.
-This is caused by the fact that the log data that are generated in the production environment are highly confidential, as they may reveal information that can be easily exploited when not handled properly. 
-
-In order to overcome this, a strategy on anonymous handling and storing data in our program must be developed which is out of scope of the thesis.
-
-\subsection{Optimal Window Size}
-A different topic that has not been completely covered in the thesis is further experimenting with the relationship of performance with window size. 
-In our research, we only worked with embedding to time windows of fixed time of two minutes and the windows were non-overlapping.
-It can be argued, that since the downtime caused by anomalies that we were primarily looking at is under two minutes, our solutions should perform reasonably well.
-However, it is left to be researched how would this embedding selection cope with especially longer lasting anomalies.
-
-\section{Future Work}
-In the time frame of six months we managed to prove that applying machine learning based monitoring tools in order to detect anomalies in Motorola SmartConnect is well possible.
-However, many interesting questions arose along the way that we could not target within the scope of this project.
-Also, our solution should not be considered a final product that can be packed and shipped. Definitively, more software engineering work has to be done before we are able to claim that. For now, our solution serves mainly to experimental purposes.
-Here we describe the questions answers to which are yet to be explored in the future research.
-
-\subsection{Anomaly Detection Pipeline}
-\label{future:pipeline}
-As discussed earlier in Section~\ref{dataset}, our anomaly detection tool yet observes only the experimental environment designated for developers to try new features. 
-
-This is just a proof of concept use of our solution, for taking full advantage of an automated anomaly detection product it needs be deployed in the production environment. However, in a big company as Motorola Solution is, this takes more than just a few months that we had at our disposal for this thesis.
-
-Let us illustrate what processes are required to improve our solution so that it can be useful in production.
-
-In the first place, a proper pipeline for continuous training of the model(s) has to be developed. We came up with the basis, however, what is left to do is to automate the process of checking whether nightly tests have passed correctly and if yes, the log samples from that night are downloaded, labeled and added to the training data set. The model needs to be retrained and updated in production. In this stage, also questions regarding how much training is too much must be targeted.
-
-At the same time, we have not covered in our research what would be the specific ways of raising an alarm upon every finding of an anomaly. Then, a mechanism for handling the detected problem must be triggered, whether it means a program trying to heal the problem or notifying a person in charge of observing state of the system.
-
-% TODO: use more attributes from raw logs to make better anomaly detection
-
-\subsection{Code Coverage}
-\label{code_coverage}
-We decided to apply one-class learning (classification) methods for detecting anomalies after gaining familiarity with Motorola SmartConnect system. 
-Knowing the domain proved to be crucial since it enabled us to exploit the fact that we could gather data from nightly tests. 
-Afterwards, we selected machine learning algorithms that we fed only negative data to.
-
-We based our solution on some assumptions about the logs we collect from passing tests:
-\begin{enumerate}
-
-    \item If a test is passing, it contains no anomalies whatsoever.
-    %\item The code under the test is actually related to the one that is being monitored.
-    \item The tests are “sufficiently” covering the code and examine to large extent the data paths that can be executed within the system. 
-
-\end{enumerate}
-
-The first assumption basically says that even if the tests are mimicking scenarios where a fault is simulated and the system is able to recover from that fault, we do not want to consider it an anomaly. 
-No alarm will be raised on that occasion because the system does not need any human intervention an is prepared to cope with the problem.
-
-Finally, the last point brings us to an interesting feature of our solution that opens a whole new way of looking at our research that may be investigated in future research.
-
-By the nature of the selected embedding and the examined machine learning methods, the models will be in a trouble in case that there is an anomaly free scenario that was not sufficiently present in the training data set (or better, could not be inferred from the data set). If this non anomalous scenario then appears in the system monitored by our anomaly detection tool,  false positives will occur.\\
-However, in our specific we can reformulate the statement into the claim, that if the model frequently reports anomalies which in reality are not (false positives), it can be converted into  a valuable piece of information about the tests themselves. 
-Specifically, it means that the tests are not examining some features of the system and are prone to drag errors into the product. 
-This observation, together with our anomaly detection solution, can be used as a foundation of a tool that could be plugged in a system monitoring process.
 \section{Conclusion}
 
 \addcontentsline{toc}{chapter}{Conclusion}
-In our research, we have reviewed and experimented with four unsupervised methods for anomaly detection in order to prove that outlier detection using machine learning techniques can be applied on log data in the domain of MSI's SmartConnect product.
+In our research, we reviewed and tried four unsupervised anomaly detection methods to prove that outlier detection using machine learning techniques can be applied to log data in the domain of MSI's SmartConnect product.
 
-Based on the conducted results of the experiments on the feature extraction methods that we have proposed in our thesis on Motorola Solutions data, we can answer the research questions outlined in Chapter \ref{introduction}. In this rest of the chapter we will provide a short answer to each of the research questions. \\
+Based on the conducted results of the experiments on the feature extraction methods proposed in our work on Motorola Solutions data, we can answer the research questions outlined in Chapter \ref{introduction}. In the remainder of the chapter, we will provide a short answer to each of the research questions.
 
-\subsection{Anomaly Prediction}
-In our research, we focused on detecting anomalies that were known to us prior running the experiments. We tried to prove that our algorithms can detect them and at the same time not raise error when normal events happen. However, the desired application of our solution would be to be able to "predict" anomalies by real time monitoring of the system. In the section above, we elaborated the rough workflow of how the alarms would be raised. For this use-case, it would be worth experimenting with windows of smaller sizes and possibly overlapping windows, in opposition to strictly fixed sized embedding we are conducting at the moment. The reason for considering smaller windows is that finer granularity of problems could be detected that way. When anomaly happens, the system breaks and users suffer, it is not so useful anymore to detect an anomaly as the system was effected heavily. But if the window is small enough to capture an event that is observed to lead to an anomaly, there is a time where something can be done about the initial problem and prevent the full anomaly (consisting of $n, n > 1$ windows) to happen.
+We focused on detecting anomalies that were known to us before conducting the experiments. We attempted to prove that our algorithms could detect them and while not triggering error when normal events occured. However, the desired application of our solution would be to be able to detect anomalies by monitoring the system in real time. In the section below, we will elaborate the rough workflow of how the alarms would be raised in the future anomaly detection pipeline. For this use-case, it would be worthwhile to experiment with smaller windows and possibly overlapping windows, as opposed to the strict fixed-size embedding we are doing at the moment. The reason for looking at smaller windows is that a finer granularity of problems could be detected this way. If an anomaly occurs, the system breaks down, and users suffer, it is no longer as useful to detect an anomaly because the system has been severely impacted. However, if the window is small enough to capture an event that leads to an anomaly, something can be done about the initial problem at some point to prevent the entire anomaly (consisting of $n, n > 1$ windows) from occurring.
 
 \textbf{RQ1}: \textit{\RQFirst}\\
 
-Before the actual active anomaly detection process, we performed some initial exploration of the dataset. Having plotted the two kinds of observed anomalies, killing Redis and killing RabbitMQ on top of the Nightly dataset of normal instances (Figure \ref{fig:tsne-anomalies}), the plot had shown three different clusters. Each clusters contained similar data points (log sequences) grouped together into clusters, and cluster of normal instances was separated from the cluster of anomalous instances, based on the behaviours of underlying data points. Moreover, in the visual interpretation we could also distinguish between two different cases of anomalies.
+Before the actual process of active anomaly detection, we performed an initial exploration of the dataset. After we plotted the two types of observed anomalies, killing Redis and killing RabbitMQ, on top of the Nightly dataset of normal instances (Figure \ref{fig:tsne-anomalies}), the plot showed three distinct clusters. Each cluster contained similar data points (log sequences) grouped into clusters, and the cluster of normal instances was separated from the cluster of anomalous instances, based on the behaviour of the underlying data points. In addition, visual interpretation also allowed us to distinguish between two different types of anomalies.
 
-Being able to observe anomalies with the naked eye gives us the 'why' a certain decision was made by the anomaly detection algorithm. Interpretability and explainability in machine learning is extremely important, it helps to understand what is the reasoning behind outcomes and it also helps us to trust the final models.
+Being able to see anomalies with the naked eye gives us the "why" of a particular decision made by the anomaly detection algorithm. Interpretability and explainability in machine learning is extremely important. It helps us to understand what the reasons are for the results, and it also helps us trust the final models.
 
-That's why we argue that the visual analytics are an immediate proof that verifies the dataset of logs produced by Motorola Solutions SmartConnect holds enough information for anomaly detection and the answer to the first research question is \textbf{yes}. \\
+Therefore, we argue that visual analysis is direct evidence that the dataset of logs produced by Motorola Solutions SmartConnect contains enough information for anomaly detection and the answer to the first research question is \textbf{yes}. \\
 
 \textbf{RQ2}: \textit{\RQSecond}\\
 
 As part of our research, we designed a preprocessing stage that transfers unstructured log messages into a structured format, or \textit{embedding}. We proposed two different types of feature embeddings: an event count vector and TF-IDF weighted vector.
 
-To answer this question, we conducted machine learning experiments and discovered that our best performing models can successfully detect all types of known anomalies, with F1 score of $100 \%$ on the test dataset.
+To answer this question, we conducted machine learning experiments and discovered that our best performing models can successfully detect all types of known anomalies, with an F1 score of $100 \%$ on the test dataset.
 
-Both types of feature embeddings performed similarly well, however we choose to prefer the event count embedding for its simplicity in terms of generation as well as interpretation. It seems that a simple representation in context of frequency of different event counts is detailed enough to detect outliers within the normal data. 
+Both types of feature embeddings performed similarly well, however we choose to prefer the event count embedding due to its simplicity in terms of generation and interpretation. It seems that a simple representation in the context of the frequency of different event counts is detailed enough to detect outliers within the normal data. 
 
-These results confirm that this type of feature extraction,  frequently used in anomaly detection does successfully reflect the characteristics of SmartConnect's log messages for further outlier analysis.\\
+These results confirm that this type of feature extraction, which is commonly used in anomaly detection, successfully reflects the characteristics of SmartConnect log messages for further outlier analysis.\\
 
 \textbf{RQ3}: \textit{\RQThird}\\
 
-We addressed the third research question by performing a thorough study of anomaly detection methods, approaches and similar research papers, where they have been successfully employed. The architecture of anomaly detection process consists of many more steps than just choosing and running a ML algorithm. 
+To answer the third research question, we conducted a thorough investigation of anomaly detection methods, approaches, and similar research papers, in which they have been successfully used. The architecture of the anomaly detection process consists of many more steps than just the selection and execution of an ML algorithm. 
 
-We have proposed a workflow of our research consisting of four important steps: data collection, log parsing, feature engineering and anomaly detection.
+We proposed a workflow of our research that consists of four important steps: Data collection, Log parsing, Feature Engineering and Anomaly Detection.
 
-As a result of our investigation, we have compiled a short list of four representative state-of-the-art unsupervised anomaly detection algorithms, including Isolation Forest, PCA, Invariants Mining and Log Clustering. Leveraging the research findings, we have explored different log parsing algorithms, which are also a crucial part of successful anomaly detection. We have decided to use an online log parser called Drain3.\\
+As a result of our research, we have compiled a short list of four representative state-of-the-art algorithms for unsupervised anomaly detection, including Isolation Forest, PCA, Invariants Mining and Log Clustering. Based on the research results, we investigated several log parsing algorithms, that are also a critical component of successful anomaly detection. We chose to use an online log parser called Drain3.\\
 
 \textbf{RQ4}: \textit{\RQFourth}\\
 
-Using the collected knowledge to transform data into a structured format and verifying our assumption using data visualization techniques, we were ready to perform the last part of the research - conducting experiments. In order to find the ideal parameters for anomaly detection algorithms we performed a simple gird search over hyperparameter space. We did not pay attention to explore hyperparameters into a close detail, as obtaining optimal parameters and results was not the main goal of this thesis. 
+With the accumulated knowledge to convert data into a structured format and verify our assumption using data visualization techniques, we were ready to perform the final part of the research - conducting experiments. To find the ideal parameters for anomaly detection algorithms, we performed a simple grid search over the hyperparameter space. We did not care to explore the hyperparameters in detail, as achieving optimal parameters and results was not the main goal of this work. 
 
-The anomaly detection algorithms are judged on their abilities to correctly identify anomalies. To measure this ability we used four kinds of evaluation metrics: precision, recall, F1 score and accuracy. On the test set, log clustering and PCA algorithms are able to detect $100 \%$ of killing Redis and killing RabbitMQ anomalies and $100 \%$ of normal instances of data. A special kind of normal sample are calls between two radios, which appeared as outliers on some plots, are also correctly recognized as anomaly-free. 
+Anomaly detection algorithms are judged on their ability to correctly identify anomalies. To measure this ability, we used four types of evaluation metrics: Precision, Recall, F1 Score and Accuracy. On the test set, the log clustering and PCA algorithms are able to detect $100 \%$ of killing Redis and killing RabbitMQ anomalies and $100 \%$ of normal data instances. A special type of normal samples are calls between two radios, which appeared as outliers on some plots, are also correctly detected as anomaly-free. 
 
-The killing Redis and RabbitMQ anomalies are fairly easy to detect because of the logs they produce and because of the high quantities in which they are being produced on those occasions. However, being able to reproduce anomalies in SmartConnect system is not a trivial task. The data of these two cases of anomalies were obtained on site physically performing the calls while stopping the connection with Redis and RabbitMQ services, when the experimental environment was not interrupted by other experiments performed by developers. 
-We also argue that by being able to recognize these two anomalies and distinguishing them between each other gives a helpful information that it is possible to detect an incidence of anomaly in this dataset. 
+The killing Redis and RabbitMQ anomalies are realtively easy to detect due to the logs generated and the high volumes generated on these occasions. However, reproducing anomalies in the SmartConnect system is not a trivial task. The data from these two cases of anomalies were obtained on site physically making the calls while stopping the connection to the Redis and RabbitMQ services, when the experimental environment was not interrupted by other experiments performed by developers. 
+We also argue that being able to recognize these two anomalies and distinguish them from each other is helpful information that it is possible to detect an occurrence of anomalies in this dataset. 
 
-To support this claim, we leveraged the knowledge of domain experts - developers in the SmartConnect's team to assess the discovered results on dataset with unknown numbers and types of anomalies. This way we got an unbiased look at the performance of the trained models. Due to the high amount of logs in time windows that the experts were given to investigate, they were unable to certainly confirm the predicted labels of all time windows. However, they managed to locate another unknown anomaly cluster, that was correctly recognized as anomaly by PCA. 
+To support this claim, we leveraged the knowledge of domain experts - developers in the SmartConnect team to evaluate the discovered results on dataset with unknown number and type of anomalies. In this way, we obtained an unbiased view of the performance of the trained models. Due to the high number of logs in time windows that the experts were asked to examine, they could not confidently confirm the predicted labels of all time windows. However, they managed to find another anomaly cluster, that was correctly identified as an anomaly by PCA. The anomaly represented by this cluster was unknown before the experiment.
+
+\section{Weaknesses and Limitations}
+Although we have been able to achieve some great results and discoveries during our methodological process, there are a number of possible improvements that could be made.
+In this section we will address some of the weaknesses and limitations that we encountered during our research.
+
+\subsection{Evaluation}
+First and foremost, the most difficult part in anomaly detection is actually verifying the results because our labeled dataset and the set of known anomalies have a very limited size. 
+For this reason, we were unable to draw conclusions about performance on a real-world dataset. However, due to the complexity of the log data, this was not possible, as labeling the data is extremely time consuming. We asked experts to manually validate of the predictions on an experimental dataset. They approved of the reported anomalies and did not report any false negatives. 
+
+However, relying on a human being as the one to validate the actual results and performance makes the whole process more error-prone and even more time consuming.
+
+\subsection{Dataset}
+The major limitation of our research is that we were not able to verify our results using datasets from the live production environment. Instead, we used log data generated in a test and experimental environment.
+This is due to the fact that log data generated in the production environment is highly confidential as it may contain information that can be easily exploited if not handled properly. 
+
+To overcome this, a strategy for anonymous handling and storage of data in our program needs to be developed, which is beyond the scope of this paper.
+
+\subsection{Optimal Window Size}
+Another issue that has not been fully addressed in this paper is further experimentation with the relationship between performance and window size. 
+In our study, we only worked with embedding in time windows with a fixed time of two minutes and the windows were non overlapping.
+It can be argued, that since the downtime caused by anomalies, which we primarily studied, is less than two minutes, our solutions should perform reasonably well.
+However, it remains to be explored how this embedding choice would cope with particularly longer lasting anomalies.
+
+\subsection{Variant Length of Feature Vector}
+In the feature engineering step, we embed features into an event count matrix, where we mark how many times an event occurred in a given time window. However, when embedding previously unseen records, it will eventually happen that a previously unseen event occurs and thus the length of the feature vector increases. In the current solution, when this happens, we have to go back and re-train our models to match the new vector size. 
+
+To make our solution more robust, an additional column should be introduced in the feature vector. The frequency of this event type would be incremented whenever an event occurs that was not represented in the training data. 
+After that, in the model re-training step (which is suggested as a possible extension in Section~\ref{future:pipeline}) the new event types integrated and the event count would be properly increased.
+
+\section{Future Work}
+In the time frame of six months, we we able to prove that applying machine learning based monitoring tools to detect anomalies in Motorola SmartConnect is well possible.
+However, many interesting questions arose along the way that we could not address within the scope of this project.
+Also, our solution should not be considered a finished product that can be packaged and shipped. Definitely, more software engineering work needs to be done before we can claim that. For now, our solution is mainly for experimental purposes.
+Here we describe the questions whose answers need to to be explored in future research.
+
+\subsection{Anomaly Detection Pipeline}
+\label{future:pipeline}
+As described earlier in Section~\ref{dataset}, so far our anomaly detection tool only observes the experimental environment intended for developers to try out new features. 
+
+This is only a proof-of-concept for our solution. To take full advantage of an automated anomaly detection product, it needs be deployed in the production environment. However, in a large company like Motorola Solution, this takes more than just a few months, which we had available for this work.
+
+Let us illustrate what processes are required to improve our solution so that it can be useful in production.
+
+First, we need to develop a proper pipeline for continuous training of the model(s). We have the foundation in place, but, what remains to be done is to automate the process that checks if the nightly tests passed correctly, and if so, the log samples from that night are downloaded, labeled, and added to the training dataset. The model needs to be re-trained and updated in production. At this stage, the question of how much training is too much also needs to be addressed.
+
+At the same time, our research has not addressed what the specific ways would be to trigger an alarm  each time an anomaly is found. Then, a mechanism must be triggered to deal with the detected problem, whether it is a program that attempts to heal the problem or the notification of a person responsible for observing the state of the system.
+
+\subsection{Code Coverage}
+\label{code_coverage}
+After becoming familiar with the Motorola SmartConnect system, we decided to use one-class learning (classification) methods to detect anomalies.
+Domain knowledge proved critical as it allowed us to take advantage of the fact that we could collect data from nightly tests. 
+We then selected machine learning algorithms that we fed only negative data.
+
+We based our solution on some assumptions about the logs we collect from passing tests:
+\begin{enumerate}
+
+    \item If a test passes, it contains no anomalies.
+    %\item The code under the test is actually related to the one that is being monitored.
+    \item The tests cover the code “sufficiently” and largely examine the data paths that can be executed within the system. 
+
+\end{enumerate}
+
+The first assumption basically says that even if the tests mimic scenarios where a failure is simulated and the system can recover from that failure, we do not want to consider that an anomaly. 
+In this case, no alarm is raised because the system does not require human intervention and is prepared to handle the problem.
+
+The last point brings us to an interesting feature of our solution, which opens a whole new perspective that can be explored in future research.
+
+By the nature of the embedding chosen and the machine learning methods studied, the models run into trouble in case when there is an anomaly free scenario that was not sufficiently present in the training dataset (or better, could not be inferred from the dataset). If this non-anomalous scenario then shows up in the system monitored by our anomaly detection tool, false positives will result.\\
+In our case, however, we can rephrase the statement into the claim that if the model frequently reports anomalies that are not in fact anomalies (false positives), this can be turned into valuable information about the tests themselves. 
+More specifically, it means that the tests are not examining some properties of the system and are prone to introducing errors into the product. 
+This observation, along with our anomaly detection solution, can be used as the basis for a tool that could be plugged into a system monitoring process.

@@ -1,18 +1,18 @@
 \chapter{Methodology}
 \label{methodology}
 
-In order to fulfil the goal of this thesis, it is important to first investigate which steps are necessaryto take towards the results. Once these steps are known, different methodological approaches must be analyzed and compared.
+In order to fulfill the goal of this thesis, it is important to first investigate what steps are necessary to achieve the results. Once these steps are known, different methodological approaches need to be analyzed and compared.
 
-In this chapter, we will firstly pass through a simple illustrative example with the goal of providing the reader a better overview of the domain and explaining the idea behind getting log messages into more organized structures. After that, we include a detailed description of the proposed approaches on developing a machine learning based anomaly detection tool. 
+In this chapter, we will first go through a simple illustrative example, with the aim of giving the reader a better overview of the domain and the idea behind getting log messages into more organized structures. This will be followed by a detailed description of the proposed approaches to develop a machine learning based anomaly detection tool.  
 
 \section{Overview of the Proposed Approach}
-The goal of our approach is to fulfil the objective of the thesis and answer the research questions listed in Chapter \ref{introduction}. The final step that needs to be conducted is trivially, applying anomaly detection methods. As a matter of fact, our dataset is mostly unlabeled, thus we need to exploit unsupervised anomaly detection methods aided by unlabeled data. However, the main focus of the methodological approach of our research is on the preprocessing steps that lead to the final machine learning application. Figure \ref{fig:worklowOverview} shows the pipeline of the key steps employed in this study. Despite the simple structure of the workflow pipeline, in reality, the process gets much more complex and requires several back and forth iterations, due to some inconsistencies in datasets, new findings from observing the data, etc.
+The goal of our approach is to fulfill the objective of the thesis and answer the research questions listed in Chapter \ref{introduction}. Trivially, the last step to be performed is the application of anomaly detection methods. Since our dataset is mostly unlabeled, we need to use unsupervised anomaly detection methods using unlabeled data. However, the main focus of the methodological approach of our research is on the preprocessing steps leading to the final application of machine learning. Figure \ref{fig:worklowOverview} shows the pipeline of the main steps used in this study. Despite the simple structure of the workflow pipeline, in reality the process becomes much more complex and requires several back and forth iterations due to some inconsistencies in the datasets, new insights from observing the data, etc.
 
-Because we are using a real-world dataset, we needed to familiarise ourselves with the domain, choose some specific parts the log data valid for our research and then investigate, what characteristic properties could be extracted from the log data that would reflect the underlying events. Given the importance of data processing to be done correctly, it is further structured into three phases.
+Because we are using a real-world dataset, we had to familiarize ourselves with the domain, select specific parts of the log data that are valid for our research, and then investigate which characteristic properties extracted from the log data reflect the underlying events. Since it is important that the data processing is done correctly, it is further divided into three phases.
 
-As a first step, it is necessary to collect the log data from the monitored system. We will examine several possibilities of gathering data from SmartConnect's system and explain which one did we choose and why. We show how those logs are parsed and event types are mined from raw log messages. We proceed with a discussion on feature engineering and how we apply windowing on the time series data. After that, we explain how we applied the selected machine learning algorithms on the preprocessed data. 
+In the first step, it is necessary to collect the log data from the monitored system. We explore several ways to collect data from the SmartConnect system and explain which ones we choose and why. We show how these logs are parsed and event types are parsed from the raw log messages. We continue with a discussion of feature engineering and how we apply windowing to the time series data. We then explain how we apply the selected machine learning algorithms to the preprocessed data. 
 
-To conclude, the following four steps of our solution will be described more comprehensively in the remainder of this chapter.
+Finally, the following four steps of our solution are described in more detail later in this chapter.
 
 \begin{enumerate}
     \item Data Collection 
@@ -24,38 +24,38 @@ To conclude, the following four steps of our solution will be described more com
 \begin{figure}[h]
     \centering
     \input{en/figures/methodology/worklowOverview.tikz}
-    \caption{The workflow of our anomaly detection solution.}
+    \caption{The workflow of our anomaly detection solution consisting of five phases - data collection, log parsing, feature engineering and anomaly detection.}
     \label{fig:worklowOverview}
 \end{figure}
 
 
 \subsection{Toy Example}
-To better understand the mathematical modelling and encoding that is required to apply machine learning algorithms for anomaly detection and also to provide a proof of concept, that an anomalous change in logs can indeed be detected, it is nice to have a simple toy scenario. We will simulate a chain of microservices sending traffic from one end to another.
+To better understand the mathematical modeling and encoding that is required to apply machine learning algorithms to anomaly detection, and also to provide a proof of concept that an anomalous change in logs can indeed be detected, it is nice to have a simple toy scenario. We will simulate a chain of microservices sending traffic from one end to the other.
 
-Let's set $m$ as a number of services denoted $s_i$, which are connected in a sequential fashion: $s_0 \rightarrow s_1 \rightarrow s_2 \rightarrow ... \rightarrow s_{m-1}$. Packets are being sent from $s_1$ to $s_m$.
+Let's set $m$ as a number of services denoted $s_i$, which are connected in a sequential manner: $s_0 \rightarrow s_1 \rightarrow s_2 \rightarrow ... \rightarrow s_{m-1}$. Packets are sent from $s_1$ to $s_m$.
 
 Over the course of $n$ epochs, we send $n$ packets labeled $p_1, p_2, p_3, ..., p_n$ to $s_1$.
 
-At every epoch, a service $s_i$ can execute one of the following simple events: 
+At each epoch, a service $s_i$ can perform one of the following simple events: 
 
 \begin{itemize}
     \item $\mathbf{E_1}$: Successfully sent a packet (SEND)
     \item $\mathbf{E_2}$: No packet was sent (FAIL)
 \end{itemize}
 
-For each event, we assign a probability of that event happening. For events it holds that 
+For each event, we assign a probability that the event will occur. For events, it holds that 
 
 \begin{gather*}
     Pr[E_1] + Pr[E_2] = 1
 \end{gather*}
 
-and each service can have a event different probability distribution.
+and each service may have a different event probability distribution.
 
-At every step, every service $s_i$ will log the choice of event for every existing packet denoted as $s_i: p_{j_{E_k}}$. In our simple scenario, the event $E_2:$ FAIL is an anomaly. 
+At each step, each service $s_i$ logs the choice of event for each packet present, denoted as $s_i: p_{j_{E_k}}$. In our simple scenario, the event $E_2:$ FAIL is an anomaly. 
 
-We will construct a machine learning model using supervised learning, logistic regression and decision tree (unlike our actual experiments, where we use strictly only unsupervised learning methods) with the goal of finding out which service failed to send a package. We will run the simulation for $n$ epochs. The prediction $Y$ of our model is either the service that failed, or no service in case of non-anomalous execution. The training set consists of vectors, where each dimension represents a service and the value at each dimension is the event executed by that service in given epoch. 
+We construct a machine learning model using supervised learning, logistic regression, and decision tree (as opposed to our actual experiments, where we use only unsupervised learning methods) with the goal of finding out which service failed to send a packet. We run the simulation for $n$ epochs. The prediction $Y$ of our model is either the service that failed or no service in case of non-anomalous execution. The training set consists of vectors, where each dimension represents a service and the value in each dimension is the event executed by that service in the given epoch. 
 
-Firstly, we created a simulation and its illustration can be found in Figure \ref{figure:simulation}. We have given the simulation the following properties: 
+First, we created a simulation, whose illustration can be found in Figure \ref{figure:simulation}. We gave the simulation the following properties: 
 
 \begin{itemize}
     \item Number of services $m = 5$: $s_0 \rightarrow ... \rightarrow s_{4}$
@@ -70,11 +70,11 @@ Firstly, we created a simulation and its illustration can be found in Figure \re
 
 \begin{figure}\centering
      \input{en/figures/methodology/toyExample.tikz}
-	\caption{An example of simulation configuration with $5$ services, with each service having its own probability distribution of events $Pr_i$}.
+	\caption{An example of a simulation configuration with $5$ services, where each service has its own probability distribution of events $Pr_i$}.
 	\label{figure:simulation}
 \end{figure}
 
-The simulation generates a log file with log messages printed out by the services. Below we can see some example log message entries in the simulated log file. Packet is sent sequentially between services in increasing order. If the service $i$ fails to send the package to the next service, it logs a message \texttt{No packet was sent} and the packet does not reach any other service $j$ such that $j$ > $i$. Those services also don't record any log message. 
+The simulation generates a log file with log messages printed out by the services. Below we see some sample log message entries in the simulated log file. The packets are sent sequentially between the services in ascending order. If service $i$ cannot send the packet to the next service, it logs a message \texttt{No packet was sent} and the packet does not reach another service $j$ such that $j$ >$i$. These services also do not record a log message. 
 
 \begin{verbatim}
 ========== Starting new simulation ==========
@@ -111,7 +111,7 @@ Epoch: 6 Service 1: Successfully sent a packet
 Epoch: 6 Service 2: No packet was sent
  \end{verbatim}
  
-We can transform the set of log messages into a vector embedding, as can be seen in Table \ref{tab:simulation}. Each row represents one epoch and each cell contains an output of the simulation of a corresponding service, where $1$ is equivalent to event $E_1$ and $0$ is equivalent to event $E_2$. In Figure \ref{fig:simulationPlot} the number of services, that successfully received and sent a packet for each epoch is shown. As expected from the probability distribution of the events, we can see that the majority of epochs finished successfully for all of the $5$ services. Service number $2$ was assigned a higher probability of failure, which corresponds with the number $2$ of successfully executed services on y axes. 
+We can convert the set of log messages into a vector embedding, as seen in Table \ref{tab:simulation}. Each row represents an epoch and each cell contains an output of the simulation of a corresponding service, where $1$ corresponds to event $E_1$ and $0$ corresponds to event $E_2$. Figure \ref{fig:simulationPlot} shows the number of services that successfully received and sent a packet for each epoch. As expected from the probability distribution of events, it can be seen that the majority of epochs for all $5$ services completed successfully. The service numbered $2$ was assigned a higher probability of failure, corresponding to the number $2$ of successfully completed services on the y-axis. 
 
 \begin{table}[!h]
 \centering
@@ -126,7 +126,7 @@ Epoch      & $\mathbf{s_0}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & $\mathbf{s_3}$ &
 \textbf{5}          & 1             & 1             & 1             & 1             & 1             \\
 \textbf{6}          & 1             & 1             & 1             & 1             & 1             \\ \bottomrule
 \end{tabular}
-\caption{An example of numerical embedding obtained from the first $7$ epochs of toy example simulation.}\label{tab:simulation}
+\caption{An example of numerical embedding obtained from the first $7$ epochs of the simulation of the toy example.}\label{tab:simulation}
 \end{table}
 
 \begin{figure}[!h]
@@ -135,56 +135,55 @@ Epoch      & $\mathbf{s_0}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & $\mathbf{s_3}$ &
         \label{fig:simulationPlot}
 \end{figure}
 
-The obtained simulated dataset can be easily modified to generate labels. If a row is all ones, the assigned label is \texttt{no\_service}. If a row contains a zero, its label is the index of the first service that failed to send a packet. This embedding is then used as an input to create a logistic regression and random forest model. The toy example should provide a better understanding of how can a unstructured textual input be transformed into a format suitable machine learning algorithms.
+The obtained simulated dataset can be easily modified to generate labels. If a line contains only ones, the assigned label is \texttt{no\_service}. If a line contains a zero, its label is the index of the first service that failed to send a packet. This embedding is then used as input to build a logistic regression and random forest model. The toy example is intended to provide a better understanding of how an unstructured text input can be converted into a format suitable for machine learning algorithms.
 
 \section{Data Collection}
 \label{data_collection}
-By data collection, we understand the process of gathering log data from the observed system in such a way that the logs can be further parsed, processed, and fed to the machine learning model.
+By data collection, we mean the process of collecting log data from the observed system in such a way that the logs can be further parsed, processed, and fed to the machine learning model.
 
-The system we study follows the microservices architectural pattern, as described in Section~\ref{smart-connect:architecture} on the architecture of SmartConnect.\\
+The system we studied follows the microservices architecture pattern as described in Section~\ref{smart-connect:architecture} on the architecture of SmartConnect.\\
 
 \subsection{Logging}
 
 Traditionally, an application performs logging by sending messages to
-(pseudo) files \texttt{stderr} (standard error) and \texttt{stdout} (standard output). It can be combined with appending those logs also to a dedicated file with \texttt{.log} extension. Both of those practices are usually deployed by services running as containerized applications in Pods\footnote{\url{https://kubernetes.io/docs/concepts/cluster-administration/logging/}}
+(pseudo) files \texttt{stderr} (standard error) and \texttt{stdout} (standard output). It can be combined with appending these logs also to a dedicated file with \texttt{.log} extension. Both methods are typically used by services running as containerized applications in Pods\footnote{\url{https://kubernetes.io/docs/concepts/cluster-administration/logging/}}.
 
-In the architecture of microservices, this method of logging may not be sufficient,  since a MSA system is usually comprised of many applications and the logs are scattered at many locations. Furthermore, the individual services may be often replaced and contents of log files subsequently removed.
+In microservices architecture, this method of logging may not be sufficient because an MSA system usually consists of many applications and the logs are scattered in many places. In addition, the individual services are often replaced and the contents of the log files are subsequently removed.
 
-Moreover, in systems that are producing a vast amount of logs, persisting logs in files and stored in service Pod's file system may eventually lead to taking up too much of the node's storage. That's why services such as \texttt{logrotate}\footnote{\url{https://linux.die.net/man/8/logrotate}} are being used. Logrotate collects logs, sends them to a different location, where they can be persisted without affecting MSA system's performance, and removes them from Pod's node. 
-On the other hand, this means that when inspecting a Pod, only the most recent (if any) logs can be found in Pod's \texttt{log} file.
+In addition, for systems that produce a large amount of logs, persisting the logs to files and storing them in the service Pod's file system can cause the node's storage space to be overused. For this reason, services such as \texttt{logrotate}\footnote{\url{https://linux.die.net/man/8/logrotate}} are used. Logrotate collects logs, sends them to another location where they can be persisted without affecting the performance of the MSA system, and removes them from the Pod's node. On the other hand, this means that when a Pod is checked, only the most recent (if any) logs can be found in the Pod's \texttt{log} file.
 
-When it comes to SmartConnect MSA, an approach similar to the one of \texttt{logrotate}'s is taken.
+SmartConnect MSA takes a similar approach to \texttt{logrotate}.
 
-\texttt{Filebeat}\footnote{\url{https://www.elastic.co/guide/en/beats/filebeat/7.10/filebeat-overview.html}} from ELK (Elasticsearch, Logstash, Kibana)\footnote{\url{https://www.elastic.co/what-is/elk-stack}} is deployed to forward data collected from the system's Pods to Elasticsearch engine (introduced in Section~\ref{smart-connect:elastic-search}). 
-The engine represents an authority for storing logs from the system and is considered the single source of truth as the log data is persisted there.
+\texttt{Filebeat}\footnote{\url{https://www.elastic.co/guide/en/beats/filebeat/7.10/filebeat-overview.html}} from ELK (Elasticsearch, Logstash, Kibana)\footnote{\url{https://www.elastic.co/what-is/elk-stack}} is used to pass the data collected by the system's Pods to the Elasticsearch engine (introduced in Section~\ref{smart-connect:elastic-search}). 
+The engine provides an authority for storing logs of the system and is considered as the single source of truth since the log data is persisted there.
 
 \subsection{Implementation}
 
-To sum up, the following are our options for log collection in the SmartConnect system:
+In summary, the following options are available for log collection in the SmartConnect system:
 \begin{enumerate}
-    \item Saving output of \texttt{kubectl logs \${POD}} command for every relevant Pod
-    \item Collecting data saved in \texttt{\${POD}:/var/log/*.log} for each Pod
-    \item Requesting logs from SmartConnect's Elasticsearch server
+\item Saving the output of the command \texttt{kubectl logs \${ POD }} for each relevant Pod 
+\item Collecting the data stored in \texttt{\${ POD }:/var/log/*.log} for each Pod \item Requesting logs from the Elasticsearch server from SmartConnect
 \end{enumerate}
 
-To assess the possibilities, the initial two items represent the same idea, just carried out in a different manner - the \texttt{logs} command just prints the output of the required \texttt{.log} file to \texttt{stdout}. 
-It is very easy to get logs of a single Pod, however, to gather all the information we want about the whole system, it requires crawling individually through all of the microservices. Also, as mentioned before, the major drawback of these approaches is that only logs that were not yet picked up by \texttt{filebeat} are accessible.
 
-Therefore, to collect log data from a multiple hours run of the system, it would require to poll the services rather frequently. These methods also bring complexity to data postprocessing, once acquired, as we cannot guarantee uniqueness of entries with these approaches.
+To gage the possibilities, the first two items represent the same idea, just executed in a different way - the \texttt{logs} command simply prints the output of the desired \texttt{.log} file to \texttt{stdout}. 
+It is very easy to get the logs of a single Pod, but to gather all the desired information about the whole system, all microservices need to be crawled individually. Moreover, as mentioned earlier, the main drawback of these approaches is that only logs that have not yet been fetched by \texttt{filebeat} are accessible.
 
-On the other hand, the third option is a more difficult one to automate, however promises more structured way of getting the logs. Also, given the features of \texttt{Elasticsearch}, it should also represent faster solution for data collection.
+Therefore, in order to collect log data from several hours of system operation, services would need to be queried relatively frequently. These methods also introduce complexity into the post-processing of the data once collected, as we cannot guarantee the uniqueness of the entries in these approaches.
 
-In Motorola, developers review logs stored in their \texttt{Elasticsearch} engine through \texttt{Kibana} web user interface. The UI makes it easy to visualize and filter log data but on the down side, its export options are not well suited for structured way of downloading the data. Regardless of these constraints, there must be a size limit set on the size of the exports. The limit is advised not to be much larger than the default 10MB as it may potentially affect negatively Kibana and Elasticsearch in terms of performance \footnote{\url{https://www.elastic.co/guide/en/kibana/current/reporting-settings-kb.html}}. Speaking in terms of our requirements, 10MB of log data would not span more that a couple of minutes of logs.
+On the other hand, the third option is more difficult to automate, but promises a more structured way to obtain the logs. Moreover, given the features of \texttt{Elasticsearch}, it should also provide a faster solution for data collection.
 
-Another option, using \texttt{ELK} stack, would be to make use of \texttt{Elasticsearch}'s REST APIs \footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html}}. However, for security reasons, some companies may opt out from exposing this API to the internet - Motorola being among them.
-The only way to access the application's programming interface is thus to make the calls from inside of the cluster.
+In Motorola, developers review logs stored in their \texttt{Elasticsearch} engine via the \texttt{Kibana} web user interface. The UI makes it easy to visualize and filter log data, but on the down side, its export options are not well suited for a structured way of downloading the data. Regardless of these limitations, a size limit needs to be set for the exports. The limit should not be much larger than the default 10 MB, as it can potentially have a negative impact on the performance \footnote{\url{https://www.elastic.co/guide/en/kibana/current/reporting-settings-kb.html}}. Based on our requirements, 10 MB of log data would not cover more than a few minutes of logs.
 
-We deployed a service called \texttt{elk-query-service} inside of the cluster that handles search requests on the \texttt{Elasticsearch}. Our service exposes a minimalistic functionality that can be accessed within the company.
-\texttt{\justify elk-query-service} can be called with two date arguments specifying the start and end of time window. Logs between the start and end date are downloaded to the \texttt{elk-query-service} Pod and can be transferred to the node where they can be further used in a machine learning anomaly detection pipeline as proposed for future work in Section~\ref{future:pipeline}. The high level architecture of our solution for data collection is schematically presented in Figure~\ref{fig:data_collection_elastic}.
+Another option, using \texttt{ELK} stack, would be to make use of the REST APIs of \texttt{Elasticsearch} \footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html}}. However, for security reasons, some companies choose not to expose this API to the Internet - Motorola is one of them.
+So the only way to access the application programming interface is to make the calls from within the cluster.
+
+We deployed a service called \texttt{elk-query-service} within the cluster that handles search queries to the \texttt{Elasticsearch}. Our service provides minimalistic functionality that can be accessed within the company.
+\texttt{\justify elk-query-service} can be invoked with two date arguments indicating the start and end of the time window. Logs between the start and end dates are downloaded to the \texttt{elk-query-service} Pod and can be transferred to the node, where they can be further used in a machine learning anomaly detection pipeline, as proposed in Section~\ref{future:pipeline} for future work. The high-level architecture of our data collection solution is schematically shown in Figure~\ref{fig:data_collection_elastic}.
 
 \begin{figure}[!tbp] \centering {
    \input{en/figures/methodology/dataGathering.tikz}
-   \caption{The implemented solution for collecting log data. Node with privileges to access to the Kubernetes cluster calls an orchestrating script with two arguments - start and end date. \texttt{elk-query-service} downloads the desired logs that meet the date requirements. The script stores the response on the machine learning mode that can proceed to next step - training and evaluation of ML models.}
+   \caption{The implemented solution for collecting log data. Node with access rights to the Kubernetes cluster calls an orchestration script with two arguments - start date and end date. \texttt{elk-query-service} downloads the desired logs that match the date specification. The script stores the response on the machine learning node, which can proceed to the next step - training and evaluating ML models.}
 	\label{fig:data_collection_elastic}
 	}
 \end{figure}
@@ -194,10 +193,10 @@ We deployed a service called \texttt{elk-query-service} inside of the cluster th
 \section{Log Parsing}
 This section describes our technique for parsing the raw and unstructured logs obtained from the analyzed system.
 
-As pointed out in Section~\ref{log_parsing_techniques} there is many different fundamental approaches to what techniques should be used when extracting message templates from logs. 
-Therefore, we developed an extra layer of abstraction over the actual parser that makes our solution less dependent on what specific template mining algorithm is being used.
+As stated in Section~\ref{log_parsing_techniques}, there are many different basic approaches to what techniques should be used when extracting message templates from logs. 
+Therefore, we have developed an additional abstraction layer on top of the actual parser that makes our solution less dependent on which specific template mining algorithm is used.
 
-The experiments therefore work with an object \texttt{LogCategorizer} that exposes functionality to clients. To mention some of the \texttt{LogCategorizer} methods, it provides among others, the following ones:
+The experiments therefore work with an object \texttt{LogCategorizer} that exposes the functionality to clients. To name a few of the \texttt{LogCategorizer} methods, it provides the following, among others:
 
 \begin{itemize}
     \item \texttt{process\textunderscore log\textunderscore message(self, log\textunderscore message: str)\\ -> LogCategory}
@@ -205,25 +204,25 @@ The experiments therefore work with an object \texttt{LogCategorizer} that expos
     \item \texttt{process\textunderscore file(self, input\textunderscore file\textunderscore name: str)}
 \end{itemize}
 
-The actual reading and template creating done by these methods is carried out by an instance of \texttt{LogParser}. \texttt{LogParser} is an abstraction - an interface that is used by \texttt{LogCategorizer}. Every implementation of parser needs to fulfill this contract defined by the interface. The interface defines just the bare minimum functionality that is required from a sensible log template miner and that is a pair of methods:
+The actual reading and creation of templates by these methods is done by an instance of \texttt{LogParser}. \texttt{LogParser} is an abstraction - an interface used by \texttt{LogCategorizer}. Any implementation of the parser must satisfy this contract defined by the interface. The interface defines only the bare minimum of functionality required by a meaningful log template miner, and that is a pair of methods:
 \begin{itemize}
     \item \texttt{get\textunderscore all\textunderscore templates(self) -> List[str]}
     \item \texttt{process\textunderscore log\textunderscore message(self, log\textunderscore message: str) -> str}
 \end{itemize}
-Therefore an implementation of a log parser should be able to return all the templates that it identified by the moment the \texttt{get\textunderscore all\textunderscore templates} method is called. The other method returns a template based on the raw log message inputed.\\
+Therefore, an implementation of a log parser should be able to return all templates it has identified up to the call to the \texttt{get\textunderscore all\textunderscore templates} method. The other method returns a template based on the raw log message entered.\\
 
-Our implementation follows the adapter design pattern \cite{gamma1995design_pattern_adapter} as the aim is to convert interfaces of specific log parsing libraries that may be dramatically different in terms of the API that they expose.
+Our implementation follows the adapter design pattern \cite{gamma1995design_pattern_adapter}, since the goal is to convert interfaces of specific log parsing libraries that may differ drastically in terms of the API they expose.
 
 This allows us to decouple the implementation of the algorithm that identifies templates from logs from our overall goal and opens the way for easy comparison with different template mining strategies.\\
 
  \begin{figure}[!h] \centering {
    \resizebox{\textwidth}{!}{\input{en/figures/methodology/parsing.tikz}}
-   \caption{Architecture for parsing classes. Adapter design pattern application: \texttt{LogParser} as the adapter, \texttt{Drain3Parser} takes on the role of concrete adaptee, \texttt{TemplateMiner} is adaptee - class defined in a different framework with incompatible interface that needs to be converted.}
+   \caption{Architecture for parsing classes. Application of the adapter design pattern: \texttt{LogParser} as adapter, \texttt{Drain3Parser} takes role of concrete adaptee, \texttt{TemplateMiner} is adaptee - class defined in other framework with incompatible interface and needs to be converted.}
 	\label{fig:uml_parsers}
 	}
 \end{figure}
 
-In Section~\ref{parser_summary} we mention that our decision was to progress with the framework Drain \cite{drain2017} that performs online fixed-depth tree template mining. The actual implementation of the algorithm we used is \texttt{Drain3} by company IBM\footnote{\url{https://github.com/IBM/Drain3}}. The algorithm follows a template of 5 steps, as described in more depth in Section~\ref{fixed_depth_tree}:
+In Section~\ref{parser_summary} we mention that our decision was to proceed with the framework Drain \cite{drain2017}, which performs online fixed-depth tree template mining. The current implementation of the algorithm we use is \texttt{Drain3} by IBM \footnote{\url{https://github.com/ IBM /Drain3}}. The algorithm follows a template of 5 steps as described in more detail in Section~\ref{fixed_depth_tree}:
 \begin{enumerate}
     \item Preprocess by Domain Knowledge
     \item Search by Log Message Length
@@ -232,40 +231,40 @@ In Section~\ref{parser_summary} we mention that our decision was to progress wit
     \item Update the Parse Tree
 \end{enumerate}
 
-Let's pay more attention to the first step. It provides us, users, the option to input encoded assumptions and insight on the logs that are produced by the logs.
-It is rather intuitive to assume that this domain knowledge, if inserted correctly, should improve the performance and precision of the mining algorithms. An empirical study \cite{he2016} confirms this assumption.
-However, we argue that this algorithm tuning technique may not be the option to choose in all use cases. With our solution, we are seeking to analyze a system that is very fluid, therefore likely to change over time. This, together with the fact many developers from multiple teams and companies (taking into account also external software the software system is dependent on), it is unfeasible to maintain a single source of truth regarding domain knowledge related to logging. Conversely, we are aiming for a solution that can learn and adapt to changes as independently as possible.\\
+Let's pay more attention to the first step. It provides us, the users, with the option to input encoded assumptions and knowledge about the logs that are produced by the system.
+It is quite intuitive to assume that this domain knowledge, if properly inserted, should improve the performance and precision of mining algorithms. An empirical study \cite{he2016} confirms this conjecture.
+However, we argue that this algorithm tuning technique may not be the right choice in all use cases. With our solution, we attempt to analyze a system that is highly fluid and therefore likely to change over time. This, coupled with the fact that many developers from multiple teams and companies (taking into account also external software on which the software system depends), it is not feasible to obtain a single source of truth regarding domain knowledge related to logging. Conversely, we aim for a solution that can learn and adapt to changes as independently as possible.\\
 
-This goal of adaptability is also reflected in the fact that we ended up choosing an online parser.
-To remind a definition of an online template miner from Section~\ref{log_template_mining}, an online template miner is such a parser, that does not require to see the whole dataset to start analyzing message templates. It can run categorization on the fly while updating its internal state, which keeps acquired knowledge about the domain.\\
-Drain offers the possibility to persist this internal state even between multiple runs, which offers us the best of both worlds - the parser is learning patterns occurring in logs over time to improve while being able to react to new data in flexible fashion.
+This goal of adaptability is also reflected in the fact that we ultimately decided to use an online parser.
+To recall a definition of an online template miner from Section~\ref{log_template_mining}, an online template miner is such a parser that does not need to see the entire dataset to start analyzing message templates. It can perform categorization on the fly while simultaneously updating its internal state, which stores acquired knowledge about the domain.\\
+Drain provides the ability to persist this internal state between multiple runs, giving us the best of both worlds - the parser learns the patterns occurring in the logs over time to improve, while being able to respond to new data in a flexible way.
 
-We have not tweaked steps 2. - 4. as the default parameters \cite{ibmdrain3} yielded results that extracted correct templates from the observed logs.
+We did not change steps 2. - 4. as the default parameters \cite{ibmdrain3} produced results that extracted correct templates from the observed logs.
 
-For the last step, updating the parse tree, Drain3 implementation offers the option to persist the state of the parse tree in JSON file format. This allows us to reuse the  domain knowledge that is acquired by the template miner across restarts of our solution.
-This is an extremely useful feature, where we may assume that all of the logs are coming from the same system, we can reuse the parse tree already build in previous runs and enrich it.
-Drain3 offers multiple ways of storing the snapshot of parse tree, we are using the one that saves the state into a file.
+For the last step, updating the parse tree, the Drain3 implementation provides the option to persist the state of the parse tree in the JSON file format. This allows us to reuse the domain knowledge acquired by the template miner across restarts of our solution.
+This is an extremely useful feature, since we can assume that all logs come from the same system, we can reuse the parse tree already built in previous runs and enrich it.
+Drain3 provides several ways to save the snapshot of the parse tree, we use the one that saves the state to a file.
 
 \section{Feature Engineering}
 \label{section:featureEngineering}
-Now that we obtained unique event types out of unstructured log messages, we need to choose valuable variables, group them together and encode them into a numerical form that can be further used by the machine learning algorithms. This process is called \textit{feature engineering} or \textit{feature extraction}. Feature extraction is the process of generating new features by doing transformations of the original feature set. On our thesis, we also refer to the generates features as \textit{embeddings}.
+Now that we have obtained unique event types from the unstructured log messages, we need to select valuable variables, group them, and encode them into a numeric form that can be further used by machine learning algorithms. This process is called \textit{feature engineering} or \textit{feature extraction}. Feature extraction is the process of generating new features through transformations of the original feature set. In our thesis, we also refer to the generated features as \textit{embeddings}.
 
-Feature engineering step is critically important. Embeddings should be able to summarize valuable information and complex relationships in the dataset, thus directly impacts performance of the learning model, speed of training and avoids overfitting. Log event types generated in the previous step are used as an input for the feature engineering step. The output is a numerical matrix. 
+The feature engineering step is crucial. The embeddings should be able to summarize valuable information and complex relationships in the dataset, which directly affects the performance of the learning model and the speed of training, and avoids overfitting. The log event types generated in the previous step are used as input to the feature engineering step. The output is a numerical matrix. 
 
 \subsection{Windowing}
 % https://core.ac.uk/download/pdf/196555557.pdf page 22
 
-In time-series anomaly detection, a common concept applied in feature extraction is \textit{windowing}. 
-Logs are grouped together into smaller blocks called \textit{windows}, where each window represents a sequence of logs. In some previous approaches \cite{xu2009}, they applied windowing by grouping events by the same session identifier, such that each window represents one job execution with an unique identifier. This solution is not be not applicable to our case, as we do not have a session or process id feature in our raw data set.
+In time series anomaly detection, a common concept applied in feature extraction is \textit{windowing}. 
+Logs are grouped into smaller blocks called \textit{windows}, where each window represents a sequence of logs. In some previous approaches \cite{xu2009}, windowing was applied by grouping events by the same session identifier, so that each window represents a job execution with a unique identifier. This solution is not applicable in our case because we do not have a session or process identifier in our raw dataset.
 
-Log data are also non-evenly spaced time series data, as there is naturally generated a time of occurrence of each log. As a result, another intuitive and frequently used approach to windowing is to generate a set of subsequences of time series. For example, let's say we have log lines ordered by the timestamp and the length of time window is $q$. Then the log line number $1$ to log line number $q$ will be included in the same time window $1$ and encoded as the first row of the resulting feature matrix. The goal of the next anomaly detection step is to tell for each subsequence if it contains an anomaly or not. In our thesis, we use windowing based on timestamp, which is also described in the next part of the text.
+Log data is also non-uniformly distributed time series data, since there is naturally a time of occurrence of each log. Therefore, another intuitive and commonly used approach to windowing is to generate a set of subsequences of time series. For example, suppose we have log lines ordered by timestamp and the length of the time window is $q$. Then, log line number $1$ to log line number $q$ is enclosed in the same time window $1$ and encoded as the first row of the resulting feature matrix. The goal of the next step of anomaly detection is to say for each subsequence whether it contains an anomaly or not. In our work, we use a timestamp based windowing, which is also described in the next part of the text.
 
-Set of time series subsequences can be generated using \textbf{sliding windows}. Let us consider a time series $\mathbf{x} = x_1, x_2, ..., x_n$ of length $n$. We want to extract subsequences $\mathbf{x_i}$ of length $m$. In other words, we want to apply sliding windows of length $m$ and move over the time series until we reach the end of the data set. We shift the window $r$ time steps to the right in each movement. As a result, we get $p$ windows, where $p$ is defined as 
+A set of time series subsequences can be generated using \textbf{sliding windows}. Consider a time series $\mathbf{x} = x_1, x_2, ..., x_n$ of length $n$. We want to extract subsequences $\mathbf{x_i}$ of length $m$. In other words, we want to apply sliding windows of length $m$ and move over the time series until we reach the end of the data set. At each move, we shift the window $r$ time steps to the right. As a result, we get $p$ windows, where $p$ is defined as
     \begin{gather*}
         p = \dfrac{n - m}{r} + 1
     \end{gather*}
 
-and the generated windows are of form 
+and the generated windows are of the form 
 
 \begin{gather*}
     \mathbf{x_1} = x_{11}, x_{12},..., x_{1m} \\
@@ -274,34 +273,34 @@ and the generated windows are of form
     \mathbf{x_p} = x_{p1}, x_{p2},..., x_{pm} 
 \end{gather*}
 
-Size of the step $r$ is a very important parameter. Choosing $r$ to be very low, e.g. $r = 1$ such that subsequences are obtained by sliding window one step at a time, the advantage is that no anomalous sequence can be missed with this approach. However, considering the large data set that grows over time, computations of such subsequences are inefficient and time consuming. On the contrary, we can choose a high value of $r$. For example, if we set $r$ to the length of the sliding window $m$ ($r = m$), then there is no overlap between the windows. The advantage of having a lower number of generated subsequences and decreased processing time comes with a greater risk of missing anomalous subsequences. 
+The size of the step $r$ is a very important parameter. If one chooses $r$ very small, e.g. $r = 1$, such that the subsequences are obtained by sliding the window one step at a time, one has the advantage that no anomalous sequence can be missed in this approach. However, considering the large dataset that grows with time, computing such partial sequences is inefficient and time consuming. On the contrary, we can choose a high value of $r$. For example, if we set $r$ to the length of the sliding window $m$ ($r = m$), then there is no overlap between the windows. The advantage of fewer generated subsequences and less processing time comes with a greater risk of missing anomalous subsequences. 
 
-Another parameter to take into consideration, is the size of the sliding window $m$. The ideal size really depends on the application domain and what's the average number of subsequent log entries that can represent an anomaly. 
+Another parameter to consider is the size of the sliding window $m$. The ideal size really depends on the application domain and how many consecutive log entries on average can represent an anomaly. 
 
-Thus, setting the size of step parameter $r$ and the length of sliding window $m$ is a trade-off between accuracy and processing time. A useful rule is to choose the value of $r$ proportional to the length of subsequences \cite{izakian2013}. As a result, longer subsequences have higher value of $r$ while shorter subsequences have lower value of $r$. The number of log lines included in each window can vary. 
+Thus, setting the size of the step parameter $r$ and the length of the sliding window $m$ is a tradeoff between accuracy and processing time. A useful rule is to choose the value of $r$ proportional to the length of the subsequences \cite{izakian2013}. Consequently, longer subsequences have a higher value of $r$, while shorter subsequences have a lower value of $r$. The number of log lines contained in each window may vary. 
 
-In our thesis, instead of setting the number of log lines in each window, we consider a size of a subsequence in terms of a time-span.
+In our work, instead of considering the number of log lines in each window, we consider the size of a subsequence in terms of a time span.
 
 \begin{figure}[!tbp] \centering {
 	\begin{subfigure}[b]{1\textwidth}
-        \includegraphics[width=\textwidth]{img/windowing.pdf}		    \caption{Sliding window with a fixed length of $m = 5$ and the size of the step $r = m = 5$}
+        \includegraphics[width=\textwidth]{img/windowing.pdf}		    \caption{Sliding window with a fixed length of $m = 5$ and step size $r = m = 5$}
 		\label{fig:f1}
 	\end{subfigure} \\
 	\hfill
 		
     \begin{subfigure}[b]{1\textwidth}
    	    \includegraphics[width=\textwidth]{img/windowing-2.pdf}
-		\caption{Sliding window with a fixed length of $m = 10$ and the size of the step $r = 5$}
+		\caption{Sliding window with a fixed length of $m = 10$ and step size $r = 5$}
 	\end{subfigure}
 	
-	\caption{Two types of windowing with different step size $r$. (a) shows sliding windows generated without any overlap. (b) illustrates sliding window generated by stepping half of the window size at the time causing overlaps between subsequent windows.}
+	\caption{Two types of windowing with different step size $r$. (a) shows sliding windows created without overlap. (b) illustrates sliding windows created by a step size of half the window size, resulting in overlap between subsequent windows.}
 	\label{fig:windowing}
 	}
 \end{figure}
 
 \subsection{Feature embedding}
 \label{subsection:features}
-After applying the sliding window to generate log sequences, the final step of feature extraction is to construct the feature matrix that can be passed as an input to ML algorithms. In our thesis, we experiment with two different types of embeddings, where both representations describe a group of logs in log sequences: \textit{event count matrix} and \textit{TF-IDF weighted matrix}. Figure \ref{fig:feature-extraction} illustrates an example of a generation process of one single log sequence into a feature matrix. We assume that the logs in sequences are highly correlated. To make it easier for the reader to understand the differences between the two proposed embeddings, we provide a summary in Table \ref{tab:embeddings-summary}.
+After applying the sliding window to generate log sequences, the final step of feature extraction is to construct the feature matrix that can be passed as input to the ML algorithms. In our thesis, we experiment with two different types of embeddings, where both representations describe a set of logs in log sequences: \textit{event count matrix} and \textit{TF-IDF weighted matrix}. Figure \ref{fig:feature-extraction} shows an example of the process of generating a single log sequence into a feature matrix. We assume that logs in sequences are highly correlated. To help the reader understand the differences between the two proposed embeddings, we provide a summary in Table \ref{tab:embeddings-summary}.
 
 \begin{figure}[!h] \centering {
    \input{en/figures/methodology/featureExtraction.tikz}
@@ -322,56 +321,57 @@ After applying the sliding window to generate log sequences, the final step of f
 \end{table}
 
 \subsubsection*{Event Count Matrix}
-A simple approach to obtain such representation is to create a event count vector for each log sequence. In other words, for each log sequence, we count the number of event type identifiers and store it as a row vector of an event count matrix. The length of the vector corresponds with the number of unique event types detected in the log parsing section, and each component of the vector corresponds to one event type. The value at each position in the vector is the frequency of event types. For event types that did not occur in the log sequence, the value is zero. Thus, one row of the event count matrix represents a single log sequence. The valuable information contributing to the machine learning model behind the event count matrix is determining what is a normal count of events and what does it mean to deviate from the normal counts.
+A simple approach to obtain such a representation is to create an event count vector for each log sequence. In other words, for each log sequence, we count the number of event type identifiers and store it as a row vector of an event count matrix. The length of the vector corresponds to the number of unique event types detected in the log parsing section, and each component of the vector corresponds to an event type. The value at each position in the vector is the frequency of the event types. For event types that did not occur in the log sequence, the value is zero. Thus, one row of the event count matrix represents a single log sequence. The valuable information that contributes to the machine learning model behind the event count matrix is determining what a normal number of events is and what it means to deviate from the normal counts.
 
 %http://essay.utwente.nl/83142/1/Ma_MA_FacultyOfEEMathematicsAndCS.pdf illustration
 
-This way of constructing the event count matrix is known in the literature as a natural language processing (NLP) model for feature extraction called \textit{Bag-of-Words} (BoW) \cite{informationRetrieval2008}. BoW treats each log sequence as a \textit{document} and for each \textit{word} (in our case, a word is an event type) in a document, a \textit{weight} is assigned. The weight depends on the number of occurrences of the term in the document. The length of the vector corresponds with the number of unique words in the database (analogous to all parsed event types). Then the weight score is referred to as \textit{Term Frequency} (TF) and denoted as $tf_{t,d}$, where the subscript $t$ refers to term (event type) and $d$ refers to document (log sequence) and $f_{t,d}$ is a frequency of term $t$ in document $d$. Term frequency describes the importance of an event type in a log sequence.
+This way of constructing the event count matrix is known in the literature as a natural language processing (NLP) model for feature extraction called \textit{Bag-of-Words} (BoW) \cite{informationRetrieval2008}. BoW treats each log sequence as a \textit{document} and for each \textit{word} (in our case, a word is an event type) in a document, a \textit{weight} is assigned. The weight depends on the number of occurrences of the term in the document. The length of the vector is equal to the number of unique words in the database (analogous to all parsed event types). The weight score is then called \textit{Term Frequency} (TF) and denoted by $tf_{t,d}$, where subscript $t$ refers to the term (event type) and $d$ refers to the document (log sequence) and $f_{t,d}$ is a frequency of term $t$ in document $d$. The term frequency describes the importance of an event type in a log sequence.
 
 \begin{gather}
     tf_{t,d} = \dfrac{f_{t,d}}{\sum_{t'}f_{t', d}}
 \end{gather}
 
-In other words, $tf_{t, d}$ is the probability of occurrence of $t$ in $d$.
+In other words, $tf_{t, d}$ is the probability of $t$ occurring in $d$.
 
 \subsubsection*{TF-IDF}
 Another weighting scheme widely used in Information Retrieval is called \textit{term frequency–inverse document frequency} (TF-IDF). 
 
-Using only the standard term frequency, we have to deal with an important issue. From the definition of term frequency, all event types are considered equally important \cite{informationRetrieval2008}. However, we would also like to know how important a term is not only in one document, but in the whole dataset. That's where another weight score, \textit{inverse document frequency} (IDF) comes to play. First, let us define \textit{document frequency} (DF). Document frequency $df_t$ is defined as the number of documents in the collection that contain the term $t$. Then the inverse document frequency $df_t$ of the term $t$ is defined as: 
+If we use only the standard term frequency, we have to deal with an important issue. After defining the term frequency, all event types are considered equally important \cite{informationRetrieval2008}. However, we also want to know how important a term is not only in a document, but in the whole dataset. This is where another weighting score, \textit{inverse document frequency} (IDF) comes into play. Let's first define \textit{ document frequency} (DF). The document frequency $df_t$ is defined as the number of documents in the collection that contain the term $t$. Then, the inverse document frequency $df_t$ of the term $t$ is defined as: 
+
 
 \begin{gather}
     idf_t = \log{\dfrac{N}{df_t}}
     \label{formula:idf}
 \end{gather}
 
-where $N$ is the total number of documents in the collection. We can observe that if a term is rarely occurring in the collection, the $idf$ is high, and if the term is frequent, then the $idf$ is low.
+where $N$ is the total number of documents in the collection. It can be observed that if a term is rare in the collection, the $idf$ is high, and if the term is frequent, the $idf$ is low.
 
-By the definition, TF-IDF weighting of a term $t$ in document $d$ is a product of two quantities: the term frequency $tf_t$ and the inverse document frequency $idf_t$:
+By definition, the TF-IDF weight of a term $t$ in document $d$ is a product of two quantities: the term frequency $tf_t$ and the inverse document frequency $idf_t$:
 
 \begin{gather}
     tf\text{-}idf_{t, d} = tf_{t,d} \times idf_t
     \label{formula:tfidf}
 \end{gather}
 
-The intuition behind the components of TF-IDF weight is that the term frequency gives higher weight to terms that are frequently occurring in a single document. On the contrary, inverse document frequency gives lower score to words that are frequently occurring in the whole collection, as we are more interested in those that happen rarely. Thus, the $tf\text{-}idf_{t, d}$ weight of the term $t$ in document $d$ is 
+The intuition behind the components of TF-IDF weighting is that term frequency gives higher weight to terms that occur frequently in a single document. In contrast, the inverse document frequency gives a lower score to words that occur frequently throughout the collection, since we are more interested in those that occur infrequently. Thus, the weight $tf\text{-}idf_{t, d}$ of the term $t$ in document $d$ is 
 
 \begin{enumerate}
-    \item higher, if the term $t$ is frequently occurring in the small number of documents
+    \item higher, if the term $t$ is occurs frequently in the small number of documents
     \item lower, if the term $t$ is rarely occurring in the high number of documents or if the term $t$ is rarely occurring in the document $d$
-    \item lowest, if the term $t$ occurs in all of the document in the collection
+    \item lowest, if the term $t$ occurs in all documents of the collection
 \end{enumerate}
 
-As a result, the feature vector of the log sequence is a vector with the value of each dimension defined by \ref{formula:tfidf}.
+As a result, the feature vector of the log sequence is a vector whose value for each dimension is defined by \ref{formula:tfidf}.
 
-Final log sequence vectorization contains normalization of IDF weight by scaling between 0 and 1. There are several ways to normalize IDF, but we decided to use a common approach of applying \textit{logistic} (sigmoid) function to normalize IDF:
+The final vectorization of the log sequence involves normalizing the IDF weight by scaling it between 0 and 1. There are several ways to normalize the IDF, but we chose the common approach of applying the \textit{logistic} (sigmoid) function to normalize IDF:
 
 \begin{align*}
     tf\text{-}idf_{t, d} &= tf_{t,d} \times \sigma(idf_t) \\
     \sigma(x) &= \dfrac{1}{1 + e^{-x}}
 \end{align*}
 
-\subsubsection*{TF-IDF example}
-We will show an example of how TF-IDF is computed in our case, where we work with log sequences instead of documents and event type identifiers instead of terms. Let's assume we have a collection of log sequences and we extracted $8$ event templates from our dataset. Each log message found in log sequence is marked by its corresponding event type identifier starting from $1$ to $8$, as shown in Table \ref{tab:tfidfexample1}.
+\subsubsection*{TF-IDF Example}
+We show an example of computing TF-IDF in our case where we work with log sequences instead of documents and event type identifiers instead of terms. Suppose we have a collection of log sequences and we have $8$ event templates extracted from our dataset. Each log message found in the log sequence is identified by the corresponding event type identifier starting from $1$ to $8$, as shown in Table \ref{tab:tfidfexample1}.
 
 \begin{table}
 \centering
@@ -383,10 +383,10 @@ $l_2$                         & {$[3, 3, 3, 8, 4]$}               \\
 $l_3$                         & {$[2, 7]$}               \\
 $l_4$                         & {$[3, 3, 6, 8, 4, 6]$}               \\ \bottomrule
 \end{tabular}
-\caption{An example of log sequences, which comprises different amounts of log messages. Log message is represented by the event type identifier.}\label{tab:tfidfexample1}
+\caption{An example of log sequences that include different sets of log messages. The log message is represented by the event type identifier.}\label{tab:tfidfexample1}
 \end{table}
 
-In order to compute the term frequency, we find the frequencies of event types in each log sequence and then normalize the frequencies to get the row vectors sum up to $1$. To continue with our example set of log sequences, the TF score computation is described in Table \ref{tab:tfidfexample2}.
+To compute the term frequency, we find the frequencies of the event types in each log sequence and then normalize the frequencies to sum the row vectors to $1$. Continuing with our sample set of log sequences, the TF score calculation is described in Table \ref{tab:tfidfexample2}.
 
 \begin{table}[!h] 
 \begin{subtable}[b]{1\textwidth}
@@ -420,7 +420,7 @@ In order to compute the term frequency, we find the frequencies of event types i
 	\label{tab:tfidfexample2}
 \end{table}
 
-To compute the IDF, we first calculate the document frequency $df_t$ of each term and use the formula \ref{formula:idf} to obtain the inverse document frequencies. We will leave out the normalization for illustration purposes.
+To compute the IDF, we first compute the document frequency $df_t$ of each term and use the formula \ref{formula:idf} to obtain the inverse document frequencies. For illustrative purposes, we omit the normalization.
 
 \begin{table}[!h] 
 \begin{subtable}[b]{1\textwidth}
@@ -447,13 +447,13 @@ To compute the IDF, we first calculate the document frequency $df_t$ of each ter
         \backslashbox{Log sequence ID}{Event type ID} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} \\ \midrule
         \textbf{$l_1$}                     & 0.602          & 0,602          & 0.125          & 0.125          & 0          & 0.602          & 0.301          & 0.301         \\ \bottomrule
         \end{tabular}}
-        \caption{Computation of the IDF score $idf_t = \log{\dfrac{N}{df_t}}$. In our example, $N=4$ as there are $4$ log sequences in the collection. For instance, IDF weight of the event type $1$ is calculated as $idf_1 = \log{\dfrac{4}{1}} = 0,602$.}
+        \caption{Calculating the IDF score $idf_t = \log{\dfrac{N}{df_t}}$. In our example, $N=4$ since there are $4$ log sequences in the collection. For example, the IDF weight of event type $1$ is calculated as $idf_1 = \log{\dfrac{4}{1}} = 0,602$.}
     \end{subtable}%
     \caption{Computation of the IDF score.}
 	\label{tab:tfidfexample3}
 \end{table}
 
-The final step is calculating the product $TF \times IDF$ and the values are shown in Table \ref{tab:tfidfexample4}.
+The final step is to calculate the product $TF \times IDF$ and the values are shown in Table \ref{tab:tfidfexample4}.
 
 \begin{table}[!h]
     \centering
@@ -466,28 +466,28 @@ The final step is calculating the product $TF \times IDF$ and the values are sho
         \textbf{$l_4$}                     & 0          & 0          & 0.042          & 0.021          & 0          & 0.201          & 0          & 0.05
         \\ \bottomrule
         \end{tabular}}
-    \caption{TF and IDF scores from the example are multiplied to obtain TF-IDF}.
+    \caption{TF and IDF scores from the example are multiplied to get TF-IDF}.
     \label{tab:tfidfexample4}
 \end{table}
 
-We assume that by using TF-IDF weighting, we will provide an extra information about the event type distribution not only in terms of log sequences, but also in the whole data set, that could potentially increase ML model's performance. 
+We assume that by using TF-IDF weighting, we obtain additional information about the event type distribution not only with respect to the log sequences, but also in the whole dataset, which could potentially increase the performance of the ML model. 
 
 \section{Anomaly Detection}
 
-Now that we have created the feature matrices, machine learning methods can be applied to detect outliers in the data. For our experiments, we are using an open-source machine learning toolkit \textit{Loglizer}. 
+Now that we have created the feature matrices, machine learning methods can be applied to detect outliers in the data. For our experiments, we use an open-source machine learning toolkit \textit{Loglizer}. 
 
 \subsection{Loglizer}
 \label{subscetion:loglizer}
 
-Loglizer\footnote{https://github.com/logpai/loglizer} is an open-source machine learning based log analysis toolkit for automated anomaly detection written in Python \cite{he2016}. Loglizer was developed for automated anomaly detection as a part of LogPAI \footnote{\url{http://www.logpai.com}}, which is a collection of AI-based log analytics solutions. These log analysis tools have been used by industrial teams in Microsoft and Huawei. It includes three supervised anomaly detection models (\textit{Logistic Regression, Decision Tree, Support Vector Machine}) and six unsupervised anomaly detection models (\textit{Local Outlier Factor, One-Class SVM, Isolation Forest, Principal Component Analysis, Invariants Mining, Clustering}). At the time of writing this thesis, another two unsupervised models were in the development (\textit{DeepLog, AutoEncoder}). 
+Loglizer\footnote{https://github.com/logpai/loglizer} is an open-source machine learning based log analysis toolkit for automated anomaly detection written in Python \cite{he2016}. Loglizer was developed for automated anomaly detection as a part of LogPAI \footnote{\url{http://www.logpai.com}}, a collection of AI-based log analysis solutions. These log analysis tools have already been deployed by industrial teams at Microsoft and Huawei. It includes three supervised anomaly detection models (\textit{Logistic Regression, Decision Tree, Support Vector Machine}) and six unsupervised anomaly detection models (\textit{Local Outlier Factor, One-Class SVM, Isolation Forest, Principal Component Analysis, Invariants Mining, Clustering}). At the time of writing, two more unsupervised models were under development (\textit{DeepLog, AutoEncoder}). 
 
-We decided to leverage a third-party toolkit for several reason. Firstly, as the algorithms we are using in our experiments have been already implemented, there is no need to completely reinvent the wheel and write the implementation ourselves. This way we can avoid a time consuming process and rather focus on the main intention of our research - to investigate if applying various anomaly detection techniques on a real-world dataset can lead to successful results and how to approach it.
+We chose to use a third-party toolkit for several reasons. First, since the algorithms we use in our experiments are already implemented, there is no need to completely reinvent the wheel and write the implementation ourselves. This way, we can avoid a time-consuming process and instead focus on the main purpose of our research - to investigate whether applying different anomaly detection techniques to a real-world dataset can lead to successful results and how to approach it.
 
-Another benefit is that the Loglizer anomaly detectors are working with log sequences. This means that each of the models is trained on a set of log sequences, and the output of the detector classifies whether a single log sequence is an anomaly or not. As described in Section \ref{section:featureEngineering}, we use windowing for generating the log sequences, which makes the Loglizer toolkit a great fit in our research context. Specifically, four methods were used in our research: Invariants Mining, Isolation Forest and PCA. The underlying algorithms behind these tools are presented in Section \ref{section:anomalyDetectionLiteratureReview}.
+Another advantage is that the Loglizer anomaly detectors work with log sequences. This means that each of the models is trained on a set of log sequences, and the output of the detector classifies whether a single log sequence is an anomaly or not. As described in Section\ref{section:featureEngineering}, we use windowing to generate the log sequences, making the Loglizer toolkit an excellent fit for our research context. Specifically, four methods were used in our research: Invariants Mining, Isolation Forest, and PCA . The underlying algorithms behind these tools are presented in Section \ref{section:anomalyDetectionLiteratureReview}.
 
-Implemented anomaly detection methods are evaluated on a public dataset, HDFS. Logs in HDFS dataset were collected from Amazon EC2 platform and contain $11\,175\,629$ entries \cite{xu2009}. Loglizer provides benchmarking results on both supervised and unsupervised methods separately using this dataset, which can be found in Table \ref{table:loglizer}. Evaluation metrics are explained in Section \ref{section:evaluationMetrics}. Benchmarking gives a better idea of the expected performance of the anomaly detection methods we are planning to use in our work. 
+The implemented anomaly detection methods are evaluated on a public dataset, HDFS. The logs in the HDFS dataset were collected from the Amazon EC2 platform and contain $11\,175\,629$ entries \cite{xu2009}. Loglizer provides benchmarking results for both supervised and unsupervised methods separately using this dataset, which can be found in Table \ref{table:loglizer}. The evaluation metrics are explained in Section \ref{section:evaluationMetrics}. Benchmarking gives a better idea of the expected performance of the anomaly detection methods we intend to use in our work.  
 
-Last but not least, Loglizer makes it easier to reproduce, understand and customize the experiments, as the code is open-source.
+Last but not least, Loglizer makes it easier to reproduce, understand and customize the experiments since the code is open source.
 
 \begin{table}[h]
 \centering
@@ -512,12 +512,12 @@ Clustering        & 1.000              & 0.720           & 0.837       \\ \botto
 \end{table}
 
 \subsection{Experiment Workflow}
-Running machine learning experiments is usually an iterative process, where each iteration requires different configuration parameters, input training and testing datasets and a lot of file handling. The same holds for our anomaly detection experiments. We obtained several raw datasets from the SmartConnect's system. We picked four anomaly detection methods, where each method might require a different dataset as well as its own parameter configuration. Every raw dataset needs to parsed from its initial JSON file into a unified structure, it needs to be cleaned and faulty log entries need to be removed. Then a log parser program is applied to obtain an event type identifier for each log message. Finally, we use two different feature matrix representations as an input for anomaly detection methods. After having obtained trained models for every dataset, the evaluation follows. Having so many dependent processes to perform for each experiment iteration where things can get messy very easily, makes it desirable to have an automated workflow system. Despite our thesis not being a software engineering thesis, thus the focus was not on having a perfectly extensible workflow, we attempted to come up with a solution that saves time required to run experiments.
+Running machine learning experiments is typically an iterative process, with each iteration requiring different configuration parameters, input training and testing datasets, and a lot of file processing. The same is true for our anomaly detection experiments. We obtained several raw datasets from the SmartConnect system. We selected four anomaly detection methods, with each method requiring a different dataset as well as its own parameter configuration. Each raw dataset must be parsed from its original JSON file into a unified structure, cleaned up, and erroneous log entries removed. Then, a log parser program is applied to obtain an event type identifier for each log message. Finally, we use two different feature matrix representations as input to anomaly detection methods. After we obtain trained models for each dataset, the evaluation follows. With so many dependent processes that need to be performed for each iteration of the experiment, where things can very easily become messy, it is desirable to have an automated workflow system. Although our work is not a software engineering thesis and thus the focus was not on a perfectly extensible workflow, we tried to find a solution that would save the time required to run experiments.
 
-We created a Makefile-based pipeline comprising a set of Python scripts to facilitate experiments. The goal was to have a reproducible, modular and scalable solution to deal with the complexity of conducting experiments. In this section, we will briefly describe the architecture of this pipeline and the implementation of the experiment scripts.
+We created a Makefile-based pipeline containing a set of Python scripts to facilitate experiments. The goal was to have a reproducible, modular, and scalable solution to deal with the complexity of running experiments. In this section, we will briefly describe the architecture of this pipeline and the implementation of the experiment scripts.
  
  \subsubsection*{Makefile}
-The experiment execution is orchestrated by the GNU \textit{make} instructions described in the Makefile scripts. A Makefile consists of a set of rules that generate target files if any of their dependencies change. We decided to use Makefile because it directly enforces a modular character to our workflow. Every rule must follow the shape:
+The execution of experiments is orchestrated by the GNU \textit{make} instructions described in the Makefile scripts. A Makefile consists of a set of rules that generate target files when one of their dependencies changes. We chose Makefile because it directly enforces a modular character to our workflow. Every rule must follow the shape:
 
 \begin{verbatim}
     target ... : prerequisities ... 
@@ -525,9 +525,9 @@ The experiment execution is orchestrated by the GNU \textit{make} instructions d
         ...
 \end{verbatim}
 
- Usually, targets and prerequisities are file names and recipes are commands. Makefile can be expressed by a directed acyclic dependency graph \cite{feldman1979make}. The dependency graph of our Makefile is illustrated in Figure \ref{fig:makefile}. 
+Normally, targets and prerequisites are filenames and recipes are commands. A Makefile can be expressed by a directed acyclic dependency graph \cite{feldman1979make}. The dependency graph of our Makefile is shown in Figure \ref{fig:makefile}. 
  
- Each target contained in the Makefile operates on the \texttt{DATASET} variable assignment. \texttt{DATASET} represents the name of the dataset, that needs to exist in the \texttt{data/raw/} directory of the project folder before any of the targets are run, therefore we call it a \textit{prerequisity} or a \textit{dependency}. The variable can be set from outside of the Makefile as part of the command line. Changing the value of \texttt{DATASET} directly influences the names of the generated output files. By running \texttt{make} in the directory containing Makefile and assigning \texttt{DATASET} variable, we can manage the experiment workflow:
+ Each target contained in the Makefile operates on the \texttt{DATASET} variable assignment.  \texttt{ DATASET } represents the name of the dataset that must exist in the \texttt{data/raw/} directory of the project folder before any of the targets are executed, so we call it a \textit{prerequisity} or a \textit{dependency}. The variable can be set from outside the Makefile as part of the command line. Changing the value of \texttt{ DATASET } directly affects the names of the generated output files. By running \texttt{make} in the directory containing the Makefile and assigning \texttt{ DATASET } variable, we can manage the workflow of the experiment:
  
  \begin{itemize}
      \item \texttt{make} \textit{data} \texttt{DATASET=<dataset name>}
@@ -562,19 +562,19 @@ The experiment execution is orchestrated by the GNU \textit{make} instructions d
  
  \begin{figure}[!h] \centering {
    \input{en/figures/methodology/makefileDependencyGraph.tikz}
-   \caption{A dependency graph for a Makefile to run experiments in our thesis. Blue rectangles represent the \textit{file targets} and the red rectangles represent \textit{phony targets}. Phony targets are are targets that are not creating or updating a file, but they represent a name for a sequence of commands to be executed. Phony targets allow our experiments to be executed in a modular manner.}
+   \caption{A dependency graph for a Makefile to perform experiments in our thesis. Blue rectangles represent \textit{file targets} and red rectangles represent \textit{phony targets}. Phony targets are targets that do not create or update a file, but instead represent a name for a sequence of commands to execute. Phony targets enable the modular execution of our experiments.}
 	\label{fig:makefile}
 	}
 \end{figure}
 
-Models and their configurations, that will be trained in the pipeline, can e specified from inside of the Makefile.
+Models and their configurations that are trained in the pipeline can be specified within the Makefile.
 
 \subsubsection*{Scripts Implementation}
- Having a consistent file naming convention and a consistent file organization into directories and subdirectories is crucial for automated experiments. The example of our experiment directory structure that is designed for use with Makefile is in the Appendix \ref{appendix:dir_structure}.
+ A consistent file naming convention and file organization in directories and subdirectories is critical for automated experiments. For an example of the directory structure of our experiments designed for use with Makefile, see the Appendix \ref{appendix:dir_structure}.
  
- Each machine learning method has three Python scripts in the \texttt{src/models} directory: \textit{train}, \textit{evaluate} and the \textit{model} itself. 
+ Each machine learning method has three Python scripts in the \texttt{src/models} directory: \textit{train}, \textit{evaluate}, and the \textit{model} itself. 
  
- Each \textit{model} script functions as a wrapper with a common interface, that contains algorithm providing library (in our case, we are using LogLizer library, as described in Section \ref{subscetion:loglizer}) and enables calling the following methods:
+ Each \textit{model} script acts as a wrapper with a common interface that contains an algorithm-providing library (in our case, we use the LogLizer library, as described in Section \ref{subscetion:loglizer}) and allows calling the following methods:
  
 \begin{itemize}
     \item \texttt{\_\_init\_\_}
@@ -585,31 +585,31 @@ Models and their configurations, that will be trained in the pipeline, can e spe
     \item \texttt{load}
 \end{itemize}
 
-The advantage of having a wrapper above the actual model is that it can be easily replaced by other library providing the model implementation, or we can provide our own implementation.
+The advantage of having a wrapper on top of the actual model is that it can easily be replaced by another library that provides the model implementation, or we can provide our own implementation.
 
-As one can see from the list above, each model also contains \texttt{save} and \texttt{load} methods. They are included in the model as a mean of serialization and deserialization of the trained model. The reason for that is the fact that training a model is usually a very time consuming task. Being able to load an already trained model saves us the trouble of training the model every time it is required. A serialized model can be conveniently restored later and used for evaluation or prediction. We use \texttt{pickle}\footnote{https://docs.python.org/3/library/pickle.html} library, that converts arbitrary Python's object into a byte stream. The process of serializing the data is then referred to as "pickling" and deserializing as "unpickling".
+As you can see from the list above, each model also contains \texttt{save} and \texttt{load} methods. They are included in the model as a means of serializing and deserializing the trained model. The reason for this is that training a model is usually a very time-consuming task. The ability to load an already trained model saves us the trouble of training the model every time it is needed. A serialized model can be conveniently restored later and used for evaluation or prediction. We use the library \texttt{pickle}\footnote{https://docs.python.org/3/library/pickle.html}, which converts any Python object into a byte stream. The process of serializing the data is then called "pickling" and the deserialization is called "unpickling".
 
-\textit{Train} scripts allow optional and model-specific parameters to tune the models. These parameters can be modified in the Makefile. Then they simply load the preprocessed data, instantiate the model and execute the model training process. Finally, the trained model is stored into a pickle. 
+\textit{Train} scripts allow optional and model-specific parameters to tune the models. These parameters can be modified in the Makefile. Then, the preprocessed data is simply loaded, the model is instantiated, and the model training process is executed. Finally, the trained model is stored in a pickle. 
  
-\textit{Evaluate} scripts contain loading the trained model and running the \texttt{\justify evaluate} method to obtain metrics and predictions.
+\textit{Evaluate} scripts include loading the trained model and executing the \texttt{\justify evaluate} method to obtain metrics and predictions.
 
-As shown in the directory structure in the Appendix \ref{appendix:dir_structure}, preprocessed features, trained models and resulting metrics and predictions are stored in either \texttt{tf} or \texttt{tfidf} folder, depending to which feature extraction method the particular file belongs. \texttt{tf}, as an abbreviation for term frequency, is an equivalent of what we call in our thesis an \texttt{event count}, as we explained in detail in Section \ref{subsection:features}. We use \texttt{tf} in our file structure for the benefit of brevity.
+As shown in the directory structure in the Appendix \ref{appendix:dir_structure}, preprocessed features, trained models, and resulting metrics and predictions are stored in either the \texttt{tf} or \texttt{tfidf} folder, depending on which feature extraction method the particular file belongs to. \texttt{tf}, as an abbreviation for term frequency, is an equivalent to what we call \texttt{event count} in our work, as we explained in detail in Section \ref{subsection:features}. For brevity, we use \texttt{tf} in our file structure.
 
 \subsection{Mapping from Prediction Back to Log Entry}
 \label{methodology:mapping-predictions-back}
-Once the output is computed, what we obtain is a prediction for each window of the input dataset. This is true regardless of the specific machine learning model used for the computation. 
-This kind of output that consists from ones and zeros is not very helpful if we want to understand why we got those results and if they are correct. Ideally, we want more elaborate information about the individual windows.
-Typically, the interesting part would be those windows, that were identified as anomalous as they are assumed to be less frequent and more important. However, there are use cases where we want to investigate all of them, especially in the debugging phase. 
+Once the output is computed, we get a prediction for each window of the input dataset. This is true regardless of the specific machine learning model used for the computation. 
+This type of output, which consists of ones and zeros, is not very helpful if we want to understand why we got these results and whether they are correct. Ideally, we would want more detailed information about each window.
+Typically, the windows that are identified as anomalous would be of interest, as they are expected to be less frequent and more important. However, there are use cases where we want to examine all windows, especially in the debugging phase. 
 
-From a feature vector of a given window, only event type's ID and frequency is stated, the template and order is lost.
-After discussing with domain experts what would be a valuable information about a time window, we concluded that with every window it should be also provided:
+From a feature vector of a given window, only the ID and the frequency of the event type are given, the template and the order are lost.
+After discussing with domain experts what would be valuable information about a time window, we concluded that it should be included with every window:
 \begin{itemize}
-    \item \textit{How frequent is each of the event types and what is the template of each event.}\\
-    We create a histogram, ordered descending from the most frequent events to the least frequent. This gives a good overview of what is the state of the system in a given time window. 
+    \item \textit{How frequent is each of the event types and what is the template for each event.}\\
+    We create a histogram, ordered in descending order from the most frequent events to the least frequent. This gives a good overview of what the state of the system is in a given time window. 
     \item \textit{Raw trace of logs within the window.}\\
-    Histogram is a good start but for some cases, details and preserved order matter. In some cases also the variable parts of log messages that are missing in the log templates need to be known to gain a clear picture of what was going on in the system. Therefore, we also assign trace of raw logs ordered by the time as they happened.
+    The histogram is a good place to start, but in some cases the detail and preserved order matters. In some cases, we also need to know the variable parts of the log messages that are missing from the log templates to get a clear picture of what was going on in the system. Therefore, we also order the traces of the raw logs according to the time in which they occurred.
     \item \textit{What time range a window corresponds to.}\\
-    It is simple to map from a window index to human readable time. This way, an expert can tell whether something special was happening in the system. For example, regular testing may take place at specific times everyday, which can explain some behaviour.
+    It is easy to map from a window index to a human readable time. This way, an expert can tell if something special happened in the system. For example, regular tests may occur daily at certain times, which may explain some behavior.
 \end{itemize}
  
 % Flowchart: https://bost.ocks.org/mike/make/
