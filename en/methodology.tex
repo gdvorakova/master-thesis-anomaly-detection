@@ -173,9 +173,9 @@ Therefore, in order to collect log data from several hours of system operation, 
 
 On the other hand, the third option is more difficult to automate, but promises a more structured way to obtain the logs. Moreover, given the features of Elasticsearch, it should also provide a faster solution for data collection.
 
-In Motorola, developers review logs stored in their Elasticsearch engine via the Kibana web user interface. The UI makes it easy to visualize and filter log data, but on the down side, its export options are not well suited for a structured way of downloading the data. Regardless of these limitations, a size limit needs to be set for the exports. The limit should not be much larger than the default 10 MB, as it can potentially have a negative impact on the performance \footnote{\url{https://www.elastic.co/guide/en/kibana/current/reporting-settings-kb.html}}. Based on our requirements, 10 MB of log data would not cover more than a few minutes of logs.
+In Motorola, developers review logs stored in their Elasticsearch engine via the Kibana web user interface. The UI makes it easy to visualize and filter log data, but on the down side, its export options are not well suited for a structured way of downloading the data. Regardless of these limitations, a size limit needs to be set for the exports. The limit should not be much larger than the default 10 MB, as it can potentially have a negative impact on the performance\footnote{\url{https://www.elastic.co/guide/en/kibana/current/reporting-settings-kb.html}}. Based on our requirements, 10 MB of log data would not cover more than a few minutes of logs.
 
-Another option, using ELK stack, would be to make use of the REST APIs of Elasticsearch \footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html}}. However, for security reasons, some companies choose not to expose this API to the Internet - Motorola is one of them.
+Another option, using ELK stack, would be to make use of the REST APIs of Elasticsearch\footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html}}. However, for security reasons, some companies choose not to expose this API to the Internet - Motorola is one of them.
 So the only way to access the application programming interface is to make the calls from within the cluster.
 
 We deployed a service called \texttt{elk-query-service} within the cluster that handles search queries to the Elasticsearch. Our service provides minimalistic functionality that can be accessed within the company.
@@ -222,7 +222,7 @@ This allows us to decouple the implementation of the algorithm that identifies t
 	}
 \end{figure}
 
-In Section~\ref{parser_summary} we mention that our decision was to proceed with the framework Drain \cite{drain2017}, which performs online fixed-depth tree template mining. The current implementation of the algorithm we use is \texttt{Drain3} by IBM \footnote{\url{https://github.com/ IBM /Drain3}}. The algorithm follows a template of 5 steps as described in more detail in Section~\ref{fixed_depth_tree}:
+In Section~\ref{parser_summary} we mention that our decision was to proceed with the framework Drain \cite{drain2017}, which performs online fixed-depth tree template mining. The current implementation of the algorithm we use is \texttt{Drain3} by IBM\footnote{\url{https://github.com/ IBM /Drain3}}. The algorithm follows a template of 5 steps as described in more detail in Section~\ref{fixed_depth_tree}:
 \begin{enumerate}
     \item Preprocess by Domain Knowledge
     \item Search by Log Message Length
@@ -479,7 +479,7 @@ Now that we have created the feature matrices, machine learning methods can be a
 \subsection{Loglizer}
 \label{subscetion:loglizer}
 
-Loglizer\footnote{https://github.com/logpai/loglizer} is an open-source machine learning based log analysis toolkit for automated anomaly detection written in Python \cite{he2016}. Loglizer was developed for automated anomaly detection as a part of LogPAI \footnote{\url{http://www.logpai.com}}, a collection of AI-based log analysis solutions. These log analysis tools have already been deployed by industrial teams at Microsoft and Huawei. It includes three supervised anomaly detection models (\textit{Logistic Regression, Decision Tree, Support Vector Machine}) and six unsupervised anomaly detection models (\textit{Local Outlier Factor, One-Class SVM, Isolation Forest, Principal Component Analysis, Invariants Mining, Clustering}). At the time of writing, two more unsupervised models were under development (\textit{DeepLog, AutoEncoder}). 
+Loglizer\footnote{https://github.com/logpai/loglizer} is an open-source machine learning based log analysis toolkit for automated anomaly detection written in Python \cite{he2016}. Loglizer was developed for automated anomaly detection as a part of LogPAI\footnote{\url{http://www.logpai.com}}, a collection of AI-based log analysis solutions. These log analysis tools have already been deployed by industrial teams at Microsoft and Huawei. It includes three supervised anomaly detection models (\textit{Logistic Regression, Decision Tree, Support Vector Machine}) and six unsupervised anomaly detection models (\textit{Local Outlier Factor, One-Class SVM, Isolation Forest, Principal Component Analysis, Invariants Mining, Clustering}). At the time of writing, two more unsupervised models were under development (\textit{DeepLog, AutoEncoder}). 
 
 We chose to use a third-party toolkit for several reasons. First, since the algorithms we use in our experiments are already implemented, there is no need to completely reinvent the wheel and write the implementation ourselves. This way, we can avoid a time-consuming process and instead focus on the main purpose of our research - to investigate whether applying different anomaly detection techniques to a real-world dataset can lead to successful results and how to approach it.
 
