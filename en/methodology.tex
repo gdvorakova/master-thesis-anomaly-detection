@@ -10,7 +10,7 @@ The goal of our approach is to fulfill the objective of the thesis and answer th
 
 Because we are using a real-world dataset, we had to familiarize ourselves with the domain, select specific parts of the log data that are valid for our research, and then investigate which characteristic properties extracted from the log data reflect the underlying events. Since it is important that the data processing is done correctly, it is further divided into three phases.
 
-In the first step, it is necessary to collect the log data from the monitored system. We explore several ways to collect data from the SmartConnect system and explain which ones we choose and why. We show how these logs are parsed and event types are parsed from the raw log messages. We continue with a discussion of feature engineering and how we apply windowing to the time series data. We then explain how we apply the selected machine learning algorithms to the preprocessed data. 
+In the first step, it is necessary to collect the log data from the monitored system. We explore several ways to collect data from the SmartConnect system and explain which ones we choose and why. We show how these logs are parsed and event types are extracted from the raw log messages. We continue with a discussion of feature engineering and how we apply windowing to the time series data. We then explain how we apply the selected machine learning algorithms to the preprocessed data. 
 
 Finally, the following four steps of our solution are described in more detail later in this chapter.
 
@@ -24,7 +24,7 @@ Finally, the following four steps of our solution are described in more detail l
 \begin{figure}[h]
     \centering
     \input{en/figures/methodology/worklowOverview.tikz}
-    \caption{The workflow of our anomaly detection solution consisting of five phases - data collection, log parsing, feature engineering and anomaly detection.}
+    \caption{The workflow of our anomaly detection solution consisting of four phases - data collection, log parsing, feature engineering and anomaly detection.}
     \label{fig:worklowOverview}
 \end{figure}
 
@@ -150,35 +150,35 @@ Traditionally, an application performs logging by sending messages to
 
 In microservices architecture, this method of logging may not be sufficient because an MSA system usually consists of many applications and the logs are scattered in many places. In addition, the individual services are often replaced and the contents of the log files are subsequently removed.
 
-In addition, for systems that produce a large amount of logs, persisting the logs to files and storing them in the service Pod's file system can cause the node's storage space to be overused. For this reason, services such as \texttt{logrotate}\footnote{\url{https://linux.die.net/man/8/logrotate}} are used. Logrotate collects logs, sends them to another location where they can be persisted without affecting the performance of the MSA system, and removes them from the Pod's node. On the other hand, this means that when a Pod is checked, only the most recent (if any) logs can be found in the Pod's \texttt{log} file.
+In addition, for systems that produce a large amount of logs, persisting the logs to files and storing them in the service Pod's file system can cause the node's storage space to be overused. For this reason, services such as logrotate\footnote{\url{https://linux.die.net/man/8/logrotate}} are used. Logrotate collects logs, sends them to another location where they can be persisted without affecting the performance of the MSA system, and removes them from the Pod's node. On the other hand, this means that when a Pod is checked, only the most recent (if any) logs can be found in the Pod's \texttt{log} file.
 
-SmartConnect MSA takes a similar approach to \texttt{logrotate}.
+SmartConnect MSA takes a similar approach to logrotate.
 
-\texttt{Filebeat}\footnote{\url{https://www.elastic.co/guide/en/beats/filebeat/7.10/filebeat-overview.html}} from ELK (Elasticsearch, Logstash, Kibana)\footnote{\url{https://www.elastic.co/what-is/elk-stack}} is used to pass the data collected by the system's Pods to the Elasticsearch engine (introduced in Section~\ref{smart-connect:elastic-search}). 
+Filebeat\footnote{\url{https://www.elastic.co/guide/en/beats/filebeat/7.10/filebeat-overview.html}} from ELK (Elasticsearch, Logstash, Kibana)\footnote{\url{https://www.elastic.co/what-is/elk-stack}} is used to pass the data collected by the system's Pods to the Elasticsearch engine (introduced in Section~\ref{smart-connect:elastic-search}). 
 The engine provides an authority for storing logs of the system and is considered as the single source of truth since the log data is persisted there.
 
 \subsection{Implementation}
 
 In summary, the following options are available for log collection in the SmartConnect system:
 \begin{enumerate}
-\item Saving the output of the command \texttt{kubectl logs \${ POD }} for each relevant Pod 
-\item Collecting the data stored in \texttt{\${ POD }:/var/log/*.log} for each Pod \item Requesting logs from the Elasticsearch server from SmartConnect
+\item Saving the output of the command \texttt{kubectl logs \$\{POD\}} for each relevant Pod 
+\item Collecting the data stored in \texttt{\$\{POD\}:/var/log/*.log} for each Pod \item Requesting logs from the Elasticsearch server from SmartConnect
 \end{enumerate}
 
 
-To gage the possibilities, the first two items represent the same idea, just executed in a different way - the \texttt{logs} command simply prints the output of the desired \texttt{.log} file to \texttt{stdout}. 
-It is very easy to get the logs of a single Pod, but to gather all the desired information about the whole system, all microservices need to be crawled individually. Moreover, as mentioned earlier, the main drawback of these approaches is that only logs that have not yet been fetched by \texttt{filebeat} are accessible.
+To gauge the possibilities, the first two items represent the same idea, just executed in a different way - the \texttt{logs} command simply prints the output of the desired \texttt{.log} file to \texttt{stdout}. 
+It is very easy to get the logs of a single Pod, but to gather all the desired information about the whole system, all microservices need to be crawled individually. Moreover, as mentioned earlier, the main drawback of these approaches is that only logs that have not yet been fetched by filebeat are accessible.
 
 Therefore, in order to collect log data from several hours of system operation, services would need to be queried relatively frequently. These methods also introduce complexity into the post-processing of the data once collected, as we cannot guarantee the uniqueness of the entries in these approaches.
 
-On the other hand, the third option is more difficult to automate, but promises a more structured way to obtain the logs. Moreover, given the features of \texttt{Elasticsearch}, it should also provide a faster solution for data collection.
+On the other hand, the third option is more difficult to automate, but promises a more structured way to obtain the logs. Moreover, given the features of Elasticsearch, it should also provide a faster solution for data collection.
 
-In Motorola, developers review logs stored in their \texttt{Elasticsearch} engine via the \texttt{Kibana} web user interface. The UI makes it easy to visualize and filter log data, but on the down side, its export options are not well suited for a structured way of downloading the data. Regardless of these limitations, a size limit needs to be set for the exports. The limit should not be much larger than the default 10 MB, as it can potentially have a negative impact on the performance \footnote{\url{https://www.elastic.co/guide/en/kibana/current/reporting-settings-kb.html}}. Based on our requirements, 10 MB of log data would not cover more than a few minutes of logs.
+In Motorola, developers review logs stored in their Elasticsearch engine via the Kibana web user interface. The UI makes it easy to visualize and filter log data, but on the down side, its export options are not well suited for a structured way of downloading the data. Regardless of these limitations, a size limit needs to be set for the exports. The limit should not be much larger than the default 10 MB, as it can potentially have a negative impact on the performance \footnote{\url{https://www.elastic.co/guide/en/kibana/current/reporting-settings-kb.html}}. Based on our requirements, 10 MB of log data would not cover more than a few minutes of logs.
 
-Another option, using \texttt{ELK} stack, would be to make use of the REST APIs of \texttt{Elasticsearch} \footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html}}. However, for security reasons, some companies choose not to expose this API to the Internet - Motorola is one of them.
+Another option, using ELK stack, would be to make use of the REST APIs of Elasticsearch \footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html}}. However, for security reasons, some companies choose not to expose this API to the Internet - Motorola is one of them.
 So the only way to access the application programming interface is to make the calls from within the cluster.
 
-We deployed a service called \texttt{elk-query-service} within the cluster that handles search queries to the \texttt{Elasticsearch}. Our service provides minimalistic functionality that can be accessed within the company.
+We deployed a service called \texttt{elk-query-service} within the cluster that handles search queries to the Elasticsearch. Our service provides minimalistic functionality that can be accessed within the company.
 \texttt{\justify elk-query-service} can be invoked with two date arguments indicating the start and end of the time window. Logs between the start and end dates are downloaded to the \texttt{elk-query-service} Pod and can be transferred to the node, where they can be further used in a machine learning anomaly detection pipeline, as proposed in Section~\ref{future:pipeline} for future work. The high-level architecture of our data collection solution is schematically shown in Figure~\ref{fig:data_collection_elastic}.
 
 \begin{figure}[!tbp] \centering {
@@ -527,7 +527,7 @@ The execution of experiments is orchestrated by the GNU \textit{make} instructio
 
 Normally, targets and prerequisites are filenames and recipes are commands. A Makefile can be expressed by a directed acyclic dependency graph \cite{feldman1979make}. The dependency graph of our Makefile is shown in Figure \ref{fig:makefile}. 
  
- Each target contained in the Makefile operates on the \texttt{DATASET} variable assignment.  \texttt{ DATASET } represents the name of the dataset that must exist in the \texttt{data/raw/} directory of the project folder before any of the targets are executed, so we call it a \textit{prerequisity} or a \textit{dependency}. The variable can be set from outside the Makefile as part of the command line. Changing the value of \texttt{ DATASET } directly affects the names of the generated output files. By running \texttt{make} in the directory containing the Makefile and assigning \texttt{ DATASET } variable, we can manage the workflow of the experiment:
+ Each target contained in the Makefile operates on the \texttt{DATASET} variable assignment.  \texttt{DATASET} represents the name of the dataset that must exist in the \texttt{data/raw/} directory of the project folder before any of the targets are executed, so we call it a \textit{prerequisity} or a \textit{dependency}. The variable can be set from outside the Makefile as part of the command line. Changing the value of \texttt{DATASET} directly affects the names of the generated output files. By running \texttt{make} in the directory containing the Makefile and assigning \texttt{DATASET} variable, we can manage the workflow of the experiment:
  
  \begin{itemize}
      \item \texttt{make} \textit{data} \texttt{DATASET=<dataset name>}
