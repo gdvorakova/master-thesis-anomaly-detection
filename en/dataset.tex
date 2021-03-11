@@ -15,18 +15,18 @@ The data we feed machine learning models with makes a big difference. Therefore,
 
 The anomaly detection task can be reformulated as a classification problem with two classes: \textit{negative (anomaly)} class and \textit{positive (anomaly-free)} class. 
 
-\textit{Negative} or \textit{normal} class is a category of a data set that is free of anomalies and represents the expected (or normal) behavior of a system that produces these logs. Negative data samples are labeled as $0$. The class \textit{Positive}, \textit{anomalous}, or \textit{abnormal} is the target class we are interested in. It is assigned to log sequences that contain anomalies as $1$. The goal is to train the classifier to distinguish between positive and negative samples.
+\textit{Negative} or \textit{normal} class is a category of a dataset that is free of anomalies and represents the expected (or normal) behaviour of a system that produces these logs. Negative data samples are labeled as $0$. The class \textit{Positive}, \textit{anomalous}, or \textit{abnormal} is the target class we are interested in. It is assigned to log sequences that contain anomalies as $1$. The goal is to train the classifier to distinguish between positive and negative samples.
 
 Motorola Solution's policy for storing historical data is that we have logs available at any point in time from $30$ days ago to this point in time. The stored interval may at times become even smaller if the amount of persisted logs exceeds a limit.
 
 In Motorola, the development environment is further divided into two subsections that we have access to. 
 Let's call them \textit{experimental} and \textit{stable}. 
 
-The \textit{Stable} environment is synchronized with the master branches of the source code and is used to perform extensive testing of the system every night. 
+The \textit{stable} environment is synchronized with all the master branches of the source code. It is used to perform extensive testing of the system every night. 
 
-On the other hand, the \textit{experimental} environment is used by the developers to deploy and explore side branches (features) during the day.
+On the other hand, the \textit{experimental} environment is used by the developers to deploy and explore side (or feature) branches during the day.
 
-For confidentiality reasons, we do not have logs of the \textit{production} environment available. This is one of the major drawbacks, as it can be assumed that they contain different traffic. It can also be assumed that the distribution of anomalies in the production dataset is different from both \textit{experimental} (more anomalies, some related to ad hoc deployment, not in \textit{production}) and \textit{stable} (fewer anomalies, less traffic). In general, the development environment produces huge amounts of data, thousands of log messages per minute.
+For confidentiality reasons, we do not have logs of the \textit{production} environment available. This is one of the major drawbacks, as it can be assumed that they contain different traffic. It can also be assumed that the distribution of anomalies in \textit{production} environment is different from both \textit{experimental} (more anomalies, some related to ad hoc deployment) and \textit{stable} (fewer anomalies, less traffic). In general, the development environment produces huge amounts of data, thousands of log messages per minute.
 
 Next, we provide a detailed description of the characteristics of each dataset and how they were obtained. See Table \ref{table:datasets} for a summary of all datasets used in this work.
 
@@ -40,12 +40,12 @@ However, we are talking about tens of thousands of log messages per hour, even w
 Unfortunately, such a dataset is not labeled, as experts would have to go through millions of lines of unstructured log messages to obtain the labels.
 
 \subsection{Dataset Nightly}
-At night, the system we are experimenting with goes through tests in the \textit{stable} region. This phase of health check of the system involves mimicking the normal behavior of the telecommunications system. All the necessary infrastructure setup takes place and simulations of calls between groups of push-to-talk radios are performed. 
+At night, the system we are experimenting with goes through tests in the \textit{stable} region. This phase of health check of the system involves mimicking the normal behaviour of the telecommunications system. All the necessary infrastructure setup takes place and simulations of calls between groups of push-to-talk radios are performed. 
 These tests are run again each night as part of the nightly test suite. 
 Typically, the test pipeline lasts about 7 hours and produces about 2 million log messages.
 
 If the nightly tests all pass, the data collected should either be completely free of anomalies, or contain only a very small percentage of them. 
-Therefore, we assume that the data collected during the nightly testing phase, if passed successfully, will contain a large majority of negative data samples and represent normal anomaly-free behavior of the system. This statement relies heavily on the assumption that the functionality of the system is well covered by the tests (the relationship of our approach to anomaly detection and test code coverage is discussed in detail in Section~\ref{code_coverage}). 
+Therefore, we assume that the data collected during the nightly testing phase, if passed successfully, will contain a large majority of negative data samples and represent normal anomaly-free behaviour of the system. This statement relies heavily on the assumption that the functionality of the system is well covered by the tests (the relationship of our approach to anomaly detection and test code coverage is discussed in detail in Section~\ref{code_coverage}). 
 
 Therefore, for our use case, we can also interchangeably refer to the dataset \textit{negative} or \textit{normal} dataset as the \textit{Nightly} dataset interchangeably.
 
@@ -102,7 +102,7 @@ This is not an ideal test dataset, but not all anomalies are known and can be so
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{img/testset-composition.pdf}
-    \caption{Testing dataset composition. A manually collected and labeled dataset consists of 131 log sequences, where each log sequence was collected within a two-minute time window. The value in each section of the pie chart indicates the number of log sequences of each type of log message it contains. The "Normal" and "Call" sections of the pie chart both represent normal, anomaly-free behavior, while " Killing RabbitMQ" and "Killing Redis" are anomalies.}
+    \caption{Testing dataset composition. A manually collected and labeled dataset consists of 131 log sequences, where each log sequence was collected within a two-minute time window. The value in each section of the pie chart indicates the number of log sequences of each type of log message it contains. The "Normal" and "Call" sections of the pie chart both represent normal, anomaly-free behaviour, while " Killing RabbitMQ" and "Killing Redis" are anomalies.}
     \label{fig:testset-composition}
 \end{figure}
 

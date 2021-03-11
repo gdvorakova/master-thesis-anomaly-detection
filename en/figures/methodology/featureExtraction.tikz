@@ -23,7 +23,7 @@
             \tiny 2 \textcolor{customDarkRed}{Event template 2} Start call: <*>\\
             \tiny 3 \textcolor{customDarkRed}{Event template 3} Received message: \#PID<*> type: <*> rv: <*>\\
             \tiny 4 \textcolor{customDarkRed}{Event template 4} New TLS connection attempt client\_ip: <*>, port: <*>\\
-            \tiny 5 \textcolor{customDarkRed}{Event template 5} Received message: \#PID<*> type: <*> rv: <*>};
+            \tiny 5 \textcolor{customDarkRed}{Event template 3} Received message: \#PID<*> type: <*> rv: <*>};
         \end{tikzpicture} 
     };
     

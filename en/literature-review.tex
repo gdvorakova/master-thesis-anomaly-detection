@@ -34,7 +34,7 @@ We can divide anomaly detection methods into three broad categories: \textit{sup
 
 % describe the advantages of unsupervised methods over supervised ones https://reader.elsevier.com/reader/sd/pii/S0167404818306333?token=9C7DC222C83AC3AD33CBF921C2E23508BEA68B59C5336EC0200EF02A1F60DAB2916EEE9D83663EE9029AB30B9C1CC538
 
-\subsection{ Supervised Anomaly Detection }
+\subsection{Supervised Anomaly Detection }
 Supervised methods require previously labeled data, where the labels describe whether the behaviour in each data instance is normal or abnormal (anomalous). The main focus of supervised learning methods is then to derive a model from the labeled data that maximizes the discrimination between the classes (normal and anomalous). A drawback of the supervised method is that it can only be trained on the types of anomalies introduced in the training examples. It cannot handle previously unseen anomalies. 
 
 \subsection{Semi-supervised Anomaly Detection} %https://www-users.cs.york.ac.uk/vicky/myPapers/Hodge+Austin_OutlierDetection_AIRE381.pdf.
@@ -45,7 +45,7 @@ Semi-supervised learning is defined as a machine learning paradigm that studies 
 \subsection{Unsupervised Anomaly Detection}
 Unsupervised learning, unlike supervised learning, does not require any prior knowledge about the data. One of the main difficulties faced by anomaly detection is unlabeled data. In most cases, logs with labeled anomalies are not available. The process of log annotation would have to be done manually by the experts - developers who are familiar with the system. Along with the growth of data volume, labeling becoms very time consuming. For this reason, in practice, anomaly detection mostly relies on unsupervised learning to deal with unlabeled data. Unsupervised anomaly detection algorithms learn what normal behavior looks like. Based on these observations, systems based on unsupervised methods detect anomalies as outliers that are significantly different from other examples. Moreover, any type of anomaly can be detected by these systems. Thus, the main difference between supervised and unsupervised learning techniques is that the former focuses on discriminating concept classes, while the latter rather focuses on data characterization \cite{Goernitz_2013}. % They work on the basis of the observation that an abnormal instance usually manifests as an outlier point that is distant from other instances. As such, unsupervised learning techniques, such as clustering, can be applied.
  
-\subsubsection{One-Class Classification}
+\subsubsection*{One-Class Classification}
 When it comes to anomaly detection, it is common to use a special method called One-Class Classification (or One-Class Learning) formulated by Tax \cite{tax2002occ}. 
  
 In OCC, labels are only provided for instances of the normal class, while labels are not required for classes describing anomalies. In fact, it is discouraged that they occur in the training dataset. There should be so few instances of outliers that they do not form a statistically representative sample of the negative concept \cite{khan_madden_2014}.
@@ -66,7 +66,7 @@ Since the anomaly score is the average path length of iTree, which corresponds t
      s(x, n) = 2^{- \dfrac{E(h(x))}{c(n)}},
  \end{gather}
  
- where $h(x)$ a length of a traversed path from the root note to a terminating node $x$, $E(h(x))$ is the average of $h(x)$ in all isolation trees and $c(n)$ is a normalization factor defined as: 
+ where $h(x)$ a length of a traversed path from the root node to a terminating node $x$, $E(h(x))$ is the average of $h(x)$ in all isolation trees and $c(n)$ is a normalization factor defined as: 
  
  \[
  c(n) = 

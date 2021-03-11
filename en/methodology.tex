@@ -150,7 +150,7 @@ Traditionally, an application performs logging by sending messages to
 
 In microservices architecture, this method of logging may not be sufficient because an MSA system usually consists of many applications and the logs are scattered in many places. In addition, the individual services are often replaced and the contents of the log files are subsequently removed.
 
-In addition, for systems that produce a large amount of logs, persisting the logs to files and storing them in the service Pod's file system can cause the node's storage space to be overused. For this reason, services such as logrotate\footnote{\url{https://linux.die.net/man/8/logrotate}} are used. Logrotate collects logs, sends them to another location where they can be persisted without affecting the performance of the MSA system, and removes them from the Pod's node. On the other hand, this means that when a Pod is checked, only the most recent (if any) logs can be found in the Pod's \texttt{log} file.
+Moreover, for systems that produce a large amount of logs, persisting the logs to files and storing them in the service Pod's file system can cause the node's storage space to be overused. For this reason, techniques such as logrotate\footnote{\url{https://linux.die.net/man/8/logrotate}} are used. Logrotate collects logs, sends them to another location where they can be persisted without affecting the performance of the MSA system, and removes them from the Pod's node. On the other hand, this means that only the most recent (if any) logs can be found in the Pod's \texttt{log} file.
 
 SmartConnect MSA takes a similar approach to logrotate.
 
@@ -209,7 +209,7 @@ The actual reading and creation of templates by these methods is done by an inst
     \item \texttt{get\textunderscore all\textunderscore templates(self) -> List[str]}
     \item \texttt{process\textunderscore log\textunderscore message(self, log\textunderscore message: str) -> str}
 \end{itemize}
-Therefore, an implementation of a log parser should be able to return all templates it has identified up to the call to the \texttt{get\textunderscore all\textunderscore templates} method. The other method returns a template based on the raw log message entered.\\
+Therefore, an implementation of a log parser should be able to return all templates it has identified up to the call of the \texttt{get\textunderscore all\textunderscore templates} method. The other method returns a template based on the raw log message entered.\\
 
 Our implementation follows the adapter design pattern \cite{gamma1995design_pattern_adapter}, since the goal is to convert interfaces of specific log parsing libraries that may differ drastically in terms of the API they expose.
 
@@ -217,7 +217,7 @@ This allows us to decouple the implementation of the algorithm that identifies t
 
  \begin{figure}[!h] \centering {
    \resizebox{\textwidth}{!}{\input{en/figures/methodology/parsing.tikz}}
-   \caption{Architecture for parsing classes. Application of the adapter design pattern: \texttt{LogParser} as adapter, \texttt{Drain3Parser} takes role of concrete adaptee, \texttt{TemplateMiner} is adaptee - class defined in other framework with incompatible interface and needs to be converted.}
+   \caption{The architecture for parsing classes. Application of the adapter design pattern: \texttt{LogParser} as adapter, \texttt{Drain3Parser} takes the role of concrete adaptee, \texttt{TemplateMiner} is adaptee - class defined in another framework with incompatible interface and needs to be converted.}
 	\label{fig:uml_parsers}
 	}
 \end{figure}
@@ -233,7 +233,7 @@ In Section~\ref{parser_summary} we mention that our decision was to proceed with
 
 Let's pay more attention to the first step. It provides us, the users, with the option to input encoded assumptions and knowledge about the logs that are produced by the system.
 It is quite intuitive to assume that this domain knowledge, if properly inserted, should improve the performance and precision of mining algorithms. An empirical study \cite{he2016} confirms this conjecture.
-However, we argue that this algorithm tuning technique may not be the right choice in all use cases. With our solution, we attempt to analyze a system that is highly fluid and therefore likely to change over time. This, coupled with the fact that many developers from multiple teams and companies (taking into account also external software on which the software system depends), it is not feasible to obtain a single source of truth regarding domain knowledge related to logging. Conversely, we aim for a solution that can learn and adapt to changes as independently as possible.\\
+However, we argue that this algorithm tuning technique may not be the right choice in all use cases. With our solution, we attempt to analyze a system that is highly fluid and therefore likely to change over time. This, coupled with the fact that many developers from multiple teams and companies (taking into account also external software on which the software system depends) write code that logs in the system, it is not feasible to obtain a single source of truth regarding domain knowledge related to logging. Conversely, we aim for a solution that can learn and adapt to changes as independently as possible.\\
 
 This goal of adaptability is also reflected in the fact that we ultimately decided to use an online parser.
 To recall a definition of an online template miner from Section~\ref{log_template_mining}, an online template miner is such a parser that does not need to see the entire dataset to start analyzing message templates. It can perform categorization on the fly while simultaneously updating its internal state, which stores acquired knowledge about the domain.\\
@@ -298,7 +298,7 @@ In our work, instead of considering the number of log lines in each window, we c
 	}
 \end{figure}
 
-\subsection{Feature embedding}
+\subsection{Feature Embedding}
 \label{subsection:features}
 After applying the sliding window to generate log sequences, the final step of feature extraction is to construct the feature matrix that can be passed as input to the ML algorithms. In our thesis, we experiment with two different types of embeddings, where both representations describe a set of logs in log sequences: \textit{event count matrix} and \textit{TF-IDF weighted matrix}. Figure \ref{fig:feature-extraction} shows an example of the process of generating a single log sequence into a feature matrix. We assume that logs in sequences are highly correlated. To help the reader understand the differences between the two proposed embeddings, we provide a summary in Table \ref{tab:embeddings-summary}.
 
@@ -483,7 +483,7 @@ Loglizer\footnote{https://github.com/logpai/loglizer} is an open-source machine 
 
 We chose to use a third-party toolkit for several reasons. First, since the algorithms we use in our experiments are already implemented, there is no need to completely reinvent the wheel and write the implementation ourselves. This way, we can avoid a time-consuming process and instead focus on the main purpose of our research - to investigate whether applying different anomaly detection techniques to a real-world dataset can lead to successful results and how to approach it.
 
-Another advantage is that the Loglizer anomaly detectors work with log sequences. This means that each of the models is trained on a set of log sequences, and the output of the detector classifies whether a single log sequence is an anomaly or not. As described in Section\ref{section:featureEngineering}, we use windowing to generate the log sequences, making the Loglizer toolkit an excellent fit for our research context. Specifically, four methods were used in our research: Invariants Mining, Isolation Forest, and PCA . The underlying algorithms behind these tools are presented in Section \ref{section:anomalyDetectionLiteratureReview}.
+Another advantage is that the Loglizer anomaly detectors work with log sequences. This means that each of the models is trained on a set of log sequences, and the output of the detector classifies whether a single log sequence is an anomaly or not. As described in Section~\ref{section:featureEngineering}, we use windowing to generate the log sequences, making the Loglizer toolkit an excellent fit for our research context. Specifically, four methods were used in our research: Invariants Mining, Isolation Forest, and PCA . The underlying algorithms behind these tools are presented in Section \ref{section:anomalyDetectionLiteratureReview}.
 
 The implemented anomaly detection methods are evaluated on a public dataset, HDFS. The logs in the HDFS dataset were collected from the Amazon EC2 platform and contain $11\,175\,629$ entries \cite{xu2009}. Loglizer provides benchmarking results for both supervised and unsupervised methods separately using this dataset, which can be found in Table \ref{table:loglizer}. The evaluation metrics are explained in Section \ref{section:evaluationMetrics}. Benchmarking gives a better idea of the expected performance of the anomaly detection methods we intend to use in our work.  
 
