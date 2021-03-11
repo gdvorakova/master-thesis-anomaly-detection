@@ -354,7 +354,7 @@ Vaarandi presented a clustering algorithm for finding frequent patterns in logs 
 
     
 \subsubsection*{Heuristics}
-IPLoM, proposed by Makanju et al. \cite{Makanju2009ALA}, is an example of a heuristics-based log parsing method. IPLoM stands for \textit{ Iterative Partitioning Log Mining }, where their algorithm partitions the log messages into their respective clusters through a 3-step hierarchical partitioning process. In the final 4th stage, IPLoM generates discovered clusters and a line format describing each cluster. We will describe each step in more detail.\\
+IPLoM, proposed by Makanju et al. \cite{Makanju2009ALA}, is an example of a heuristics-based log parsing method. IPLoM stands for \textit{Iterative Partitioning Log Mining}, where their algorithm partitions the log messages into their respective clusters through a 3-step hierarchical partitioning process. In the final 4th stage, IPLoM generates discovered clusters and a line format describing each cluster. We will describe each step in more detail.\\
 
 \begin{enumerate}
     \item \textit{Partition by event size}. The first step of IPLoM applies an event size heuristics based on the assumption that log messages of the same event type have the same event size (number of tokens). The result is a partitioning of log messages into groups of equal length, e.g. \textit{"Connection from 255.255.255.255"} and \textit{"Connection from 0.0.0.0"} both contain $3$ tokens and would end up in the same cluster. The cases where events with different event sizes belong to the same cluster are handled in post-processing.
