@@ -50,18 +50,18 @@ All in all, considering that event count embedding is simple and much easier to 
 
 \begin{figure}[h]%
     \centering
-    \subfloat[\centering Event count embedding]{{\includegraphics[width=5.52cm]{img/tsne-anomalies-vs-normal-small.pdf} }}%
+    \subfloat[\centering Event count embedding]{{\includegraphics[width=5.52cm]{img/tsne-anomalies-vs-normal-small.pdf}}}%
     \qquad
-    \subfloat[\centering TF-IDF embedding]{{\includegraphics[width=5.52cm]{img/tsne-anomalies-vs-normal-tfidf.pdf} }}%
+    \subfloat[\centering TF-IDF embedding]{{\includegraphics[width=5.52cm]{img/tsne-anomalies-vs-normal-tfidf.pdf}}}%
     \caption{Event count embedding (left) and TF-IDF embedding (right) of the normal and anomalous log sequences plotted using PCA.}%
     \label{fig:tf-vs-tfidf}%
 \end{figure}
 
 \begin{figure}[h]%
     \centering
-    \subfloat[\centering Event count]{{\includegraphics[width=0.9\textwidth]{img/tf-histogram.pdf} }}%
+    \subfloat[\centering Event count]{{\includegraphics[width=0.9\textwidth]{img/tf-histogram.pdf}}}%
     \qquad
-    \subfloat[\centering TF-IDF]{{\includegraphics[width=0.9\textwidth]{img/tfidf-histogram.pdf} }}%
+    \subfloat[\centering TF-IDF]{{\includegraphics[width=0.9\textwidth]{img/tfidf-histogram.pdf}}}%
     \caption{Histogram distribution plot of the event type IDs in the test dataset, where the logs of the same event type ID, shown on the x-axis, are binned together and their cumulative count is shown on the y-axis. (a) is a histogram generated over event count embeddings, and (b) is a histogram generated over TF-IDF embeddings.}%
     \label{fig:histogram-event-types}%
 \end{figure}
@@ -74,7 +74,7 @@ In order of importance, it is more important for a live production system not to
 
 From the results table, it can be seen that all the anomaly detection methods give a decent result, with Log Clustering and PCA performing significantly better than Invariants Mining and Isolation Forest.  
 
-Among the four unsupervised anomaly detection algorithms, the evaluation metrics for Invariants Mining model are the lowest with the values of $22.22\%$ precision, $100.00\%$ recall and $36.36\%$ F1 score. Figure \ref{fig:tsne-predictions-labeled} (c) shows that Invariants Mining has a tendency to falsely identify normal data points as anomalies. This poor performance is not surprising and we suspect that there are two reasons for this occurrence. First, as explained in Section \ref{section:experimental-setup}, we did not perform hyperparameter exploration because the training process for Invariants Mining on our dataset is extremely ineffective. However, we assume that the main reason for the inability to detect anomalies is the way we performed windowing in log sequences. In similar research that successfully used Invariants Mining, such as He et al. \cite{he2016}, they used \textit{session ID } or \textit{process ID } shared between logs as a key for grouping logs into log sequences. We, on the other hand, focused on the timely relationship between logs and grouped them into log sequences in consecutive two-minute windows. Therefore, there is no guarantee that log events that are part of the invariants revealed by Invariants Mining are in the same log sequence in the resulting embedding. Therefore, it is expected that the Invariants Mining method does not perform well in the feature representation of our log dataset.
+Among the four unsupervised anomaly detection algorithms, the evaluation metrics for Invariants Mining model are the lowest with the values of $22.22\%$ precision, $100.00\%$ recall and $36.36\%$ F1 score. Figure \ref{fig:tsne-predictions-labeled} (c) shows that Invariants Mining has a tendency to falsely identify normal data points as anomalies. This poor performance is not surprising and we suspect that there are two reasons for this occurrence. First, as explained in Section \ref{section:experimental-setup}, we did not perform hyperparameter exploration because the training process for Invariants Mining on our dataset is extremely ineffective. However, we assume that the main reason for the inability to detect anomalies is the way we performed windowing in log sequences. In similar research that successfully used Invariants Mining, such as He et al. \cite{he2016}, they used \textit{session ID} or \textit{process ID} shared between logs as a key for grouping logs into log sequences. We, on the other hand, focused on the timely relationship between logs and grouped them into log sequences in consecutive two-minute windows. Therefore, there is no guarantee that log events that are part of the invariants revealed by Invariants Mining are in the same log sequence in the resulting embedding. Therefore, it is expected that the Invariants Mining method does not perform well in the feature representation of our log dataset.
 
 Another algorithm that did not perform well is Isolation Forest\\ with $100.00\%$ precision, but $57.14\%$ recall and $66.67\%$ F1 score. In \ref{fig:tsne-predictions-labeled} (a), we can observe that Isolation Forest misses a high number of anomalies, resulting in low recall and a high number of false negatives as well as false positives. We concluded that one reason for this finding is that Isolation Forest is not well suited for the one-class learning case (training set containing only negative samples) \cite{adForest}. The leaves of iTrees provide an anomaly score equal to the length of the average path from the node (sample from the training set) to that leaf. The shorter the path, the smaller the anomaly score and the higher the probability that it is an outlier. Since all samples in the training dataset are normal, assigned anomaly scores may be biased. Therefore, the performance of Isolation Forest does not perform well on our dataset.
 
@@ -82,13 +82,13 @@ Log clustering and PCA achieved superior performance compared to other anomaly d
 
 \begin{figure}%
     \centering
-    \subfloat[\centering Isolation Forest]{{\includegraphics[width=5.52cm]{img/tsne-predictions-isolation-forest.pdf} }}%
+    \subfloat[\centering Isolation Forest]{{\includegraphics[width=5.52cm]{img/tsne-predictions-isolation-forest.pdf}}}%
     \qquad
-    \subfloat[\centering PCA]{{\includegraphics[width=5.52cm]{img/tsne-predictions-pca.pdf} }}%
+    \subfloat[\centering PCA]{{\includegraphics[width=5.52cm]{img/tsne-predictions-pca.pdf}}}%
     \qquad
-    \subfloat[\centering Invariants Mining]{{\includegraphics[width=5.52cm]{img/tsne-predictions-invariants-mining.pdf} }}%
+    \subfloat[\centering Invariants Mining]{{\includegraphics[width=5.52cm]{img/tsne-predictions-invariants-mining.pdf}}}%
     \qquad
-    \subfloat[\centering Log Clustering]{{\includegraphics[width=5.52cm]{img/tsne-predictions-clustering.pdf} }}%
+    \subfloat[\centering Log Clustering]{{\includegraphics[width=5.52cm]{img/tsne-predictions-clustering.pdf}}}%
     \caption{Comparison of the predictions of Isolation Forest (a), PCA (b), Invariants Mining (c), and Log Clustering (d) on the labeled test data set. It can be observed from the plots that PCA and Log Clustering algorithms handle testing dataset with a $100 \%$ accuracy.}%
     \label{fig:tsne-predictions-labeled}%
 \end{figure}
@@ -154,7 +154,7 @@ Log clustering and PCA achieved superior performance compared to other anomaly d
 Thanks to the developers of Motorola Solutions, we were able to obtain external validation of our results. We consulted experts to evaluate the detected anomalies, but also to evaluate samples detected as normal by two of the best performing anomaly detection models: PCA and Log Clustering.
 
 Figure \ref{fig:tsne-unlabeled-plots} shows the t-SNE plots of the predictions for the Daily data obtained by the trained PCA and Log Clustering models. For t-SNE and PCA plots produced on the predictions of the Daily dataset by the other less performing algorithms studied in our research, see Appendix \ref{fig:tsne-unlabeled-plots-appendix} and Appendix \ref{fig:pca-unlabeled-plots-appendix}, respectively. 
-\begin{figure}% \centering \subfloat[\centering Log Clustering]{{\includegraphics[width=0.9\textwidth]{img/tsne-predictions-unlabeled-clustering.pdf} }}% \qquad \subfloat[\centering PCA]{{\includegraphics[width=0.9\textwidth]{img/tsne-predictions-unlabeled-pca.pdf} }}% \caption{Comparison of Log Clustering (left) and PCA (right) predictions on the unlabeled Daily dataset. Green data points represent the normal data points as a reference point, blue and red highlighted data points represent predictions of a normal and anomalous log sequence, respectively.}% \label{fig:tsne-unlabeled-plots}%
+\begin{figure}% \centering \subfloat[\centering Log Clustering]{{\includegraphics[width=0.9\textwidth]{img/tsne-predictions-unlabeled-clustering.pdf}}}% \qquad \subfloat[\centering PCA]{{\includegraphics[width=0.9\textwidth]{img/tsne-predictions-unlabeled-pca.pdf}}}% \caption{Comparison of Log Clustering (left) and PCA (right) predictions on the unlabeled Daily dataset. Green data points represent the normal data points as a reference point, blue and red highlighted data points represent predictions of a normal and anomalous log sequence, respectively.}% \label{fig:tsne-unlabeled-plots}%
 \end{figure}
 
 \subsection{Analysis}

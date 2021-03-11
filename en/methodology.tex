@@ -317,7 +317,7 @@ After applying the sliding window to generate log sequences, the final step of f
 \textbf{\textcolor{customRed}{Event count}}    & log sequence & Frequency of event type in the log sequence              \\
 \textbf{\textcolor{customRed}{TF-IDF}}         & log sequence & IDF weighted frequency of event type in the log sequence \\ \bottomrule
 \end{tabular}}
-\caption{A summary of feature matrix types using in our thesis }\label{tab:embeddings-summary}
+\caption{A summary of feature matrix types using in our thesis.}\label{tab:embeddings-summary}
 \end{table}
 
 \subsubsection*{Event Count Matrix}
@@ -336,7 +336,7 @@ In other words, $tf_{t, d}$ is the probability of $t$ occurring in $d$.
 \subsubsection*{TF-IDF}
 Another weighting scheme widely used in Information Retrieval is called \textit{term frequency–inverse document frequency} (TF-IDF). 
 
-If we use only the standard term frequency, we have to deal with an important issue. After defining the term frequency, all event types are considered equally important \cite{informationRetrieval2008}. However, we also want to know how important a term is not only in a document, but in the whole dataset. This is where another weighting score, \textit{inverse document frequency} (IDF) comes into play. Let's first define \textit{ document frequency} (DF). The document frequency $df_t$ is defined as the number of documents in the collection that contain the term $t$. Then, the inverse document frequency $df_t$ of the term $t$ is defined as: 
+If we use only the standard term frequency, we have to deal with an important issue. After defining the term frequency, all event types are considered equally important \cite{informationRetrieval2008}. However, we also want to know how important a term is not only in a document, but in the whole dataset. This is where another weighting score, \textit{inverse document frequency} (IDF) comes into play. Let's first define \textit{document frequency} (DF). The document frequency $df_t$ is defined as the number of documents in the collection that contain the term $t$. Then, the inverse document frequency $df_t$ of the term $t$ is defined as: 
 
 
 \begin{gather}

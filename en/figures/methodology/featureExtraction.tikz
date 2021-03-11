@@ -5,7 +5,7 @@
 ]
 
     % RAW LOG MESSAGE SEQUENCE
-    \node[mainRectangle, minimum width={110mm}, label={[label distance=2mm, align=center] { \footnotesize Raw log message sequence}}] (logSequence) at (0, 0) {
+    \node[mainRectangle, minimum width={110mm}, label={[label distance=2mm, align=center] {\footnotesize Raw log message sequence}}] (logSequence) at (0, 0) {
         \begin{tikzpicture}[node distance=1cm,outer sep=0pt, align=left]
             \node[draw=none] (log1) at (0, 0) {\tiny 1 \textcolor{customDarkBlue}{2020-10-04 19:15:00} Error in estabilishing TLS connection: ip: {52,240,151,125}, port: 17857\\
             \tiny 2 \textcolor{customDarkBlue}{2020-10-04 19:15:07} Start call: Service.start()\\
@@ -16,7 +16,7 @@
     };
     
     % EVENT TEMPLATES
-    \node[mainRectangle, minimum width={90mm}, label={[label distance=2mm] { \footnotesize Event templates}}] (eventTemplates) at (0, -5) {
+    \node[mainRectangle, minimum width={90mm}, label={[label distance=2mm] {\footnotesize Event templates}}] (eventTemplates) at (0, -5) {
         \begin{tikzpicture}[node distance=1cm,outer sep=0pt]
             \node[draw=none] (templates) at (-2, 0) {
             \tiny 1 \textcolor{customDarkRed}{Event template 1} Error in estabilishing TLS connection: ip: <*>, port: <*>\\
@@ -30,7 +30,7 @@
     \draw[edge] (logSequence) -- (0, -3.1) node [midway, fill=white] {\footnotesize \textcolor{customGreen}{log parsing}};
     
      % EVENT TEMPLATES
-    \node[mainRectangle, label={[label distance=2mm] { \footnotesize Feature vectors}}] (featureVectors) at (0, -9.5) {
+    \node[mainRectangle, label={[label distance=2mm] {\footnotesize Feature vectors}}] (featureVectors) at (0, -9.5) {
         \begin{tikzpicture}[node distance=1cm,outer sep=0pt]
              % ML METHODS
             \node[mainRectangle, align=center, densely dashed, minimum width={15mm}, label={[label distance=0mm, align=center]{\scriptsize Event count vector}}] (eventCountVector) at (-1, -9.5) {

@@ -34,7 +34,7 @@ We can divide anomaly detection methods into three broad categories: \textit{sup
 
 % describe the advantages of unsupervised methods over supervised ones https://reader.elsevier.com/reader/sd/pii/S0167404818306333?token=9C7DC222C83AC3AD33CBF921C2E23508BEA68B59C5336EC0200EF02A1F60DAB2916EEE9D83663EE9029AB30B9C1CC538
 
-\subsection{Supervised Anomaly Detection }
+\subsection{Supervised Anomaly Detection}
 Supervised methods require previously labeled data, where the labels describe whether the behaviour in each data instance is normal or abnormal (anomalous). The main focus of supervised learning methods is then to derive a model from the labeled data that maximizes the discrimination between the classes (normal and anomalous). A drawback of the supervised method is that it can only be trained on the types of anomalies introduced in the training examples. It cannot handle previously unseen anomalies. 
 
 \subsection{Semi-supervised Anomaly Detection} %https://www-users.cs.york.ac.uk/vicky/myPapers/Hodge+Austin_OutlierDetection_AIRE381.pdf.
@@ -71,8 +71,8 @@ Since the anomaly score is the average path length of iTree, which corresponds t
  \[
  c(n) = 
   \begin{dcases}
-     c(n) = 2H(n - 1) - (2(n - 1) / n), & \text{if } n > 2\\
-     1, & \text{if } n = 2\\
+     c(n) = 2H(n - 1) - (2(n - 1) / n), & \text{if} n > 2\\
+     1, & \text{if} n = 2\\
      0, & \text{otherwise}
  \end{dcases} 
  \]
@@ -110,7 +110,7 @@ To put it formally, let's say we have an $m$-dimensional vector $\mathbf{Y} \in 
  \mathbf{Y} = \mathbf{\hat{Y}} + \mathbf{\widetilde{Y}}
 \end{gather}
 
-Where $\mathbf{\hat{Y}}$ represents the modeled part of the projection - the selected principal components. $\mathbf{\widetilde{Y}}$ represents the residual part of the projection. The modeled part is obtained by projecting the original data $\mathbf{{Y}}$. The projection is shown in the equation \ref{formula:projection}, where $\mathbf{P} \in \mathbb{R}^{n \times k}$ is the PCA loading matrix, $k$ is the number of principal components, and the matrix $\mathbf{C = \mathbf{ PP }^T}$ is a projection matrix. 
+Where $\mathbf{\hat{Y}}$ represents the modeled part of the projection - the selected principal components. $\mathbf{\widetilde{Y}}$ represents the residual part of the projection. The modeled part is obtained by projecting the original data $\mathbf{{Y}}$. The projection is shown in the equation \ref{formula:projection}, where $\mathbf{P} \in \mathbb{R}^{n \times k}$ is the PCA loading matrix, $k$ is the number of principal components, and the matrix $\mathbf{C = \mathbf{PP}^T}$ is a projection matrix. 
 Thus, $\mathbf{C}$ is a matrix for a projection of the original data onto a model space, so called normal space $S_d$ with $n$ dimensions.
 
 \begin{gather}
@@ -202,7 +202,7 @@ Clustering-based approaches to anomaly detection rely on an intuitive principle.
 
 LogCluster consists of two phases: \textit{construction} phase and \textit{production} phase. 
 
-\subsubsection*{ Construction Phase }
+\subsubsection*{Construction Phase}
 The construction phase can again be divided into four steps: Log vectorization, log clustering, extraction of representative log sequences, and recurrence checking.
 
 \begin{enumerate}
@@ -241,7 +241,7 @@ The construction phase can again be divided into four steps: Log vectorization, 
 \subsubsection*{Production Phase}
 In the production phase, logs are collected from the actual production environment (or more generally, the monitored environment). The process is then the same as in the construction phase: the logs are vectorized into log sequences and the log sequences are clustered. For each cluster, a representative is extracted. Then, the algorithm checks if all the representatives fall under one of the clusters seen earlier in the knowledge base. Then, engineers are required to manually examine the log sequences that have not been seen before for anomalies. After resolution, the knowledge base is updated with new clusters.
  
-\section{ Log Parsing }
+\section{Log Parsing}
 
 The time series data we are working with is a sequence of \textit{logs} produced by a development or production system. 
 \textit{Log} is a textual trace of variable length runtime information designed to be easily readable for humans.
@@ -308,7 +308,7 @@ Therefore, we say that two logs have the same event type if their messages match
 Originally, log parsing was based on regular expressions written manually by developers themselves. As we can assume, manual parsing is not an ideal solution for several reasons. Indeed, designing regular expressions by hand is a very error-prone and time-consuming process, as the size of the code may be too large for a single developer. Moreover, the ever-increasing complexity of modern software systems makes it recognizably more difficult to update and maintain these regular expressions. According to Xu et al. \cite{xu2009}, the number of new logs introduced into Google's newly developed system amounts to about a hundred per month. \\
 \\
 As an alternative to writing regular expressions, several automated methods have been proposed that typically operate in one of two modes. Either in \textit{online} (\cite{drain2017}) or \textit{offline} (\cite{vaarandi2003}, \cite{logsig2011}, \cite{Makanju2009ALA}) mode. Most of the current log parsers work offline, which means that they need to have a full collection of logs available before the actual log processing takes place. This implies that the entire log dataset must be loaded into memory. One such example is a study by Xu et al. \cite{xu2008}, in which they use the source code and a search function in a text editor to search for each occurrence of the logging function. From each log in the file, they extract a regular expression and compare them to find the best match. The disadvantage of this approach is that it is not always possible to have access to the source code, as is the case when using third-party libraries, etc. On the other hand, online log parsing methods process logs immediately when they arrive in a stream. \\
-According to the log parsing technique, parsers can be classified into four main groups, including \textit{Clustering}, \textit{ Frequent Pattern Mining }, \textit{Heuristic}, and \textit{ Fixed Depth Tree } based methods. In the following, we will present more details and an example of a representative of each of these methods, with the overall overview available in Table~\ref{tab:logParsers}.\\
+According to the log parsing technique, parsers can be classified into four main groups, including \textit{Clustering}, \textit{Frequent Pattern Mining}, \textit{Heuristic}, and \textit{Fixed Depth Tree} based methods. In the following, we will present more details and an example of a representative of each of these methods, with the overall overview available in Table~\ref{tab:logParsers}.\\
 
 \subsection{Log Parsing Techniques} \label{log_parsing_techniques}
     
@@ -354,7 +354,7 @@ Vaarandi presented a clustering algorithm for finding frequent patterns in logs 
 
     
 \subsubsection*{Heuristics}
-IPLoM, proposed by Makanju et al. \cite{Makanju2009ALA}, is an example of a heuristics-based log parsing method. IPLoM stands for \textit{ Iterative Partitioning Log Mining }, where their algorithm partitions the log messages into their respective clusters through a 3-step hierarchical partitioning process. In the final 4th stage, IPLoM generates discovered clusters and a line format describing each cluster. We will describe each step in more detail.\\
+IPLoM, proposed by Makanju et al. \cite{Makanju2009ALA}, is an example of a heuristics-based log parsing method. IPLoM stands for \textit{Iterative Partitioning Log Mining}, where their algorithm partitions the log messages into their respective clusters through a 3-step hierarchical partitioning process. In the final 4th stage, IPLoM generates discovered clusters and a line format describing each cluster. We will describe each step in more detail.\\
 
 \begin{enumerate}
     \item \textit{Partition by event size}. The first step of IPLoM applies an event size heuristics based on the assumption that log messages of the same event type have the same event size (number of tokens). The result is a partitioning of log messages into groups of equal length, e.g. \textit{"Connection from 255.255.255.255"} and \textit{"Connection from 0.0.0.0"} both contain $3$ tokens and would end up in the same cluster. The cases where events with different event sizes belong to the same cluster are handled in post-processing.

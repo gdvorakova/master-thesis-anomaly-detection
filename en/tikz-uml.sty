@@ -269,7 +269,7 @@
                                                \equal{\keyname}{above right}\OR%
                                                \equal{\keyname}{below left}\OR%
                                                \equal{\keyname}{below right}}{%
-                                     \IfSubStr{\keyvalue}{ of }{%
+                                     \IfSubStr{\keyvalue}{of }{%
                                        \pgfkeys{/tikzuml/package/.cd, no coords}%
                                      }{}%
                                    }{}%
@@ -397,7 +397,7 @@
                                              \equal{\keyname}{above right}\OR%
                                              \equal{\keyname}{below left}\OR%
                                              \equal{\keyname}{below right}}{%
-                                   \IfSubStr{\keyvalue}{ of }{%
+                                   \IfSubStr{\keyvalue}{of }{%
                                      \pgfkeys{/tikzuml/class/.cd, no coords}%
                                    }{}%
                                  }{}%
@@ -1534,7 +1534,7 @@
           %
           \def\tikzumlFirstArc{node[midway, inner sep=0, name=\tikzumlRelationName-1, anchor=center] {} }%
           \def\tikzumlLastArc{node[midway, inner sep=0, name=\tikzumlRelationName-5, anchor=center] {} }%
-          \def\tikzumlMidOneArc{ }%
+          \def\tikzumlMidOneArc{}%
           %
           \begin{pgfonlayer}{connections}%
           %
@@ -2241,7 +2241,7 @@
                                             \equal{\keyname}{above right}\OR%
                                             \equal{\keyname}{below left}\OR%
                                             \equal{\keyname}{below right}}{%
-                                  \IfSubStr{\keyvalue}{ of }{%
+                                  \IfSubStr{\keyvalue}{of }{%
                                     \pgfkeys{/tikzuml/note/.cd, no coords}%
                                   }{}%
                                 }{}%
@@ -2421,7 +2421,7 @@
                                                   \equal{\keyname}{above right}\OR%
                                                   \equal{\keyname}{below left}\OR%
                                                   \equal{\keyname}{below right}}{%
-                                        \IfSubStr{\keyvalue}{ of }{%
+                                        \IfSubStr{\keyvalue}{of }{%
                                           \pgfkeys{/tikzuml/assocclass/.cd, no coords}%
                                         }{}%
                                       }{}%
@@ -2663,7 +2663,7 @@
                                                \equal{\keyname}{above right}\OR%
                                                \equal{\keyname}{below left}\OR%
                                                \equal{\keyname}{below right}}{%
-                                     \IfSubStr{\keyvalue}{ of }{%
+                                     \IfSubStr{\keyvalue}{of }{%
                                        \pgfkeys{/tikzuml/usecase/.cd, no coords}%
                                      }{}%
                                    }{}%
@@ -2756,7 +2756,7 @@
                                              \equal{\keyname}{above right}\OR%
                                              \equal{\keyname}{below left}\OR%
                                              \equal{\keyname}{below right}}{%
-                                   \IfSubStr{\keyvalue}{ of }{%
+                                   \IfSubStr{\keyvalue}{of }{%
                                      \pgfkeys{/tikzuml/actor/.cd, no coords}%
                                    }{}%
                                  }{}%
@@ -3038,7 +3038,7 @@
                                                  \equal{\keyname}{above right}\OR%
                                                  \equal{\keyname}{below left}\OR%
                                                  \equal{\keyname}{below right}}{%
-                                       \IfSubStr{\keyvalue}{ of }{%
+                                       \IfSubStr{\keyvalue}{of }{%
                                          \pgfkeys{/tikzuml/statejoin/.cd, no coords}%
                                        }{}%
                                      }{}%
@@ -3098,7 +3098,7 @@
                                                      \equal{\keyname}{above right}\OR%
                                                      \equal{\keyname}{below left}\OR%
                                                      \equal{\keyname}{below right}}{%
-                                           \IfSubStr{\keyvalue}{ of }{%
+                                           \IfSubStr{\keyvalue}{of }{%
                                              \pgfkeys{/tikzuml/statedecision/.cd, no coords}%
                                            }{}%
                                          }{}%
@@ -3159,7 +3159,7 @@
                                                     \equal{\keyname}{above right}\OR%
                                                     \equal{\keyname}{below left}\OR%
                                                     \equal{\keyname}{below right}}{%
-                                          \IfSubStr{\keyvalue}{ of }{%
+                                          \IfSubStr{\keyvalue}{of }{%
                                             \pgfkeys{/tikzuml/stateinitial/.cd, no coords}%
                                           }{}%
                                         }{}%
@@ -3219,7 +3219,7 @@
                                                   \equal{\keyname}{above right}\OR%
                                                   \equal{\keyname}{below left}\OR%
                                                   \equal{\keyname}{below right}}{%
-                                        \IfSubStr{\keyvalue}{ of }{%
+                                        \IfSubStr{\keyvalue}{of }{%
                                           \pgfkeys{/tikzuml/statefinal/.cd, no coords}%
                                         }{}%
                                       }{}%
@@ -3279,7 +3279,7 @@
                                                   \equal{\keyname}{above right}\OR%
                                                   \equal{\keyname}{below left}\OR%
                                                   \equal{\keyname}{below right}}{%
-                                        \IfSubStr{\keyvalue}{ of }{%
+                                        \IfSubStr{\keyvalue}{of }{%
                                           \pgfkeys{/tikzuml/stateenter/.cd, no coords}%
                                         }{}%
                                       }{}%
@@ -3339,7 +3339,7 @@
                                                  \equal{\keyname}{above right}\OR%
                                                  \equal{\keyname}{below left}\OR%
                                                  \equal{\keyname}{below right}}{%
-                                       \IfSubStr{\keyvalue}{ of }{%
+                                       \IfSubStr{\keyvalue}{of }{%
                                          \pgfkeys{/tikzuml/stateexit/.cd, no coords}%
                                        }{}%
                                      }{}%
@@ -3400,7 +3400,7 @@
                                                 \equal{\keyname}{above right}\OR%
                                                 \equal{\keyname}{below left}\OR%
                                                 \equal{\keyname}{below right}}{%
-                                      \IfSubStr{\keyvalue}{ of }{%
+                                      \IfSubStr{\keyvalue}{of }{%
                                         \pgfkeys{/tikzuml/stateend/.cd, no coords}%
                                       }{}%
                                     }{}%
@@ -3469,7 +3469,7 @@
                                                     \equal{\keyname}{above right}\OR%
                                                     \equal{\keyname}{below left}\OR%
                                                     \equal{\keyname}{below right}}{%
-                                          \IfSubStr{\keyvalue}{ of }{%
+                                          \IfSubStr{\keyvalue}{of }{%
                                             \pgfkeys{/tikzuml/statehistory/.cd, no coords}%
                                           }{}%
                                         }{}%
@@ -3540,7 +3540,7 @@
                                                         \equal{\keyname}{above right}\OR%
                                                         \equal{\keyname}{below left}\OR%
                                                         \equal{\keyname}{below right}}{%
-                                              \IfSubStr{\keyvalue}{ of }{%
+                                              \IfSubStr{\keyvalue}{of }{%
                                                 \pgfkeys{/tikzuml/statedeephistory/.cd, no coords}%
                                               }{}%
                                             }{}%
@@ -3614,7 +3614,7 @@
                                              \equal{\keyname}{above right}\OR%
                                              \equal{\keyname}{below left}\OR%
                                              \equal{\keyname}{below right}}{%
-                                   \IfSubStr{\keyvalue}{ of }{%
+                                   \IfSubStr{\keyvalue}{of }{%
                                      \pgfkeys{/tikzuml/state/.cd, no coords}%
                                    }{}%
                                  }{}%
@@ -4690,7 +4690,7 @@
                                                  \equal{\keyname}{above right}\OR%
                                                  \equal{\keyname}{below left}\OR%
                                                  \equal{\keyname}{below right}}{%
-                                       \IfSubStr{\keyvalue}{ of }{%
+                                       \IfSubStr{\keyvalue}{of }{%
                                          \pgfkeys{/tikzuml/component/.cd, no coords}%
                                        }{}%
                                      }{}%

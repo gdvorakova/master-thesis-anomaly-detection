@@ -6,7 +6,7 @@
     dataCollectionCylinder/.style={cylinder, draw=customBlue, shape aspect = 0.3, align=center, shape border rotate=90}
 ]
     % DATA COLLECTION
-    \node[mainRectangle, minimum width={40mm}, label={[label distance=2mm, align=center]{ \footnotesize 1. Data collection}}] (dataCollection) at (0, 0) {
+    \node[mainRectangle, minimum width={40mm}, label={[label distance=2mm, align=center]{\footnotesize 1. Data collection}}] (dataCollection) at (0, 0) {
         \begin{tikzpicture}[node distance=1cm,outer sep=0pt]
           \node[dataCollectionCylinder, minimum width={25mm}, minimum height={10mm}] (dataCylinder) {\scriptsize Log file};
         \end{tikzpicture}
@@ -64,7 +64,7 @@
     
     \draw[edge] (node cs:name=logParsing, anchor=east) -| (9, 0) |- (node cs:name=featureEngineering, anchor=east);
     
-    \node[mainRectangle, minimum width={40mm}, label={[label distance=2mm, align=center]{ \footnotesize 4. Anomaly Detection}}] (anomalyDetection) at (0, -6) {
+    \node[mainRectangle, minimum width={40mm}, label={[label distance=2mm, align=center]{\footnotesize 4. Anomaly Detection}}] (anomalyDetection) at (0, -6) {
         % FEATURE MATRIX
         \begin{tikzpicture}
             \node[rectangle, draw=customDarkRed, align=center, solid, minimum width={30mm}] (featureMatrix) at (0, -2) {\textcolor{customDarkRed}{\tiny FEATURE MATRIX}};
