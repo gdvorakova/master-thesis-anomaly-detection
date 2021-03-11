@@ -19,7 +19,7 @@ For visualization, we use the numerical representation of our dataset obtained b
 The four assumptions we will explore with respect to the collected data are the following: 
 
 \begin{itemize} 
-    \item \textbf{Assumption 1:} Daily dataset deviates too much from the normal behavior represented by Nightly to be used for training purposes 
+    \item \textbf{Assumption 1:} Daily dataset deviates too much from the normal behaviour represented by Nightly to be used for training purposes 
     \item \textbf{Assumption 2:} Using data from nightly tests collected in a single night for training is sufficient because the data from all nightly tests are equivalent 
     \item \textbf{Assumption 3:} Logs generated from calls between two radios are\\
     grouped into a call cluster when plotted 
@@ -58,7 +58,7 @@ Since calls are not frequent during testing phase, compared to other processes r
 
 Finally, we are interested in seeing how PCA compares to t-SNE, and we also want to plot the Daily and Nightly datasets relative to each other. Figure \ref{fig:pca-nightly-daily} shows a plot of the first two principal components after performing principal component analysis on the Nightly and Daily datasets. Figure \ref{fig:tsne-nightly-daily} is a t-SNE plot visualizing the Nightly and Daily datasets.
 
-The points produced by PCA appear to be much denser compared to t-SNE, but there is very little overlap between the Daily and Nightly data in either plot. One way to explain this is that the tests performed at night do not fully cover the behavior of the system. Another explanation, confirmed by the developers at Motorola as the most likely, is that the experiments conducted during the day vary each day depending on the feature being tested, and it may also behave completely opposite to what we consider normal behavior. Nonetheless, these visualizations confirmed that the Daily dataset should not be used for training the models because it is unpredictable and inconsistent. It is still a good candidate for performing expert validation on an unlabeled dataset, where an expert's understanding of the underlying processes will help us understand the anomaly detection models.
+The points produced by PCA appear to be much denser compared to t-SNE, but there is very little overlap between the Daily and Nightly data in either plot. One way to explain this is that the tests performed at night do not fully cover the behaviour of the system. Another explanation, confirmed by the developers at Motorola as the most likely, is that the experiments conducted during the day vary each day depending on the feature being tested, and it may also behave completely opposite to what we consider normal behaviour. Nonetheless, these visualizations confirmed that the Daily dataset should not be used for training the models because it is unpredictable and inconsistent. It is still a good candidate for performing expert validation on an unlabeled dataset, where an expert's understanding of the underlying processes will help us understand the anomaly detection models.
 
 \begin{figure}[h]
     \centering
@@ -77,7 +77,7 @@ The points produced by PCA appear to be much denser compared to t-SNE, but there
 \subsection{Completeness of the Nightly Dataset}
 \label{assumption-completeness}
 
-Another important question we would like to answer by conducting EDA concerns the completeness of the Nightly dataset from January 24, 2021, which we would like to use for training the one-class model: \textit{Do the data from the nightly tests differ across dates?} \textit{Would merging data from multiple nightly test datasets provide additional information about the normal behavior of the system?}
+Another important question we would like to answer by conducting EDA concerns the completeness of the Nightly dataset from January 24, 2021, which we would like to use for training the one-class model: \textit{Do the data from the nightly tests differ across dates?} \textit{Would merging data from multiple nightly test datasets provide additional information about the normal behaviour of the system?}
 
 To analyze the data and answer these questions, we will again use PCA and t-SNE and plot the data from two different nights of testing. Figure \ref{fig:tsne-nights-comparison} shows the visualization of the results. It can be seen that the two data sets overlap almost completely in both the PCA and t-SNE plots. Given the considerable overlap, we can safely assume that the logs collected during the nightly tests are equivalent within the different dates.
 
@@ -169,7 +169,7 @@ However, accuracy alone does not exactly reflect the actual performance of a sys
 
 The most commonly used metrics for performance evaluation in machine learning are \textit{precision, recall} and ${F_{\beta}-measure}$. They measure the correct prediction of anomalies within different classes. In our research, we will also focus mainly on these three performance measures.
 
-In order to use them, the problem for which we want to estimate performance must be a classification problem. We assume that our dataset represents a normal behavior of the system, so that an anomaly detection problem can be translated into a one-class classification problem. 
+In order to use them, the problem for which we want to estimate performance must be a classification problem. We assume that our dataset represents a normal behaviour of the system, so that an anomaly detection problem can be translated into a one-class classification problem. 
 
 Precision, recall, and $F_{\beta}$-measure are based on the ratios of counts TP, FP, TN, and FN. 
 
