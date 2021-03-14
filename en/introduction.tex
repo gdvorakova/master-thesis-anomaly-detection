@@ -54,7 +54,7 @@ Since the challenging part of the experiments is to design an appropriate embedd
 \textbf{RQ2}: \textit{\RQSecond}\\
 
 If this is the case and we are able to detect the outliers in plots based on our embedding, it should be possible to find an algorithm that can do this task automatically. Since we have large datasets available, we plan to use machine learning algorithms, which in theory should be more scalable and flexible for this kind of problems in large software systems.
-Therefore, we are looking for an answer to this question:\\
+Therefore, we are looking for an answer to the next research question:\\
 
 
 \textbf{RQ3}: \textit{\RQThird}\\
@@ -69,10 +69,10 @@ So the final question to be addressed in the thesis is:\\
 
 
 \section{Related Work}
-Log-based anomaly detection has been widely studied. Anomaly detection research usually follows similar steps. First, a log parser is used to extract log templates from unstructured log data. Then, logs are transformed into a numerical feature vector using the log templates. Last, anomaly detection techniques are applied.
+Log-based anomaly detection has been widely studied. Anomaly detection research usually follows similar steps. First, a log parser is used to extract log templates from unstructured log data. Then, logs are transformed into a numerical feature vectors using the log templates. Last, anomaly detection techniques are applied.
 Different approaches to each of these steps have been presented in previous work on this topic. 
 
-Xu et al. \cite{xu2009} was one of the first to use Principal Component Analysis (PCA) to detect anomalies in log data. They generated event templates based on the source code and used the event count matrix as input to PCA. To form an input, Xu uses the concept of windowing by session, where all logs with the same session ID are grouped together. The event count matrix is constructed such that each vector in a row represents events in a session ID and each column vector is an event type. The dataset used for their experiments was collected from Hadoop Distributed File System (HDFS).
+Xu et al. \cite{xu2009} was one of the first to use Principal Component Analysis (PCA) to detect anomalies in log data. They generated event templates based on the source code and used the event count matrix as input to PCA. To form an input, Xu uses the concept of windowing by session, where all logs with the same session ID are grouped together. The event count matrix is constructed such that each vector in a row represents events in a session with the same ID and each column vector is an event type. The dataset used for their experiments was collected from Hadoop Distributed File System (HDFS).
 A similar approach was used by He \cite{he2016}, which also used an event count matrix. To extract features, they group log data into three groups: fixed windows, sliding windows, and session windows. 
 
 Invariant Mining (IM) method was developed by Lou et al. \cite{lou2010}, also using the log event count matrix as input. IM mines the invariants between log events from the event count vectors. Event count vectors that do not satisfy the determined invariants are considered as anomalies. 
@@ -84,9 +84,9 @@ Du et al. \cite{deeplog2017} used a Deep Neural Network (DNN) model consisting o
 \section{Outline}
 In Chapter~\ref{smart-connect}, we introduce the domain of our problem by describing the SmartConnect product from Motorola Solution, whose log data is examined in the thesis. We also introduce the reader to the software architecture of SmartConnect. 
 
-In the following chapter, Chapter~\ref{chapter:literatureReview}, we review related work done by researchers before us. Methods relevant to our work and used in our approach are analyzed in detail.
+In the following chapter, Chapter~\ref{chapter:literatureReview}, methods relevant to our work and used in our approach are analyzed in detail.
 
-Methodology ( Chapter \ref{methodology}), explains exactly how we proceeded with our solution. It starts with a simple example that provides the motivation for an anomaly detection tool in SmartConnect. We then outline the exact steps we took and describe them comprehensively. More specifically, it consists of data collection, log parsing, feature engineering, anomaly detection, and finally mapping predictions back to log entries.
+Methodology (Chapter \ref{methodology}), explains exactly how we proceeded with our solution. It starts with a simple example that provides the motivation for an anomaly detection tool in SmartConnect. We then outline the exact steps we took and describe them comprehensively. More specifically, it consists of data collection, log parsing, feature engineering and anomaly detection. Finally, it also describes how are predictions mapped back to log entries.
 
 Later in Chapter~\ref{chapter:dataset} we describe the data we work with in our research. From the test dataset to the data used for validation. Some concrete examples of anomalies that occur in the system and can be recorded by logs are presented.
 

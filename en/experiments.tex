@@ -1,7 +1,7 @@
 \chapter{Experiments}
 \label{chapter:experiments}
 
-In this chapter, we will look at the configuration of the experiments, which has a direct impact on the results of our four different approaches to anomaly detection. Before running the experiments, we will also look at the data visually to verify the accuracy of the assumptions we make about the data. We then present the experimental setup, including the datasets, the software and hardware used for the experiments, and the evaluation metrics. Finally, we present the definitions of the tunable hyperparameters and give an overview of the hyperparameter values that performed best and will be used for the final experiments.
+In this chapter, we will look at the configuration of the experiments, which has a direct impact on the results of our four different approaches to anomaly detection. Before running the experiments, we will also look at the data visually to verify the assumptions we make about the data. We then present the experimental setup, including the datasets, the software and hardware used for the experiments, and the evaluation metrics. Finally, we present the definitions of the tunable hyperparameters and give an overview of the hyperparameter values that performed best and will be used for the final experiments.
 
 \section{Exploration of Assumptions}
 To gain better insight into the dataset, it is useful to perform an initial Exploratory Data Analysis (EDA) \cite{eda} of our dataset. Exploratory data analysis is used to analyze the underlying structure of the data and summarize the main features, often via visualization methods. Visualization helps us to test our assumptions and formulate hypotheses about the data, which are important to choose the right approaches and parameters for anomaly detection. In addition, visualization of the logs helps us answer \textbf{RQ1} (Research Question 1).
@@ -10,7 +10,7 @@ For visualization, we use the numerical representation of our dataset obtained b
 
 \begin{itemize} 
 
-\item \textbf{Principal Component Analysis (PCA)} \\ One way to reduce the dimensionality of data without losing too much information is to use Principal Component Analysis (PCA) as an unsupervised tool for exploratory data analysis. In PCA, the data points (in our case, the feature vectors) in our\\ \featureVectorLength-dimensional feature space are transformed to a 2-dimensional feature subspace. Moreover, the variables in the new artificial subspace (principal components) are not correlated. The first principal component (PC1) propagates in the x-axis direction and explains most of the variance in the data.
+\item \textbf{Principal Component Analysis (PCA)} \\ One way to reduce the dimensionality of data without losing too much information is to use Principal Component Analysis (PCA) as an unsupervised tool for exploratory data analysis. In PCA, the data points (in our case, the feature vectors) in our \featureVectorLength-dimensional feature space are transformed to a 2-dimensional feature subspace. Moreover, the variables in the new artificial subspace (principal components) are not correlated. The first principal component (PC1) propagates in the x-axis direction and explains most of the variance in the data.
     
    \item \textbf{t-distributed Stochastic Neighbor Embedding (t-SNE)}\\ t-SNE is a recent algorithm for dimensionality reduction into a two or three dimensional space that is particularly well suited for data visualization \cite{tsne}. PCA is a linear method that keeps the dissimilar data points far apart in the low-dimensional projection. In contrast to PCA, t-SNE is a non-linear method. It focuses on preserving the local structure by keeping the high-dimensional data points that lie on or near a nonlinear manifold in the lower dimensions close together. Preserving local structure while revealing important global structure is the main advantage over linear techniques, where this is usually not possible.
     
@@ -20,7 +20,7 @@ The four assumptions we will explore with respect to the collected data are the 
 
 \begin{itemize} 
     \item \textbf{Assumption 1:} Daily dataset deviates too much from the normal behaviour represented by Nightly to be used for training purposes 
-    \item \textbf{Assumption 2:} Using data from nightly tests collected in a single night for training is sufficient because the data from all nightly tests are equivalent 
+    \item \textbf{Assumption 2:} Using data from nightly tests collected in a single night for training is sufficient because the data from all nightly tests are equivalent (following the same distribution)
     \item \textbf{Assumption 3:} Logs generated from calls between two radios are\\
     grouped into a call cluster when plotted 
     \item \textbf{Assumption 4:} Different anomaly logs are grouped into distinct and clearly separated clusters when plotted
@@ -43,7 +43,7 @@ The visualization of the t-SNE in the plot of the Nightly dataset shows that mos
     \item \texttt{\justify Call \{1586,1\} \{:call\_number, <*> <*> forward RtpPacket\{ssrc: <*> urid: <*> timestamp: <*> seq\_num: <*> LMR: [ssrc: <*> urid: <*> to \{228, 28, <*> <*>}
 \end{itemize}
 
-This is further confirmed by visualizing the Call dataset in respect to the Nightly dataset in Assumption \ref{assumption-calls}.
+This is further confirmed by visualizing the Glostrup Calling dataset in respect to the Nightly dataset in Assumption \ref{assumption-calls}.
 
 Since calls are not frequent during testing phase, compared to other processes running in the system, this is exactly what we expect to see reflected in the logs. Nonetheless, as shown in the plot, the cluster is considerably distant from the rest of the points, and we do not want regular calls to be detected as anomalies. It is important to note here that the distances between clusters in t-SNE do not necessarily mean anything. Fine-tuning the \textit{perplexity} hyperparameter of t-SNE is required to obtain clusters that maintain global geometry. Thus, we do not know where the assumed call cluster lies with respect to the rest of the data points.
 
@@ -77,21 +77,21 @@ The points produced by PCA appear to be much denser compared to t-SNE, but there
 \subsection{Completeness of the Nightly Dataset}
 \label{assumption-completeness}
 
-Another important question we would like to answer by conducting EDA concerns the completeness of the Nightly dataset from January 24, 2021, which we would like to use for training the one-class model: \textit{Do the data from the nightly tests differ across dates?} \textit{Would merging data from multiple nightly test datasets provide additional information about the normal behaviour of the system?}
+Another important questions we would like to answers by conducting EDA concern the completeness of the Nightly dataset from January 24, 2021, which we would like to use for training the one-class model: \textit{Do the data from the nightly tests differ across dates?} \textit{Would merging data from multiple nightly test datasets provide additional information about the normal behaviour of the system?}
 
 To analyze the data and answer these questions, we will again use PCA and t-SNE and plot the data from two different nights of testing. Figure \ref{fig:tsne-nights-comparison} shows the visualization of the results. It can be seen that the two data sets overlap almost completely in both the PCA and t-SNE plots. Given the considerable overlap, we can safely assume that the logs collected during the nightly tests are equivalent within the different dates.
 
 Through our domain knowledge, we know that the code will differ slightly among the tests as the Motorola SmartConnect software product is under development. The reason for this is that the master branches of the services are being tested and we do not expect them to change dramatically from day to day. 
 However, it is something that needs to be considered when deploying our solution. It must be ensured that the code whose produced logs are analyzed by our anomaly detection algorithm is also the version of the code that runs the tests.
 
-We conclude that using data from only one night is sufficient for training the anomaly detection models, and adding more logs from different nights would not add any additional information to the data. 
+We conclude that using data from only one night is sufficient for training the anomaly detection models, and adding more logs from different nights would not add any additional information to the data. In the longer term, however, the software will deviate from the current state. Therefore, in the future, a proper automated machine learning pipeline that includes retraining models needs to be developed as discussed in Section~\ref{future:pipeline}.
 
 \begin{figure}%
     \centering
     \subfloat[\centering PCA]{{\includegraphics[width=5.52cm]{img/pca-nights-comparison.pdf}}}%
     \qquad
     \subfloat[\centering t-SNE]{{\includegraphics[width=5.52cm]{img/tsne-nights-comparison.pdf}}}%
-    \caption{Comparing data from nightly testing obtained from two different dates.}%
+    \caption{Comparing data from nightly testing obtained from two different dates. The plot on the left (a) represents a PCA plot of the two datasets, whereas (b) is a t-SNE plot.}%
     \label{fig:tsne-nights-comparison}%
 \end{figure}
 
@@ -140,9 +140,9 @@ We obtained a solid indication that feature embedding is informative enough to i
 \label{section:evaluationMetrics}
 Evaluation metrics are needed to adequately compare different anomaly detection algorithms and different experiment settings.
 
-Let us first introduce four basic metrics: true positive (TP), false positive (FP), true negative (TN), and false negative (FN). ). 
+Let us first introduce four basic metrics: true positive (TP), false positive (FP), true negative (TN), and false negative (FN).
 
-To give an example, let us consider an experimental setting: In a classification task, for each data sample, we assigned a binary label $l$ with values in a set of classes. It is important to note that a class that is normally positive is of particular interest for which the evaluation measure is valid. It gives an information about the correctness of the example in the task of anomaly detection. Moreover, an anomaly detector makes a prediction $\hat{l}$, assigning for each data example whether it classifies it as an anomaly or as a normal data instance. The pairwise relationship of the four counts is explained by the confusion matrix in Table \ref{table:confusionMatrix}. The confusion matrix is a form of contingency table that provides an interpretation of the classifier's performance on a labeled dataset. It is a $2 \times 2$ matrix (in the case of only two classes, but can easily be extended for multiple classes), where the rows represent the actual value of a variable, while the columns represent the predicted value of a variable.
+To give an example, let us consider an experimental setting: In a classification task, for each data sample, we assigned a binary label $l$ with values in a set of classes. It is important to note that a positive class is of particular interest for which the evaluation measure is valid. It gives an information about the correctness of the example in the task of anomaly detection. Moreover, an anomaly detector makes a prediction $\hat{l}$, assigning for each data example whether it classifies it as an anomaly or as a normal data instance. The pairwise relationship of the four counts is explained by the confusion matrix in Table \ref{table:confusionMatrix}. The confusion matrix is a form of contingency table that provides an interpretation of the classifier's performance on a labeled dataset. It is a $2 \times 2$ matrix (in the case of only two classes, but can easily be extended for multiple classes), where the rows represent the actual value of a variable, while the columns represent the predicted value of a variable.
 
 \begin{table}[!h]
 \centering
@@ -167,7 +167,7 @@ Many meaningful measures can be extracted from the confusion matrix. The evaluat
 
 However, accuracy alone does not exactly reflect the actual performance of a system designed to correctly detect anomalies. It does not distinguish between the number of correct predictions of different classes \cite{performanceEvaluation2006}. The reason why the accuracy measure is not sufficient in the majority of ML applications is explained later in this section. 
 
-The most commonly used metrics for performance evaluation in machine learning are \textit{precision, recall} and ${F_{\beta}-measure}$. They measure the correct prediction of anomalies within different classes. In our research, we will also focus mainly on these three performance measures.
+The most commonly used metrics for performance evaluation in machine learning are \textit{precision, recall} and ${F_{\beta}-measure}$. They measure the correct prediction of anomalies within different classes. In our research, we will focus mainly on these three performance measures.
 
 In order to use them, the problem for which we want to estimate performance must be a classification problem. We assume that our dataset represents a normal behaviour of the system, so that an anomaly detection problem can be translated into a one-class classification problem. 
 
@@ -194,7 +194,7 @@ In Chapter \ref{chapter:literatureReview}, we described four anomaly detection a
 \subsection{Dataset}
 The dataset used for training the models is the Nightly dataset with data instances of the normal class, hence we also refer to this type of learning as one-class learning. Before training, we start preprocessing the data into numerical vector embeddings in all our experiments indistinguishably according to the methods described in Chapter \ref{methodology}. In Table \ref{tab:training} we give an overview of the statistics related to the dataset used for training and testing.
 
-We used the sliding window technique to divide the dataset into log sequences. The number of resulting sequences depends on the size of the window and a step size. The window size should be chosen to contain the maximum amount of information. We have found that the anomalies we observe in the experiments span at most two minutes. Therefore, we set the window size to two minutes and the step size also to two minutes so that no two windows overlap. As a result, we obtained $201$ log sequences extracted from the Nightly dataset. Each log sequence can be one of two different vector representations: \textit{event count}-vectors and \textit{TF-IDF}-weighted vectors. Therefore, each experiment is run twice with both embedding types.
+We used the sliding window technique to divide the dataset into log sequences. The number of resulting sequences depends on the size of the window and a step size. The window size should be chosen to contain the maximum amount of information. We have found that the anomalies we observe in the experiments span at most two minutes. Therefore, we set the window size to two minutes and the step size also to two minutes so that no two windows overlap. As a result, we obtained $201$ log sequences extracted from the Nightly dataset. Each log sequence can be one of two different vector representations: \textit{event count} vectors and \textit{TF-IDF}-weighted vectors. Therefore, each experiment is run twice with both embedding types.
 
 The length of a vector is given by the number of unique event templates extracted during preprocessing of all datasets used in our research and stored in the state of our log template miner. Thus, at the time of model training, both the number of event types and the length of each log sequence is equal to $3\,963$.
 
@@ -253,7 +253,7 @@ Below is a list of hyperparameters and their definitions for all algorithms. The
 
 \subsubsection*{PCA}
 \begin{enumerate} 
-\item \textbf{Number of components}: Number of output features (principal components) to be extracted in the PCA. If a decimal number is specified, it is used to represent the variance ratio as the principal components 
+\item \textbf{Number of components}: Number of output features (principal components) to be extracted in the PCA. If a decimal number is specified, it is used to represent the variance ratio of the principal components 
 \item \textbf{Threshold}: The threshold for anomaly detection, which is a value between $0$ and $1$. When this value is exceeded, the sample is considered an anomaly. The threshold value can be set to be automatically calculated using the Q-statistics using the value of the alpha hyperparameter 
 \item \textbf{Alpha}: The alpha values for the Q-statistic to calculate the threshold for anomaly detection. 
 \end{enumerate}
@@ -284,7 +284,7 @@ Below is a list of hyperparameters and their definitions for all algorithms. The
 \end{table}
 \end{enumerate}
 
-To obtain the optimal hyperparameters, we will run algorithms for each combination of hyperparameters described in the tables above. We will perform these tests using only the basic event count embeddings, and after finding the optimal parameters, we will use them to train the models on the TF-IDF embeddings as well. . 
+To obtain the optimal hyperparameters, we will run algorithms for each combination of hyperparameters described in the Table \ref{tab:hyperparameters}. We will perform these tests using only the basic event count embeddings, and after finding the optimal parameters, we will use them to train the models on the TF-IDF embeddings as well.
 
 We evaluate the results of the experiments using the metrics defined in Section \ref{section:evaluationMetrics} to find the optimal hyperparameter values. Since the F1-score combines both precision and recall measures, we select the final set of hyperparameters by the highest F1 score, so we optimize both metrics by optimizing F1. The evaluation is performed on the test dataset. 
 

@@ -5,7 +5,7 @@
     phonyTarget/.style={rectangle, draw=customRed, align=left, minimum width=20mm, minimum height=7mm}
 ]
 
-\node[fileTarget, align=center] (root) at (0, 0) {\tiny data/raw/\$(DATASET)-raw.json};
+\node[fileTarget, align=center] (root) at (0, 0) {\tiny data/raw/\$(DATASET).json};
 
 \node[fileTarget, align=center] (preprocessed_tf) at (-3, -1.5) {\tiny data/preprocessed/tf/\%-preprocessed.pickle};
 

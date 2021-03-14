@@ -13,7 +13,7 @@ More about the preprocessing step can be found in Chapter \ref{methodology}.
 \label{dataset}
 The data we feed machine learning models with makes a big difference. Therefore, we need to look at what data we can collect at a high level from the system and what properties an individual log entry has.
 
-The anomaly detection task can be reformulated as a classification problem with two classes: \textit{negative (anomaly)} class and \textit{positive (anomaly-free)} class. 
+The anomaly detection task can be reformulated as a classification problem with two classes: \textit{positive} (anomaly) class and \textit{negative} (anomaly-free) class. 
 
 \textit{Negative} or \textit{normal} class is a category of a dataset that is free of anomalies and represents the expected (or normal) behaviour of a system that produces these logs. Negative data samples are labeled as $0$. The class \textit{Positive}, \textit{anomalous}, or \textit{abnormal} is the target class we are interested in. It is assigned to log sequences that contain anomalies as $1$. The goal is to train the classifier to distinguish between positive and negative samples.
 
@@ -91,7 +91,7 @@ Unlike supervised learning, where one can directly compare predictions with actu
 
 In our work, the majority of the data is unlabeled data. To validate the proposed approaches, we had to develop the test dataset ourselves.
 
-To get a better idea of what kind of data constitutes a manually created test dataset, we provide a pie chart of the test set composition in Figure \ref{fig:testset-composition}. It is important to note that the number $131$ represents the amount of extracted log sequence, so the number of underlying log message samples is much higher.
+To get a better idea of what kind of data constitutes a manually created test dataset, we provide a pie chart of the test set composition in Figure \ref{fig:testset-composition}. It is important to note that the number $131$ represents the amount of extracted log sequences (windows), so the number of underlying log message samples is much higher.
 
 Determining the negative class representation is trivial. As we mentioned earlier in this chapter, we consider the Nightly data from the testing phase as normal data samples. To create the normal part of the dataset, we collect another set of data from the testing phase that was previously unseen in the training phase. 
 
@@ -108,14 +108,14 @@ This is not an ideal test dataset, but not all anomalies are known and can be so
 
 \begin{table}[!h]
 \centering
-\resizebox{\textwidth}{!}{\begin{tabular}{@{}lcr@{}}
+\resizebox{\textwidth}{!}{\begin{tabular}{@{}lccr@{}}
 \toprule
-\textbf{Dataset Name} & \textbf{Log Entries}       & \textbf{Size}  &\textbf{Time Span}  \\ \toprule
-\textcolor{customDarkBlue}{\textbf{Daily}}           & $539\,372$    & $2.84$ GB     & \footnotesize{26/1/2021 6:00  -  26/1/2021 21:00}     \\ \midrule
-\textcolor{customDarkBlue}{\textbf{Nightly}}         & $1\,362\,004$ & $4.24$ GB     &  \footnotesize{24/1/2021 21:00  -  25/1/2021 3:50}      \\ \midrule
-\textcolor{customDarkBlue}{\textbf{Nightly Test}}    & $1\,373\,919$ & $4.47$ GB     &  \footnotesize{22/1/2021 21:00  -  23/1/2021 3:43}      \\ \midrule
-\textcolor{customDarkBlue}{\textbf{Anomalies}}       & $805\,614$    & $3.6$ GB      & \footnotesize{25/1/2021 15:40  -  25/1/2021 17:00,  28/1/2021 15:25  -  28/1/2021 16:00}    \\ \midrule
-\textcolor{customDarkBlue}{\textbf{Glostrup Calling}}    & $1904$    & $15.82$ MB    &  \footnotesize{3/2/2021 9:40  -  3/2/2021 9:47} \\
+\textbf{Dataset Name} & \textbf{Log Entries}     & \textbf{Size} & \textbf{Environment} &\textbf{Time Span}   \\ \toprule
+\textcolor{customDarkBlue}{\textbf{Daily}}           & $539\,372$    & $2.84$ GB     & Experimental  & \footnotesize{26/1/2021 6:00  -  26/1/2021 21:00}   \\ \midrule
+\textcolor{customDarkBlue}{\textbf{Nightly}}         & $1\,362\,004$ & $4.24$ GB      & Stable  &  \footnotesize{24/1/2021 21:00  -  25/1/2021 3:50}     \\ \midrule
+\textcolor{customDarkBlue}{\textbf{Nightly Test}}    & $1\,373\,919$ & $4.47$ GB    & Stable  &  \footnotesize{22/1/2021 21:00  -  23/1/2021 3:43}       \\ \midrule
+\textcolor{customDarkBlue}{\textbf{Anomalies}}       & $805\,614$    & $3.6$ GB     & Experimental    & \footnotesize{25/1/2021 15:40  -  25/1/2021 17:00,  28/1/2021 15:25  -  28/1/2021 16:00}   \\ \midrule
+\textcolor{customDarkBlue}{\textbf{Glostrup Calling}}    & $1904$    & $15.82$ MB   & Experimental  &  \footnotesize{3/2/2021 9:40  -  3/2/2021 9:47}   \\
 \bottomrule
 \end{tabular}}
 \caption{Summary of all the log datasets we worked with in our research on anomaly detection.}
@@ -123,31 +123,33 @@ This is not an ideal test dataset, but not all anomalies are known and can be so
 \end{table}
 
 \section{Log Properties}
-The services record 33 properties per single log entry. Of the 33 log properties, we chose to consider only \texttt{msg} and \texttt{timestamp}, as the others (such as the name of the Kubernetes pod, the process ID of the service generating the log, etc.) are too specific. For the full list of the individual log properties see Appendix~\ref{appendix:log-properties}).
+The services record 33 properties per single log entry. Of the 33 log properties, we chose to consider only \texttt{msg} and \texttt{timestamp}, as the others (such as the name of the Kubernetes pod, the process ID of the service generating the log, etc.) are too specific. For the full list of the individual log properties see Appendix~\ref{appendix:log-properties}.
 Including fewer predictor variables should generally avoid overfitting, make the final model more transparent, and make debugging easier.
 Therefore, to obtain as general a solution as possible, we restrict ourselves to these two predictors.
 
 \subsection{Format of Log Properties}
-Messages are strings and we assume that they follow the logic we described in Section~\ref{log_template_mining} on log template mining. In other words, we assume that they are generated by code in such a way that they can be thought of as a product of constant and variable parts. Consequently, log messages can be further categorized using event types.
+Log messages (property \texttt{msg}) are strings and we assume that they follow the logic we described in Section~\ref{log_template_mining} on log template mining. In other words, we assume that they are generated by code in such a way that they can be thought of as a product of constant and variable parts. Consequently, log messages can be further categorized using event types.
 
-Timestamps have the format of \texttt{YYYY-MM- DD'T'HH:mm: SS.sss'Z'}. The format string indicates that the year (YYYY) is a four-digit number padded with zeros, the month (\texttt{MM}), the day (\texttt{DD}), the hour (\texttt{HH}), the minutes (\texttt{mm}) and the seconds (\texttt{SS}) are two-digit zero padded numbers and the milliseconds (\texttt{ssss}) are a three-digit number filled with zeros. The time part is separated from the date by a single \texttt{T} character and the entire timestamp ends with a letter \texttt{Z}.
+Timestamps (property \texttt{timestamp}) have the format of:\\
+\begin{equation*}
+    \text{\texttt{YYYY-MM-DD'T'HH:mm:SS.sss'Z'}}
+\end{equation*}
+The format string indicates that the year (\texttt{YYYY}) is a four-digit number padded with zeros, the month (\texttt{MM}), the day (\texttt{DD}), the hour (\texttt{HH}), the minutes (\texttt{mm}) and the seconds (\texttt{SS}) are two-digit zero padded numbers and the milliseconds (\texttt{sss}) is a three-digit number filled with zeros. The time part is separated from the date by a single \texttt{T} character and the entire timestamp ends with a letter \texttt{Z}.
 
 \section{Types of Anomalies}
 \label{anomaly_types}
 In this section, we present a set of known anomalies that we will trace in order to test our solution.
-We will benchmark our approaches and models to these known anomalies, which can be easily simulated and reproduced. 
+We will benchmark our approaches and models against these known anomalies, which can be easily simulated and reproduced. 
 However, the goal is to also detect anomalies that we are not aware of.
 In other words, we also want to identify anomalous scenarios that appear for the first time in the production environment and do not appear in our training and testing dataset.
 
 \subsection{Cache Outage}
 In this anomaly, a cache storage that orchestrates the call logic is taken down and the radios that are in a call at that moment bonk because they cannot communicate with each other.
-In response, the storage service automatically restores itself, usually in no more than 2 seconds. After that, broadcast should continue.
+In response, the storage service automatically restores itself, usually in no more than 2 seconds. After that, the broadcast should continue.
 
 As mentioned in Section~\ref{architecture:caching} about caching in Motorola SmartConnect, Redis is used for caching, so we can also call this anomaly \textit{Killing Redis} or similar.
 
 \subsection{Message Broker Out of Service}
-Similarly, an important entity in the SmartConnect microservices system is the message broker that enables inter-service communication. In this scenario, all brokers are terminated, therefore the microservices network is disrupted and messages cannot be forwarded until the brokers are restored.
+Similarly, an important entity in the SmartConnect microservices system is the message broker that enables inter-service communication. In this scenario, all brokers are terminated, therefore the microservices network is disrupted and messages cannot be forwarded until the brokers are restored. After such disruption, it normally takes over one minute to restore the operation.
 
-Section~\ref{architecture:messaging} discusses again how messages are forwarded in SmartConnect's microservices architecture. RabbitMQ is the specific message broker that is used, so we can refer to this anomaly in the text as \textit{Killing RabbitMQ}.
-
-% https://pure.tue.nl/ws/portalfiles/portal/142685995/sci_2019_Lomagin_Egor.pdf
+Section~\ref{architecture:messaging} discusses in more detail how messages are forwarded in SmartConnect's microservices architecture. RabbitMQ is the specific message broker that is used, so we will refer to this anomaly in the text also as \textit{Killing RabbitMQ}.

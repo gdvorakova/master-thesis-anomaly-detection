@@ -152,9 +152,7 @@ In microservices architecture, this method of logging may not be sufficient beca
 
 Moreover, for systems that produce a large amount of logs, persisting the logs to files and storing them in the service Pod's file system can cause the node's storage space to be overused. For this reason, techniques such as logrotate\footnote{\url{https://linux.die.net/man/8/logrotate}} are used. Logrotate collects logs, sends them to another location where they can be persisted without affecting the performance of the MSA system, and removes them from the Pod's node. On the other hand, this means that only the most recent (if any) logs can be found in the Pod's \texttt{log} file.
 
-SmartConnect MSA takes a similar approach to logrotate.
-
-Filebeat\footnote{\url{https://www.elastic.co/guide/en/beats/filebeat/7.10/filebeat-overview.html}} from ELK (Elasticsearch, Logstash, Kibana)\footnote{\url{https://www.elastic.co/what-is/elk-stack}} is used to pass the data collected by the system's Pods to the Elasticsearch engine (introduced in Section~\ref{smart-connect:elastic-search}). 
+SmartConnect MSA takes a similar approach to logrotate. Filebeat\footnote{\url{https://www.elastic.co/guide/en/beats/filebeat/7.10/filebeat-overview.html}} from ELK (Elasticsearch, Logstash, Kibana)\footnote{\url{https://www.elastic.co/what-is/elk-stack}} is used to pass the data collected by the system's Pods to the Elasticsearch engine (introduced in Section~\ref{smart-connect:elastic-search}). 
 The engine provides an authority for storing logs of the system and is considered as the single source of truth since the log data is persisted there.
 
 \subsection{Implementation}
@@ -277,7 +275,7 @@ The size of the step $r$ is a very important parameter. If one chooses $r$ very 
 
 Another parameter to consider is the size of the sliding window $m$. The ideal size really depends on the application domain and how many consecutive log entries on average can represent an anomaly. 
 
-Thus, setting the size of the step parameter $r$ and the length of the sliding window $m$ is a tradeoff between accuracy and processing time. A useful rule is to choose the value of $r$ proportional to the length of the subsequences \cite{izakian2013}. Consequently, longer subsequences have a higher value of $r$, while shorter subsequences have a lower value of $r$. The number of log lines contained in each window may vary. 
+Thus, setting the size of the step parameter $r$ and the length of the sliding window $m$ is a tradeoff between accuracy and processing time. A useful rule is to choose the value of $r$ proportional to the length of the subsequences \cite{izakian2013}. Consequently, longer subsequences have a higher value of $r$, while shorter subsequences have a lower value of $r$. The number of log lines contained in each window may vary. An example of windowing with different values of $m$ and $r$ parameters is shown in Figure \ref{fig:windowing}.
 
 In our work, instead of considering the number of log lines in each window, we consider the size of a subsequence in terms of a time span.
 
@@ -336,7 +334,7 @@ In other words, $tf_{t, d}$ is the probability of $t$ occurring in $d$.
 \subsubsection*{TF-IDF}
 Another weighting scheme widely used in Information Retrieval is called \textit{term frequency–inverse document frequency} (TF-IDF). 
 
-If we use only the standard term frequency, we have to deal with an important issue. After defining the term frequency, all event types are considered equally important \cite{informationRetrieval2008}. However, we also want to know how important a term is not only in a document, but in the whole dataset. This is where another weighting score, \textit{inverse document frequency} (IDF) comes into play. Let's first define \textit{document frequency} (DF). The document frequency $df_t$ is defined as the number of documents in the collection that contain the term $t$. Then, the inverse document frequency $df_t$ of the term $t$ is defined as: 
+If we use only the standard term frequency, we have to deal with an important issue. After defining the term frequency, all event types are considered equally important \cite{informationRetrieval2008}. However, we also want to know how important a term is not only in a document (window), but in the whole dataset. This is where another weighting score, \textit{inverse document frequency} (IDF) comes into play. Let's first define \textit{document frequency} (DF). The document frequency $df_t$ is defined as the number of documents in the collection that contain the term $t$. Then, the inverse document frequency $df_t$ of the term $t$ is defined as: 
 
 
 \begin{gather}
@@ -361,7 +359,7 @@ The intuition behind the components of TF-IDF weighting is that term frequency g
     \item lowest, if the term $t$ occurs in all documents of the collection
 \end{enumerate}
 
-As a result, the feature vector of the log sequence is a vector whose value for each dimension is defined by \ref{formula:tfidf}.
+As a result, the feature vector of the log sequence is a vector whose value for each dimension is defined by equation \ref{formula:tfidf}.
 
 The final vectorization of the log sequence involves normalizing the IDF weight by scaling it between 0 and 1. There are several ways to normalize the IDF, but we chose the common approach of applying the \textit{logistic} (sigmoid) function to normalize IDF:
 
@@ -400,7 +398,7 @@ To compute the term frequency, we find the frequencies of the event types in eac
         $l_4$                     & 0          & 0          & 2          & 1          & 0          & 2          & 0          & 1          \\ \bottomrule
         \end{tabular}
         
-        \caption{Computation of the frequency $f_{t,d}$ of term $t$ in document $d$.}
+        \caption{Computation of the frequency $f_{t,d}$ of term $t$ in document $d$. Each value represents the number of occurences of the event type in the respective column in the sequence of the respective row.}
     \end{subtable} \\
 	\hfill
 	\\
@@ -436,7 +434,7 @@ To compute the IDF, we first compute the document frequency $df_t$ of each term 
         \\ \bottomrule
         \end{tabular}
         
-        \caption{Computation of the document frequency $df_{t}$ of term $t$.}
+        \caption{Computation of the document frequency $df_{t}$ of term $t$. $n_t$ represents the number of documents (log sequences) that contain an event type represented by the given column.}
     \end{subtable} \\
 	\hfill
 	\\
@@ -466,7 +464,7 @@ The final step is to calculate the product $TF \times IDF$ and the values are sh
         \textbf{$l_4$}                     & 0          & 0          & 0.042          & 0.021          & 0          & 0.201          & 0          & 0.05
         \\ \bottomrule
         \end{tabular}}
-    \caption{TF and IDF scores from the example are multiplied to get TF-IDF}.
+    \caption{TF and IDF scores from the example are multiplied to get TF-IDF.}
     \label{tab:tfidfexample4}
 \end{table}
 
@@ -481,9 +479,9 @@ Now that we have created the feature matrices, machine learning methods can be a
 
 Loglizer\footnote{https://github.com/logpai/loglizer} is an open-source machine learning based log analysis toolkit for automated anomaly detection written in Python \cite{he2016}. Loglizer was developed for automated anomaly detection as a part of LogPAI\footnote{\url{http://www.logpai.com}}, a collection of AI-based log analysis solutions. These log analysis tools have already been deployed by industrial teams at Microsoft and Huawei. It includes three supervised anomaly detection models (\textit{Logistic Regression, Decision Tree, Support Vector Machine}) and six unsupervised anomaly detection models (\textit{Local Outlier Factor, One-Class SVM, Isolation Forest, Principal Component Analysis, Invariants Mining, Clustering}). At the time of writing, two more unsupervised models were under development (\textit{DeepLog, AutoEncoder}). 
 
-We chose to use a third-party toolkit for several reasons. First, since the algorithms we use in our experiments are already implemented, there is no need to completely reinvent the wheel and write the implementation ourselves. This way, we can avoid a time-consuming process and instead focus on the main purpose of our research - to investigate whether applying different anomaly detection techniques to a real-world dataset can lead to successful results and how to approach it.
+We chose to use a third-party toolkit for several reasons. First, since the algorithms we use in our experiments are already implemented, there is no need to completely reinvent the wheel and write the implementation ourselves. This way, we can avoid a time-consuming process and instead focus on the main purpose of our research - to investigate whether applying different anomaly detection techniques to a real-world dataset obtained from SmartConnect system can lead to successful results and how to approach it.
 
-Another advantage is that the Loglizer anomaly detectors work with log sequences. This means that each of the models is trained on a set of log sequences, and the output of the detector classifies whether a single log sequence is an anomaly or not. As described in Section~\ref{section:featureEngineering}, we use windowing to generate the log sequences, making the Loglizer toolkit an excellent fit for our research context. Specifically, four methods were used in our research: Invariants Mining, Isolation Forest, and PCA . The underlying algorithms behind these tools are presented in Section \ref{section:anomalyDetectionLiteratureReview}.
+Another advantage is that the Loglizer anomaly detectors work with log sequences. This means that each of the models is trained on a set of log sequences, and the output of the detector classifies whether a single log sequence is an anomaly or not. As described in Section~\ref{section:featureEngineering}, we use windowing to generate the log sequences, making the Loglizer toolkit an excellent fit for our research context. Specifically, four methods were used in our research: Invariants Mining, Isolation Forest, and PCA. The underlying algorithms behind these tools are presented in Section \ref{section:anomalyDetectionLiteratureReview}.
 
 The implemented anomaly detection methods are evaluated on a public dataset, HDFS. The logs in the HDFS dataset were collected from the Amazon EC2 platform and contain $11\,175\,629$ entries \cite{xu2009}. Loglizer provides benchmarking results for both supervised and unsupervised methods separately using this dataset, which can be found in Table \ref{table:loglizer}. The evaluation metrics are explained in Section \ref{section:evaluationMetrics}. Benchmarking gives a better idea of the expected performance of the anomaly detection methods we intend to use in our work.  
 
@@ -556,7 +554,7 @@ Normally, targets and prerequisites are filenames and recipes are commands. A Ma
      \end{itemize}
      \item \texttt{make} \textit{clean} \texttt{DATASET=<dataset name>}
      \begin{itemize}
-         \item Cleans up all generated files related to \texttt{DATASET} including the trained model, if it exists
+         \item Cleans up all generated files related to \texttt{DATASET}
      \end{itemize}
  \end{itemize}
  
@@ -587,7 +585,7 @@ Models and their configurations that are trained in the pipeline can be specifie
 
 The advantage of having a wrapper on top of the actual model is that it can easily be replaced by another library that provides the model implementation, or we can provide our own implementation.
 
-As you can see from the list above, each model also contains \texttt{save} and \texttt{load} methods. They are included in the model as a means of serializing and deserializing the trained model. The reason for this is that training a model is usually a very time-consuming task. The ability to load an already trained model saves us the trouble of training the model every time it is needed. A serialized model can be conveniently restored later and used for evaluation or prediction. We use the library \texttt{pickle}\footnote{https://docs.python.org/3/library/pickle.html}, which converts any Python object into a byte stream. The process of serializing the data is then called "pickling" and the deserialization is called "unpickling".
+As reader can see from the list above, each model also contains \texttt{save} and \texttt{load} methods. They are included in the model as a means of serializing and deserializing the trained model. The reason for this is that training a model is usually a very time-consuming task. The ability to load an already trained model saves us the trouble of training the model every time it is needed. A serialized model can be conveniently restored later and used for evaluation or prediction. We use the library \texttt{pickle}\footnote{https://docs.python.org/3/library/pickle.html}, which converts any Python object into a byte stream. The process of serializing the data is then called "pickling" and the deserialization is called "unpickling".
 
 \textit{Train} scripts allow optional and model-specific parameters to tune the models. These parameters can be modified in the Makefile. Then, the preprocessed data is simply loaded, the model is instantiated, and the model training process is executed. Finally, the trained model is stored in a pickle. 
  

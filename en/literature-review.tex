@@ -48,11 +48,11 @@ Unsupervised learning, unlike supervised learning, does not require any prior kn
 \subsubsection*{One-Class Classification}
 When it comes to anomaly detection, it is common to use a special method called One-Class Classification (or One-Class Learning) formulated by Tax \cite{tax2002occ}. 
  
-In OCC, labels are only provided for instances of the normal class, while labels are not required for classes describing anomalies. In fact, it is discouraged that they occur in the training dataset. There should be so few instances of outliers that they do not form a statistically representative sample of the negative concept \cite{khan_madden_2014}.
+In OCC, labels are only provided for instances of the normal class, while labels are not required for classes describing anomalies. In fact, it is discouraged that they occur in the training dataset. There should be so few instances of outliers that they do not form a statistically representative sample of the positive concept, where positive refers to anomalous class \cite{khan_madden_2014}.
  
 Thus, in a semi-supervised mode, the model that captures normal behaviour is created and used to identify anomalous behaviour. A class describing normal data is used primarily because it is more readily available, while a labeled dataset that would cover all anomalies is difficult to obtain \cite{cvbakv2009}.
  
-Due to the nature of our data, we used unsupervised anomaly detection methods for this study.
+Due to the nature of our data, we used unsupervised anomaly detection methods in a one-class manner for this study.
 
 \subsubsection{Isolation Forest}
 \label{section:lrIsolationForest}
@@ -71,8 +71,8 @@ Since the anomaly score is the average path length of iTree, which corresponds t
  \[
  c(n) = 
   \begin{dcases}
-     c(n) = 2H(n - 1) - (2(n - 1) / n), & \text{if} n > 2\\
-     1, & \text{if} n = 2\\
+     c(n) = 2H(n - 1) - (2(n - 1) / n), & \text{if } n > 2\\
+     1, & \text{if } n = 2\\
      0, & \text{otherwise}
  \end{dcases} 
  \]
@@ -82,12 +82,12 @@ where $H(i)$ is the harmonic number estimated by $ln(i) + 0.5772156649$. \\
 The Isolation Forest algorithm operates in linear time complexity and is particularly suitable for large and high dimensional datasets due to its low memory requirements. It is proven to be an accurate and effective anomaly detector.
 
 \subsubsection*{Anomaly Detection Forest}
-Recently, a variant of the Isolation Forest algorithm has been studied for the specific use case of Anomaly Detection - Anomaly Detection Forest \cite{adForest}. It is also commonly referred to as One-Class Isolation Forest. 
+Recently, a variant of the Isolation Forest algorithm has been studied by Sternby et al. \cite{adForest} for the specific use case of Anomaly Detection - Anomaly Detection Forest. It is also commonly referred to as One-Class Isolation Forest. 
 It falls under the category of One-Class Classification algorithms.
 
-Sternby et al. claim that the algorithm outperforms the state-of-the-art algorithms Isolation Forest and One-Class Random Forest for the task of anomaly detection in the one-class learning setting. They argue that IF has an intrinsic bias towards labeling similar unusual normal instances as anomalies \cite{adForest}.
+In their work they claim that the algorithm outperforms the state-of-the-art algorithms Isolation Forest and One-Class Random Forest for the task of anomaly detection in the one-class learning setting. They argue that IF has an intrinsic bias towards labeling similar unusual normal instances as anomalies.
 
-They try to improve that by introducing two new concepts \cite{adForest}:
+They try to improve that by introducing two new concepts:
 \begin{itemize}
     \item \textit{Anomaly leaves} with the aim of catching anomalies with feature values that are not contained
             in the range of the subsample of tree training observations.
@@ -104,7 +104,7 @@ One problem with high dimensional data is that it is often noisy and even redund
 
 PCA uses projection methods on a given set of input data points with many input features. Once a PCA model is obtained, a distance from test log entries (either positive or negative) to normal space can be calculated to detect anomalies. Correlations in the original feature space are searched for and the combination of variables that maximizes variance is found to preserve all information with minimal redundancy. A new, more representative and compact feature space is generated. This feature space with lower dimensions is called the \textit{principal components}. The features in the principal components are uncorrelated and ordered by the proportion of the data variance that each feature captures.\\
 
-To put it formally, let's say we have an $m$-dimensional vector $\mathbf{Y} \in \mathbb{R^n}$ with $n$ standardized input features in the original data. The PCA model decomposes $\mathbf{Y}$ into two parts \cite{pca1997}:
+To put it formally, let's say we have an $m$-dimensional vector $\mathbf{Y} \in \mathbb{R}^n$ with $n$ standardized input features in the original data. The PCA model decomposes $\mathbf{Y}$ into two parts \cite{pca1997}:
 
 \begin{gather}
  \mathbf{Y} = \mathbf{\hat{Y}} + \mathbf{\widetilde{Y}}
@@ -141,7 +141,7 @@ SPE is used as an anomaly score: The higher the prediction error, the more anoma
      SPE \leq \delta^2
 \end{gather}
 
-where $\delta^2$ is a threshold for the error. A standard implementation of the threshold  $\delta^2$ in anomaly detection is based on the \textit{Q-statistics} proposed by Jackson \cite{pcaJackson1979}. According to this, an anomaly is flagged if the following holds:
+where $\delta^2$ is a threshold for the error. A standard implementation of the threshold  $\delta^2$ in anomaly detection is based on the \textit{Q-statistics} proposed by Jackson \cite{pcaJackson1979}. According to this, an anomaly is detected if the following holds:
 
 \begin{gather}
     SPE = \parallel \mathbf{\widetilde{Y}} \parallel^2 > Q_{\alpha} 
@@ -152,14 +152,14 @@ where $Q_{\alpha}$ denotes a Q-value statistics providing a $(1 - \alpha)$ confi
 \subsubsection{Invariants Mining}
 \label{section:lrInvariantMining}
  
-A linear program invariant is a predicate that always holds the same value under different normal executions - different workloads or inputs. Lou et al. were the first to propose automatic anomaly detection by mining linear invariants from logs. \cite{lou2010}. It is based on the assumption that log sequences provide enough information about the execution paths of the system. Linear invariants are extracted from execution path properties by analyzing log sequences that follow workflow logic. The ideal candidate for the dataset for mining invariants are true log samples. We know that some examples of linear relationship between logs can also be found in the Motorola SmartConnect system dataset. 
+A linear program invariant is a predicate that always holds the same value under different normal executions - different workloads or inputs. Lou et al. were the first to propose automatic anomaly detection by mining linear invariants from logs \cite{lou2010}. It is based on the assumption that log sequences provide enough information about the execution paths of the system. Linear invariants are extracted from execution path properties by analyzing log sequences that follow workflow logic. The ideal candidate for the dataset for mining invariants are positive log samples. We know that some examples of linear relationship between logs can also be found in the Motorola SmartConnect system dataset. 
 There are steps in the call logic, such as subscribing to a call group, calling, and unsubscribing that are recorded and could potentially be exploited for anomaly detection. The occurrence of the above messages in pairs is an expected normal behaviour. Therefore, the number of these event types should be the same in one execution of the program. 
 
 We can formally define a linear invariant as a linear equation:
 
 \begin{gather}
-    a_0 + a_1 x_1 + ... + a_m x_m = 0
-\end{gather},
+    a_0 + a_1 x_1 + ... + a_m x_m = 0,
+\end{gather}
 
 where $x_i$ is the event count of the event type with identifier $i$ and $\theta = [a_0, a_1, ... a_m]^T$ is the vector representing the coefficients. It holds that: 
 
@@ -178,7 +178,7 @@ Log datasets that contain information about the specific execution flow, such as
 
 \begin{align}
     c(A) &= c(B) = c(E) \\
-    c(B) &= c(C) + c(D)
+    c(B) &= c(C) + c(D),
 \end{align}
 
 where $c(x)$ denotes the number of log messages of event type $x$. 
@@ -206,7 +206,7 @@ LogCluster consists of two phases: \textit{construction} phase and \textit{produ
 The construction phase can again be divided into four steps: Log vectorization, log clustering, extraction of representative log sequences, and recurrence checking.
 
 \begin{enumerate}
-    \item \textbf{Log vectorization}:In the log vectorization step, unstructured log messages are parsed into numeric vectors by abstracting log events. Then, log sequences are obtained by grouping logs with the same task ID and vectorization by counting the frequency of the event ID in the log sequence. Event ID frequency is further weighted using the Inverse Document Frequency -based weighting. The Inverse Document Frequency (IDF) weighting technique is also used in our research and we describe it in more detail in Section \ref{subsection:features}.
+    \item \textbf{Log vectorization}:In the log vectorization step, unstructured log messages are parsed into numeric vectors by abstracting log events. Then, log sequences are obtained by grouping logs with the same task ID and vectorization by counting the frequency of the event ID in the log sequence. Event ID frequency is further weighted using the Inverse Document Frequency based weighting. The Inverse Document Frequency (IDF) weighting technique is also used in our research and we describe it in more detail in Section \ref{subsection:features}.
     
     While in our research we combine IDF weight with event type frequency per log sequence, in LogCluster they use \textit{contrast-based} weighting. The intuition behind the contrast-based weighting is the observation that an event that occurs in both the test and production environments is less discriminative for anomaly detection than an event that appears only in the production environment. Events that occur only in the production environment are assigned a higher weight because they are assumed to better reflect failures.
     
@@ -239,7 +239,7 @@ The construction phase can again be divided into four steps: Log vectorization, 
 %https://netman.aiops.org/~peidan/ANM2019/6.LogAnomalyDetection/LectureCoverage/2016ICSE_Log%20Clustering%20based%20Problem%20Identification%20for%20Online%20Service%20Systems%20.pdf page 5
 
 \subsubsection*{Production Phase}
-In the production phase, logs are collected from the actual production environment (or more generally, the monitored environment). The process is then the same as in the construction phase: the logs are vectorized into log sequences and the log sequences are clustered. For each cluster, a representative is extracted. Then, the algorithm checks if all the representatives fall under one of the clusters seen earlier in the knowledge base. Then, engineers are required to manually examine the log sequences that have not been seen before for anomalies. After resolution, the knowledge base is updated with new clusters.
+In the production phase, logs are collected from the actual production environment (or more generally, the monitored environment). The process is then the same as in the construction phase: the logs are vectorized into log sequences and the log sequences are clustered. For each cluster, a representative is extracted. Then, the algorithm checks if all the representatives fall under one of the clusters seen earlier in the knowledge base. After that, engineers are required to manually examine the log sequences that have not been seen before for anomalies. After resolution, the knowledge base is updated with new clusters.
  
 \section{Log Parsing}
 
@@ -342,10 +342,10 @@ According to the log parsing technique, parsers can be classified into four main
 \end{enumerate}
     
 \subsubsection*{Frequent Pattern Mining} 
-Vaarandi presented a clustering algorithm for finding frequent patterns in logs with his tool SLCT (Simple Log File Clustering Tool) \cite{vaarandi2003}. A \textit{frequent pattern} is defined as a set of elements that occur frequently in a data set \cite{zhlhxzl2018}. As we described earlier, we can also think of event templates as a set of constants that occur frequently in log messages. SLCT reformulates the problem of finding event templates as a problem of mining frequent itemsets. The algorithm consists of three steps, with two passes over the data. The algorithm requires a threshold of support, which is set by the user beforehand. 
+Vaarandi \cite{vaarandi2003} presented a clustering algorithm for finding frequent patterns in logs with his tool SLCT (Simple Log File Clustering Tool). A \textit{frequent pattern} is defined as a set of elements that occur frequently in a data set \cite{zhlhxzl2018}. As we described earlier, we can also think of event templates as a set of constants that occur frequently in log messages. SLCT reformulates the problem of finding event templates as a problem of mining frequent itemsets. The algorithm consists of three steps, with two passes over the data. The algorithm requires a threshold of support, which is set by the user beforehand. 
 
     \begin{enumerate} 
-        \item During the first step (data summarization ), the algorithm first performs a pass to build a summary vector from words and their frequencies. After the summary vector is created, a vocabulary is constructed. To optimize the size of the vocabulary, only frequent words (dense 1-regions ) are stored. A word is considered frequent if it occurs at least $N$ times in the dataset, where $N$ is the user-specified threshold for support. This step is a modification of the Apriori algorithm for finding frequent itemsets \cite{Agrawal94fastalgorithms}. 
+        \item During the first step (data summarization), the algorithm first performs a pass to build a summary vector from words and their frequencies. After the summary vector is created, a vocabulary is constructed. To optimize the size of the vocabulary, only frequent words (dense 1-regions) are stored. A word is considered frequent if it occurs at least $N$ times in the dataset, where $N$ is the user-specified threshold for support. This step is a modification of the Apriori algorithm for finding frequent itemsets \cite{Agrawal94fastalgorithms}. 
         
         \item In the second step, another pass is made over the data to assemble all cluster candidates into a candidate table. The entire dataset is processed to form a cluster candidate from the line if a combination of the dense 1-regions occurs on the line. If the cluster candidate exists, it is inserted into the table with incremented support value. Otherwise, it is inserted into the table with support value $1$. 
         
@@ -361,7 +361,11 @@ IPLoM, proposed by Makanju et al. \cite{Makanju2009ALA}, is an example of a heur
     
     \item \textit{Partition by token position}. The next step assumes that the tokens at the same position in the log message that have the least number of unique words are likely to contain constants. Then, the heuristics works to find the token position with the lowest number of unique values and further splits each cluster based on the unique values at that position. 
     
-    \item \textit{Partition by searching for bijection}. The final partitioning step is based on searching for bijective (one-to-one) relationships between the set of unique tokens in two token positions. If a bijective relationship is found between two elements in the sets of tokens, log messages will be separated into new partitions at the corresponding token positions. The heuristics works as follows: The number of unique tokens at each token position and the most frequent number of unique tokens greater than $1$ are determined. The two token positions with the highest number of tokens are chosen. The idea is that the most frequent token count can indicate the number of event types. For example, in log messages\\ \texttt{Command has completed successfully} \\ \texttt{Command has been aborted} \\ \texttt{Command failed on starting}, \\ first position of the token has one unique token \{Command\}, the second position has two unique tokens \{has, failed\}, the third position has three unique tokens \{completed, been, on\} and the final fourth position also has three unique tokens \{successfully, aborted, starting\}. Therefore, the tokens at positions three and four, e.g. "completed" and "successfully", are in a $1-1$ bijective relationship with "been" and "aborted", since all lines containing "completed" in position three contain "successfully" in position four and vice versa. There is also a $1-M$ relationship with the tokens "Command", "completed", "been", and "on" because all lines containing "Command" also contain "completed", or "been", or "on" at position three. Another type of relationship is an $M-1$, which works in reverse to the previous scenario. The last type of relationship is $M-M$. This occurs in our example when positions two and three are chosen by the heuristics. \\ Therefore, another heuristics is implemented to handle the case of $1-M$ and $M-1$ relationships. 
+    \item \textit{Partition by searching for bijection}. The final partitioning step is based on searching for bijective (one-to-one) relationships between the set of unique tokens in two token positions. If a bijective relationship is found between two elements in the sets of tokens, log messages will be separated into new partitions at the corresponding token positions. The heuristics works as follows: The number of unique tokens at each token position and the most frequent number of unique tokens greater than $1$ are determined. The two token positions with the highest number of tokens are chosen. The idea is that the most frequent token count can indicate the number of event types. For example, in log messages:\\ 
+    \texttt{Command has completed successfully} \\ 
+    \texttt{Command has been aborted} \\ 
+    \texttt{Command failed on starting}, \\ 
+    first position of the token has one unique token \{Command\}, the second position has two unique tokens \{has, failed\}, the third position has three unique tokens \{completed, been, on\} and the final fourth position also has three unique tokens \{successfully, aborted, starting\}. Therefore, the tokens at positions three and four, e.g. "completed" and "successfully", are in a $1-1$ bijective relationship with "been" and "aborted", since all lines containing "completed" in position three contain "successfully" in position four and vice versa. There is also a $1-M$ relationship with the tokens "Command", "completed", "been", and "on" because all lines containing "Command" also contain "completed", or "been", or "on" at position three. Another type of relationship is an $M-1$, which works in reverse to the previous scenario. The last type of relationship is $M-M$. This occurs in our example when positions two and three are chosen by the heuristics. \\ Therefore, another heuristics is implemented to handle the case of $1-M$ and $M-1$ relationships. 
     
     \item \textit{Discover message type descriptions (line formats) from each partition}. In this step, the algorithm is terminated and descriptions of clusters or line formats should be discovered.
 \end{enumerate}
@@ -383,9 +387,7 @@ IPLoM, proposed by Makanju et al. \cite{Makanju2009ALA}, is an example of a heur
         \item \textit{Search by Log Message Length}. The next step is to build the parsing tree. The process is based on the assumption that log messages with the same log event can have the same log message length. Starting from the root node, each node in the first layer represents log groups whose log messages have different lengths. The message length is specified by the number of tokens. Cases where log messages with the same log event have different lengths can be handled by post-processing. For example, the path to the preprocessed log message \texttt{Packet has been sent} to a first layer node would be \textit{Length: 4}.
         
         \item \textit{Search by Preceding Tokens}. In the third step, the parsing tree is traversed to a leaf node in the second layer. In this step, it is assumed that the first tokens in a log message are likely to be constants. For example, in the log message \texttt{Packet has been sent}, the tree is traversed from the first layer node \textit{Length: 4} to the leaf node containing the internal node \textit{Packet}, since "Packet" is considered a constant. Therefore, the second layer contains nodes with unique first words. Depending on the \textit{depth} of the tree, there are more internal nodes which search by the tokens at the first, second, third... etc. position. However, sometimes a variable word may appear in the initial positions, such as \texttt{120 bytes received}. This is solved by considering only tokens that do not contain digits. If a token contains a digit, it matches a special internal node \textit{"*"}. 
-        \item \textit{Search by Token Similarity}. After step 3, lists of log groups are contained in leaf nodes. Each log group has \textit{log event} and
-        
-        \textit{log IDs}. Log event is the template that describes the log messages of the group, and log IDs are the log IDs of the log messages in that group. Each log group contains log messages of the same length that start with the same word. In this step, Drain calculates the similarity between the log message and the log event of each log group. The similarity is calculated over each token position. The highest similarity score is compared to a predefined similarity threshold, which indicates whether the given log group is suitable.
+        \item \textit{Search by Token Similarity}. After step 3, lists of log groups are contained in leaf nodes. Each log group has \textit{log event} and \textit{log IDs}. Log event is the template that describes the log messages of the group, and log IDs are the log IDs of the log messages in that group. Each log group contains log messages of the same length that start with the same word. In this step, Drain calculates the similarity between the log message and the log event of each log group. The similarity is calculated over each token position. The highest similarity score is compared to a predefined similarity threshold, which indicates whether the given log group is suitable.
         \item \textit{Update the Parse Tree}. In the last step, the log ID of the current log message is added to the most suitable log group from step $4$ and log event in the log group is updated (different tokens are replaced by wildcards *).
     \end{enumerate}
 
