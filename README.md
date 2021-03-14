@@ -1,4 +1,6 @@
-# Anomaly Detection and Automated Diagnostics Using Machine Learning Techniques
+# Log-Based Unsupervised Anomaly Detection in Mission Critical System
+Analysis of Logs Produced by Push-to-Talk Radios
+and Infrastructure in Motorola Solution’s SmartConnect.
 
 ## Background/motivation (incl. key concepts & terminology)
 For decades radio communication has been confined to the boundaries of network
