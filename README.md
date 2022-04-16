@@ -73,3 +73,7 @@ detection.
 detection.
 5. Ability to discuss the methodologies and theory of anomaly detection
 techniques in general as well as at an academic level.
+
+## Contributors
+- [Denis Drobny](https://github.com/drobnyd)
+- [Gabriela Dvorakova](https://github.com/gdvorakova)
